@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE INVADERS '86</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        .game-wrapper {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #0f0;
+            box-shadow: 0 0 20px rgba(0,255,0,0.3), inset 0 0 20px rgba(0,255,0,0.05);
+            display: block;
+            image-rendering: pixelated;
+        }
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 4px;
+            color: #0f0;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 6px rgba(0,255,0,0.5);
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #0f0;
+            text-shadow: 0 0 10px rgba(0,255,0,0.6);
+            pointer-events: none;
+        }
+        .overlay h1 {
+            font-size: 42px;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            animation: blink 1.5s step-end infinite;
+        }
+        .overlay p {
+            font-size: 16px;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+        .overlay .blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .game-container {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+    <div class="hud">
+        <span id="scoreDisplay">SCORE: 0000</span>
+        <span id="livesDisplay">LIVES: 3</span>
+        <span id="waveDisplay">WAVE: 1</span>
+    </div>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
+        <div class="overlay" id="overlay">
+            <h1>SPACE INVADERS</h1>
+            <p>PRESS <span class="blink">SPACE</span> TO START</p>
+            <p style="margin-top:20px;font-size:12px;opacity:0.5;">← → MOVE &nbsp;|&nbsp; SPACE FIRE</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const livesDisplay = document.getElementById('livesDisplay');
+const waveDisplay = document.getElementById('waveDisplay');
+
+const W = 480, H = 640;
+let gameState = 'menu'; // menu, playing, gameover
+let score = 0;
+let lives = 3;
+let wave = 1;
+let keys = {};
+let frame = 0;
+let animFrame = 0;
+
+// ── Audio ──────────────────────────────────────────────
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playBeep(freq, duration, type = 'square', volume = 0.08) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playShoot() {
+    playBeep(880, 0.08, 'square', 0.06);
+    setTimeout(() => playBeep(660, 0.06, 'square', 0.04), 40);
+}
+
+function playExplosion() {
+    if (!audioCtx) return;
+    const bufferSize = audioCtx.sampleRate * 0.2;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+    }
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+    source.connect(gain);
+    gain.connect(audioCtx.destination);
+    source.start();
+}
+
+function playPlayerHit() {
+    playBeep(220, 0.15, 'sawtooth', 0.08);
+    setTimeout(() => playBeep(150, 0.2, 'sawtooth', 0.06), 100);
+}
+
+function playGameOver() {
+    const notes = [440, 370, 330, 220];
+    notes.forEach((n, i) => {
+        setTimeout(() => playBeep(n, 0.2, 'square', 0.06), i * 200);
+    });
+}
+
+function playWaveStart() {
+    const notes = [220, 330, 440, 660];
+    notes.forEach((n, i) => {
+        setTimeout(() => playBeep(n, 0.1, 'square', 0.05), i * 100);
+    });
+}
+
+// ── Player ──────────────────────────────────────────────
+const player = {
+    x: W/2,
+    y: H - 50,
+    w: 24,
+    h: 18,
+    speed: 4,
+    cooldown: 0,
+    maxCooldown: 12,
+    invulnerable: 0,
+    muzzleFlash: 0,
+};
+
+function drawPlayer() {
+    // Flicker when invulnerable
+    if (player.invulnerable > 0 && Math.floor(player.invulnerable / 6) % 2 === 0) return;
+
+    ctx.fillStyle = '#0f0';
+    // Ship body
+    ctx.beginPath();
+    ctx.moveTo(player.x, player.y - 10);
+    ctx.lineTo(player.x - 12, player.y + 8);
+    ctx.lineTo(player.x - 8, player.y + 6);
+    ctx.lineTo(player.x - 8, player.y + 8);
+    ctx.lineTo(player.x - 4, player.y + 8);
+    ctx.lineTo(player.x, player.y + 6);
+    ctx.lineTo(player.x + 4, player.y + 8);
+    ctx.lineTo(player.x + 8, player.y + 8);
+    ctx.lineTo(player.x + 8, player.y + 6);
+    ctx.lineTo(player.x + 12, player.y + 8);
+    ctx.closePath();
+    ctx.fill();
+    // Engine glow
+    ctx.fillStyle = '#ff0';
+    ctx.fillRect(player.x - 3, player.y + 6, 2, 4 + Math.random() * 3);
+    ctx.fillRect(player.x + 1, player.y + 6, 2, 4 + Math.random() * 3);
+
+    // Muzzle flash
+    if (player.muzzleFlash > 0) {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(player.x - 4, player.y - 14, 8, 4);
+        ctx.fillStyle = '#ff0';
+        ctx.fillRect(player.x - 2, player.y - 13, 4, 2);
+    }
+}
+
+// ── Bullets ─────────────────────────────────────────────
+let bullets = [];
+const BULLET_SPEED = 8;
+const BULLET_W = 5, BULLET_H = 14;
+
+function fireBullet() {
+    if (player.cooldown > 0) return;
+    bullets.push({
+        x: player.x - 1,
+        y: player.y - 14,
+        w: BULLET_W,
+        h: BULLET_H,
+    });
+    player.cooldown = player.maxCooldown;
+    player.muzzleFlash = 6;
+    playShoot();
+}
+
+function drawBullets() {
+    bullets.forEach(b => {
+        // Bright center
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(b.x + 1, b.y, 3, b.h);
+        // Green glow
+        ctx.fillStyle = '#0f0';
+        ctx.fillRect(b.x, b.y + 2, b.w, b.h - 4);
+        // Outer glow
+        ctx.fillStyle = 'rgba(0,255,0,0.4)';
+        ctx.fillRect(b.x - 1, b.y + 4, b.w + 2, b.h - 6);
+    });
+}
+
+function updateBullets() {
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].y -= BULLET_SPEED;
+        if (bullets[i].y + bullets[i].h < 0) {
+            bullets.splice(i, 1);
+        }
+    }
+}
+
+// ── Enemies ─────────────────────────────────────────────
+let enemies = [];
+let enemyBullets = [];
+let enemyDir = 1;
+let enemySpeed = 0.5;
+let enemyMoveCounter = 0;
+let enemyMoveDelay = 30;
+let enemiesAlive = 0;
+
+const ENEMY_COLS = 8;
+const ENEMY_ROWS = 5;
+
+function spawnWave(waveNum) {
+    enemies = [];
+    enemyBullets = [];
+    enemyDir = 1;
+    enemySpeed = 0.4 + (waveNum - 1) * 0.08;
+    enemyMoveDelay = Math.max(12, 30 - (waveNum - 1) * 2);
+
+    const startX = 60;
+    const startY = 50;
+    const spacingX = 48;
+    const spacingY = 40;
+
+    for (let row = 0; row < ENEMY_ROWS; row++) {
+        for (let col = 0; col < ENEMY_COLS; col++) {
+            enemies.push({
+                x: startX + col * spacingX,
+                y: startY + row * spacingY,
+                w: 28,
+                h: 20,
+                row: row,
+                col: col,
+                alive: true,
+                anim: 0,
+            });
+        }
+    }
+    enemiesAlive = enemies.length;
+    playWaveStart();
+}
+
+function drawEnemies() {
+    enemies.forEach(e => {
+        if (!e.alive) return;
+        const offset = e.anim ? 2 : 0;
+
+        if (e.row === 0) {
+            ctx.fillStyle = '#f44';
+        } else if (e.row <= 2) {
+            ctx.fillStyle = '#fa0';
+        } else {
+            ctx.fillStyle = '#0f0';
+        }
+
+        // Draw alien based on row
+        const x = e.x, y = e.y;
+        if (e.row === 0) {
+            // Crab alien (top row)
+            ctx.fillRect(x + 4, y + 2 + offset, 20, 4);
+            ctx.fillRect(x + 2, y + 6 + offset, 24, 4);
+            ctx.fillRect(x, y + 10 + offset, 28, 4);
+            ctx.fillRect(x + 4, y + 14 + offset, 8, 4);
+            ctx.fillRect(x + 16, y + 14 + offset, 8, 4);
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(x + 8, y + 6 + offset, 4, 4);
+            ctx.fillRect(x + 16, y + 6 + offset, 4, 4);
+        } else if (e.row <= 2) {
+            // Squid alien (middle rows)
+            ctx.fillStyle = '#fa0';
+            ctx.fillRect(x + 6, y + 2 + offset, 16, 4);
+            ctx.fillRect(x + 2, y + 6 + offset, 24, 6);
+            ctx.fillRect(x + 4, y + 12 + offset, 8, 4);
+            ctx.fillRect(x + 16, y + 12 + offset, 8, 4);
+            ctx.fillRect(x + 10, y + 16 + offset, 8, 2);
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(x + 8, y + 6 + offset, 4, 4);
+            ctx.fillRect(x + 16, y + 6 + offset, 4, 4);
+        } else {
+            // Bug alien (bottom rows)
+            ctx.fillRect(x + 6, y + offset, 16, 4);
+            ctx.fillRect(x + 2, y + 4 + offset, 24, 6);
+            ctx.fillRect(x, y + 10 + offset, 6, 6);
+            ctx.fillRect(x + 10, y + 10 + offset, 8, 6);
+            ctx.fillRect(x + 22, y + 10 + offset, 6, 6);
+            // Eyes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(x + 8, y + 4 + offset, 4, 4);
+            ctx.fillRect(x + 16, y + 4 + offset, 4, 4);
+        }
+    });
+}
+
+function updateEnemies() {
+    enemyMoveCounter++;
+    if (enemyMoveCounter >= enemyMoveDelay) {
+        enemyMoveCounter = 0;
+
+        // Check bounds
+        let hitEdge = false;
+        enemies.forEach(e => {
+            if (!e.alive) return;
+            if (e.x + enemyDir * 2 < 4 || e.x + e.w + enemyDir * 2 > W - 4) {
+                hitEdge = true;
+            }
+        });
+
+        if (hitEdge) {
+            enemyDir *= -1;
+            enemies.forEach(e => {
+                if (e.alive) e.y += 8;
+            });
+        } else {
+            enemies.forEach(e => {
+                if (e.alive) e.x += enemyDir * 2;
+                e.anim = e.anim ? 0 : 1;
+            });
+        }
+    }
+
+    // Enemy shooting - capped to keep it playable
+    let enemyShotsThisFrame = 0;
+    enemies.forEach(e => {
+        if (!e.alive) return;
+        if (enemyBullets.length >= 4 + wave) return;
+        if (Math.random() < 0.002) {
+            enemyBullets.push({
+                x: e.x + e.w / 2 - 2,
+                y: e.y + e.h,
+                w: 4,
+                h: 10,
+            });
+            if (enemyShotsThisFrame < 1) {
+                playBeep(200, 0.05, 'square', 0.03);
+                enemyShotsThisFrame++;
+            }
+        }
+    });
+
+    // Update enemy bullets
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        enemyBullets[i].y += 3;
+        if (enemyBullets[i].y > H) {
+            enemyBullets.splice(i, 1);
+        }
+    }
+}
+
+function drawEnemyBullets() {
+    ctx.fillStyle = '#f44';
+    enemyBullets.forEach(b => {
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+    });
+}
+
+// ── Collision Detection ─────────────────────────────────
+function rectCollide(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x &&
+           a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function checkCollisions() {
+    // Bullets vs enemies (iterate backwards to avoid index skipping)
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let bulletUsed = false;
+        for (let j = enemies.length - 1; j >= 0; j--) {
+            if (!enemies[j].alive) continue;
+            if (rectCollide(bullets[i], enemies[j])) {
+                enemies[j].alive = false;
+                enemiesAlive--;
+                score += (ENEMY_ROWS - enemies[j].row) * 10;
+                playExplosion();
+                bulletUsed = true;
+                updateHUD();
+                break;
+            }
+        }
+        if (bulletUsed) {
+            bullets.splice(i, 1);
+        }
+    }
+
+    // Enemy bullets vs player
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        if (player.invulnerable > 0) break;
+        if (rectCollide(enemyBullets[i], {x: player.x - 12, y: player.y - 10, w: 24, h: 18})) {
+            enemyBullets.splice(i, 1);
+            playerHit();
+            break;
+        }
+    }
+
+    // Enemies vs player (touch = death)
+    if (player.invulnerable <= 0) {
+        enemies.forEach(e => {
+            if (!e.alive) return;
+            if (rectCollide({x: player.x - 12, y: player.y - 10, w: 24, h: 18}, e)) {
+                playerHit();
+            }
+        });
+    }
+}
+
+function playerHit() {
+    if (gameState !== 'playing') return;
+    if (player.invulnerable > 0) return;
+    lives--;
+    playPlayerHit();
+    updateHUD();
+    if (lives <= 0) {
+        gameOver();
+    } else {
+        // Respawn player with invulnerability
+        player.x = W / 2;
+        player.y = H - 50;
+        player.invulnerable = 90; // ~1.5 seconds at 60fps
+        // Clear enemy bullets
+        enemyBullets = [];
+    }
+}
+
+function gameOver() {
+    gameState = 'gameover';
+    playGameOver();
+    overlay.style.display = 'flex';
+    overlay.innerHTML = `
+        <h1 style="color:#f44;text-shadow:0 0 10px rgba(255,0,0,0.6);">GAME OVER</h1>
+        <p style="margin-top:10px;">FINAL SCORE: ${String(score).padStart(4,'0')}</p>
+        <p style="margin-top:20px;font-size:14px;" class="blink">PRESS SPACE TO RESTART</p>
+    `;
+}
+
+// ── HUD ─────────────────────────────────────────────────
+function updateHUD() {
+    scoreDisplay.textContent = 'SCORE: ' + String(score).padStart(4, '0');
+    livesDisplay.textContent = 'LIVES: ' + lives;
+    waveDisplay.textContent = 'WAVE: ' + wave;
+}
+
+// ── Stars ────────────────────────────────────────────────
+const stars = [];
+for (let i = 0; i < 80; i++) {
+    stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        speed: 0.3 + Math.random() * 0.5,
+        brightness: 0.3 + Math.random() * 0.7,
+    });
+}
+
+function drawStars() {
+    stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
+        ctx.fillStyle = `rgba(0,255,0,${s.brightness * 0.3})`;
+        ctx.fillRect(s.x, s.y, 1.5, 1.5);
+    });
+}
+
+// ── Game Loop ────────────────────────────────────────────
+function update() {
+    if (gameState !== 'playing') return;
+    frame++;
+
+    // Player movement
+    if (keys['ArrowLeft'] && player.x - 12 > 0) player.x -= player.speed;
+    if (keys['ArrowRight'] && player.x + 12 < W) player.x += player.speed;
+    if (player.cooldown > 0) player.cooldown--;
+
+    // Shooting with Space - now handled in keydown event for instant response
+    // (see keydown handler below)
+
+    // Decrement invulnerability timer
+    if (player.invulnerable > 0) player.invulnerable--;
+    // Decrement muzzle flash
+    if (player.muzzleFlash > 0) player.muzzleFlash--;
+
+    updateBullets();
+    updateEnemies();
+    checkCollisions();
+
+    // Check wave clear
+    if (enemiesAlive <= 0 && gameState === 'playing') {
+        wave++;
+        player.x = W / 2;
+        bullets = [];
+        enemyBullets = [];
+        spawnWave(wave);
+        updateHUD();
+    }
+}
+
+function draw() {
+    // Background
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // Scanline effect
+    ctx.fillStyle = 'rgba(0,255,0,0.015)';
+    for (let i = 0; i < H; i += 3) {
+        ctx.fillRect(0, i, W, 1);
+    }
+
+    drawStars();
+
+    if (gameState === 'playing' || gameState === 'gameover') {
+        drawBullets();
+        drawEnemyBullets();
+        drawEnemies();
+        if (gameState === 'playing') drawPlayer();
+    }
+}
+
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+// ── Input ────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+    keys[e.key] = true;
+
+    if (e.key === ' ') {
+        e.preventDefault();
+        initAudio();
+
+        if (gameState === 'playing') {
+            fireBullet();
+        } else if (gameState === 'menu') {
+            gameState = 'playing';
+            overlay.style.display = 'none';
+            score = 0;
+            lives = 3;
+            wave = 1;
+            player.x = W / 2;
+            bullets = [];
+            enemyBullets = [];
+            spawnWave(wave);
+            updateHUD();
+        } else if (gameState === 'gameover') {
+            gameState = 'playing';
+            overlay.style.display = 'none';
+            score = 0;
+            lives = 3;
+            wave = 1;
+            player.x = W / 2;
+            bullets = [];
+            enemyBullets = [];
+            spawnWave(wave);
+            updateHUD();
+        }
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    keys[e.key] = false;
+});
+
+// ── Start ────────────────────────────────────────────────
+updateHUD();
+gameLoop();
+</script>
+</body>
+</html>

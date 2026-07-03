@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban To-Do</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e94560;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .add-task {
+            max-width: 500px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-task input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: #16213e;
+            color: #e0e0e0;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .add-task input:focus {
+            border-color: #e94560;
+        }
+
+        .add-task button {
+            padding: 12px 24px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        .add-task button:hover {
+            background: #c73650;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .column {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 300px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #333;
+            margin-bottom: 12px;
+        }
+
+        .column-header h2 {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+
+        .column-header .count {
+            background: #333;
+            color: #aaa;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .column.new .column-header { border-bottom-color: #e94560; }
+        .column.in-progress .column-header { border-bottom-color: #f5a623; }
+        .column.done .column-header { border-bottom-color: #4caf50; }
+
+        .task-list {
+            min-height: 200px;
+            padding: 4px 0;
+        }
+
+        .task {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .task.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .task .text {
+            flex: 1;
+            word-break: break-word;
+            padding-right: 8px;
+        }
+
+        .task .delete-btn {
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 4px;
+            line-height: 1;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .task .delete-btn:hover {
+            color: #e94560;
+        }
+
+        .column.drag-over {
+            border: 2px dashed #e94560;
+            background: rgba(233, 69, 96, 0.05);
+            border-radius: 12px;
+        }
+
+        .empty-message {
+            color: #555;
+            text-align: center;
+            padding: 40px 20px;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .clear-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 8px 20px;
+            background: none;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: border-color 0.3s, color 0.3s;
+        }
+
+        .clear-btn:hover {
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        @media (max-width: 768px) {
+            .board {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>📋 Kanban To-Do</h1>
+    <p class="subtitle">Drag and drop tasks between columns</p>
+
+    <div class="add-task">
+        <input type="text" id="taskInput" placeholder="Add a new task..." />
+        <button id="addBtn">+ Add</button>
+    </div>
+
+    <div class="board">
+        <div class="column new" data-column="new">
+            <div class="column-header">
+                <h2>🆕 New</h2>
+                <span class="count" id="newCount">0</span>
+            </div>
+            <div class="task-list" id="newList"></div>
+        </div>
+
+        <div class="column in-progress" data-column="in-progress">
+            <div class="column-header">
+                <h2>🔨 In Progress</h2>
+                <span class="count" id="progressCount">0</span>
+            </div>
+            <div class="task-list" id="progressList"></div>
+        </div>
+
+        <div class="column done" data-column="done">
+            <div class="column-header">
+                <h2>✅ Done</h2>
+                <span class="count" id="doneCount">0</span>
+            </div>
+            <div class="task-list" id="doneList"></div>
+        </div>
+    </div>
+
+    <button class="clear-btn" id="clearBtn">🗑️ Clear All Tasks</button>
+
+    <script>
+        const STORAGE_KEY = 'kanban-tasks';
+
+        let tasks = {
+            new: [],
+            'in-progress': [],
+            done: []
+        };
+
+        function loadTasks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed.new && parsed['in-progress'] && parsed.done) {
+                        tasks = parsed;
+                    }
+                } catch (e) {}
+            }
+        }
+
+        function saveTasks() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function render() {
+            const columns = ['new', 'in-progress', 'done'];
+            const idMap = {
+                'new': 'newList',
+                'in-progress': 'progressList',
+                'done': 'doneList'
+            };
+            const countMap = {
+                'new': 'newCount',
+                'in-progress': 'progressCount',
+                'done': 'doneCount'
+            };
+
+            columns.forEach(col => {
+                const list = document.getElementById(idMap[col]);
+                const count = document.getElementById(countMap[col]);
+                list.innerHTML = '';
+
+                if (tasks[col].length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-message';
+                    empty.textContent = col === 'new' ? 'Add a task above ✏️' :
+                                        col === 'in-progress' ? 'Drag tasks here 🎯' :
+                                        'Drag completed tasks here 🏁';
+                    list.appendChild(empty);
+                } else {
+                    tasks[col].forEach((text, index) => {
+                        const task = document.createElement('div');
+                        task.className = 'task';
+                        task.draggable = true;
+                        task.dataset.column = col;
+                        task.dataset.index = index;
+
+                        const span = document.createElement('span');
+                        span.className = 'text';
+                        span.textContent = text;
+
+                        const del = document.createElement('button');
+                        del.className = 'delete-btn';
+                        del.textContent = '✕';
+                        del.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            tasks[col].splice(index, 1);
+                            saveTasks();
+                            render();
+                        });
+
+                        task.appendChild(span);
+                        task.appendChild(del);
+
+                        task.addEventListener('dragstart', (e) => {
+                            e.dataTransfer.setData('text/plain', JSON.stringify({
+                                column: col,
+                                index: index
+                            }));
+                            task.classList.add('dragging');
+                            e.dataTransfer.effectAllowed = 'move';
+                        });
+
+                        task.addEventListener('dragend', () => {
+                            task.classList.remove('dragging');
+                        });
+
+                        list.appendChild(task);
+                    });
+                }
+
+                count.textContent = tasks[col].length;
+            });
+        }
+
+        function setupDragAndDrop() {
+            // Global cleanup: remove drag-over highlights when drag ends anywhere
+            document.addEventListener('dragend', () => {
+                document.querySelectorAll('.column.drag-over').forEach(el => {
+                    el.classList.remove('drag-over');
+                });
+            });
+
+            const columns = ['new', 'in-progress', 'done'];
+            const idMap = {
+                'new': 'newList',
+                'in-progress': 'progressList',
+                'done': 'doneList'
+            };
+
+            columns.forEach(col => {
+                const list = document.getElementById(idMap[col]);
+
+                list.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    list.closest('.column').classList.add('drag-over');
+                });
+
+                list.addEventListener('dragleave', (e) => {
+                    // Only remove highlight when leaving the column, not when entering a child
+                    if (!list.closest('.column').contains(e.relatedTarget)) {
+                        list.closest('.column').classList.remove('drag-over');
+                    }
+                });
+
+                list.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    list.classList.remove('drag-over');
+
+                    try {
+                        const raw = e.dataTransfer.getData('text/plain');
+                        if (!raw) return;
+                        const data = JSON.parse(raw);
+                        const fromCol = data.column;
+                        const fromIndex = data.index;
+
+                        if (fromCol === col) return;
+
+                        if (!tasks[fromCol] || fromIndex >= tasks[fromCol].length) return;
+
+                        const text = tasks[fromCol][fromIndex];
+                        tasks[fromCol].splice(fromIndex, 1);
+                        tasks[col].push(text);
+                        saveTasks();
+                        render();
+                    } catch (e) {
+                        // Ignore external drags (files, text from other sites, etc.)
+                    }
+                });
+            });
+        }
+
+        document.getElementById('addBtn').addEventListener('click', () => {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if (text) {
+                tasks.new.push(text);
+                input.value = '';
+                saveTasks();
+                render();
+            }
+        });
+
+        document.getElementById('taskInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('addBtn').click();
+            }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            if (confirm('Delete all tasks?')) {
+                tasks = { new: [], 'in-progress': [], done: [] };
+                saveTasks();
+                render();
+            }
+        });
+
+        loadTasks();
+        setupDragAndDrop();
+        render();
+    </script>
+</body>
+</html>
