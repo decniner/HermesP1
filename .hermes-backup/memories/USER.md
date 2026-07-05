@@ -1,0 +1,5 @@
+Den (Denver/サンチェス デンバーセラノ) — Senior SRE in Kawagoe, Saitama, Japan (JST+9). Wife Lailani + 3 kids + 2 Shibas (Bella, Pogi). EPOS Platinum. BTCJPY MQL5 trader (XMTrading-MT5 3, GH:decniner). Pixel Watch 3. TG:6912295778. EN only. Dev: write → subagent QA → fix → retest. Always ask clarifying questions before starting new projects — don't jump to solutions.
+§
+Denver "Den" Sanchez. Lives in Kawagoe, Saitama, Japan. SRE at financial institution. Wife Lani, 3 kids, 2 Shibas. EPOS card, MUFJ bank, Pixel Watch 3, MT5/XM trader. Email: decniner@gmail.com. GitHub: decniner. Always ask clarifying questions before building. Always copy EA files to DEN_EA folder AND GitHub.
+§
+Den's full name is Denver Sanchez. Works at Nomura as a Senior Associate / IT SRE. Lives in Kawagoe, Saitama, Japan. Has a LinkedIn profile (jp.linkedin.com/in/denver-sanchez-bba83560).

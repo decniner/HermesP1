@@ -1,0 +1,115 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have all the data. Let me compile the full digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 **DAILY NEWS DIGEST**
+📅 **Sunday, July 5, 2026**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 **JAPAN**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Japan Tax Revenues Hit Record ¥84 Trillion in Fiscal 2025**
+Record tax revenue growth reflected higher wages and corporate earnings, along with a rise in consumption value amid inflation. The milestone signals continued economic recovery despite global headwinds.
+*Source: Japan Times →* https://www.japantimes.co.jp/news/2026/07/04/japan/japan-tax-revenues-record-2025/
+
+**2. U.K., Italy and Japan Award $6.14 Billion Contract to Advance GCAP Fighter Jet**
+The contract for the next-generation Global Combat Air Programme (GCAP) comes after a rival Franco-German fighter program collapsed in June, leaving European defense alliances in flux. Japan, the UK, and Italy continue progress on their joint sixth-generation fighter.
+*Source: Japan Times →* https://www.japantimes.co.jp/news/2026/07/04/japan/uk-italy-japan-contract-gcap-fighter-jet/
+
+**3. Micron Breaks Ground on $9 Billion Hiroshima Chip Plant Expansion**
+The US chipmaker is building the facility to produce high-bandwidth memory chips critical for AI applications, with commercial shipments expected around summer 2028.
+*Source: Japan Times →* https://www.japantimes.co.jp/business/2026/07/04/tech/micron-hiroshima-chip-plant/
+
+**4. Iran Exploring Oil Sales to Japan; Buyers Seek Longer Sanctions Waiver**
+Three Japanese buyers are looking at possible crude oil purchases from Iran for the first time since 2019, as Japanese refiners seek to diversify supply amid the Strait of Hormuz tensions.
+*Source: Reuters / Japan Times →* https://www.reuters.com/business/energy/iran-exploring-oil-sales-japan-buyers-seek-longer-sanctions-waiver-sources-2026-07-03/
+
+**5. Japan Shifts to 'Ambush' Intervention Tactics Against Yen Short Sellers**
+Japanese officials are abandoning their habit of telegraphing intervention risks, instead signaling a more targeted campaign to squeeze speculators and raise the cost of betting against the battered yen.
+*Source: Reuters →* https://www.reuters.com/world/asia-pacific/japan-shifts-ambush-intervention-tactics-against-yen-short-sellers-sources-say-2026-07-02/
+
+**6. Japan Wage Hikes Top 5% for Third Straight Year, Backing BOJ Rate-Hike Path**
+Japanese firms agreed to an average pay hike above 5% for the third consecutive year, adding to evidence that a virtuous cycle of wages and prices is gaining traction.
+*Source: Reuters →* https://www.reuters.com/business/world-at-work/japanese-firms-agree-average-501-pay-hikes-top-union-groups-final-tally-shows-2026-07-03/
+
+**7. Official 'Gundam' Store Opens in London, Drawing Long Queues**
+About 200 products were on display at the second Gundam Base outlet in Europe. Fans waited for hours, with some queuing up to five hours before the shop opened.
+*Source: Kyodo News →* https://english.kyodonews.net/articles/-/79196
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 **PHILIPPINES**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Alex Eala Dethrones Defending Champion Iga Swiatek, Advances to Wimbledon Last 16**
+Filipina tennis sensation Alex Eala pulled off a stunning upset, defeating world No. 1 and defending Wimbledon champion Iga Swiatek in straight sets to reach the fourth round — the deepest run by any Filipino in Grand Slam history.
+*Source: ABS-CBN / Inquirer / Manila Times →* https://www.abs-cbn.com/sports/othersports/2026/7/4/alex-eala-dethrones-defending-champion-iga-swiatek-advances-to-wimbledon-fourth-round-2254
+
+**2. Both Sides Ready for VP Sara Duterte's Impeachment Trial**
+The historic impeachment trial of Vice President Sara Duterte is set to begin July 6. Both the prosecution and defense teams have signaled readiness, with faith-based groups holding a "Jericho Walk for Truth and Justice" outside the Senate.
+*Source: Manila Times →* https://www.manilatimes.net/2026/07/05/news/both-sides-ready-for-vp-saras-impeachment-trial/2378481
+
+**3. NBI Officials, House Security Chief Among First Witnesses in Duterte Impeach Trial**
+The prosecution has lined up NBI officials and a House of Representatives director as their initial witnesses as the impeachment trial of Vice President Sara Duterte commences.
+*Source: ABS-CBN →* https://www.abs-cbn.com/news/nation/2026/7/4/nbi-officials-hrep-director-among-witnesses-in-sara-duterte-impeachment-trial-1633
+
+**4. Ombudsman Files Plunder Charges Against Marcoleta**
+The Ombudsman filed plunder charges against former House Deputy Speaker and now-Senator Rodante Marcoleta, adding another layer of political drama alongside the Duterte impeachment proceedings.
+*Source: Manila Times →* https://www.manilatimes.net/2026/07/04/news/ombudsman-files-plunder-charges-against-marcoleta/2377911
+
+**5. Drug War Killings Continue from Duterte to Marcos – Watchdogs**
+Human rights watchdogs report that deadly drug war operations have persisted under the Marcos administration, with over 1,200 killed since the change in leadership, echoing patterns from the Duterte era.
+*Source: Inquirer →* https://newsinfo.inquirer.net/2257480/drug-war-killings-continue-from-duterte-to-marcos-watchdogs
+
+**6. Marcos 'Worried' Over Possible WPS Policy Change Under Next US Admin**
+President Marcos expressed concern about potential shifts in US policy toward the West Philippine Sea (South China Sea) under the next American administration, amid ongoing Chinese assertiveness.
+*Source: Inquirer →* https://www.inquirer.net/479436/marcos-worried-over-possible-wps-policy-change-under-next-admin/
+
+**7. ICC Partly Grants Prosecution Access to Seized Duterte Property**
+The International Criminal Court's Trial Chamber III partially granted prosecution access to property seized in connection with the case against former President Rodrigo Duterte.
+*Source: ABS-CBN →* https://www.abs-cbn.com/news/nation/2026/7/4/icc-trial-chamber-iii-partly-grants-prosecution-access-to-seized-duterte-property-0605
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 **GLOBAL**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. US Marks 250th Independence Anniversary as Heatwave Disrupts Celebrations**
+More than 165 million Americans endured dangerous heat and humidity with temperatures exceeding 100°F (38°C). President Trump delivered a "really long" speech at a campaign-style rally on the National Mall in Washington DC, featuring 850,000 fireworks. Brutal heat forced cancellation of Fourth of July events from DC to Philadelphia.
+*Source: BBC / Reuters →* https://www.bbc.com/news/live/c20y3rzq0w1t
+
+**2. Huge Crowds Gather in Tehran for Funeral of Slain Supreme Leader Ayatollah Khamenei**
+Iran began six days of mass funeral ceremonies for Supreme Leader Ali Khamenei, killed in February by the first airstrike of the Iran war. Millions are expected to participate as his body lies in state in Tehran's Grand Mosalla before processions across Iran and Iraq.
+*Source: BBC / Reuters / CNN →* https://www.bbc.com/news/articles/c0ky2zen1kgo
+
+**3. Ukraine Hits Major Oil Terminal in Russia's St Petersburg in Drone Attack**
+Ukrainian President Zelensky confirmed a major drone strike on an oil terminal in St Petersburg, saying the target was key infrastructure "that generates revenue for Russia's war." Russia claimed its forces captured the strategic eastern city of Kostiantynivka, though Zelensky denied the loss.
+*Source: BBC / Reuters →* https://www.bbc.com/news/articles/c8j2vmzxezro
+
+**4. Taylor Swift Marries Travis Kelce in Star-Studded NYC Ceremony**
+The pop superstar and NFL star tied the knot at Madison Square Garden in a ceremony officiated by comedian Adam Sandler. Several Midtown Manhattan streets were shut down as hundreds of fans and celebrities gathered to celebrate the "royal wedding."
+*Source: BBC / Reuters / ABS-CBN →* https://www.bbc.com/news/articles/c982ry2pen3o
+
+**5. Pope Leo Urges US and Europe to Welcome Migrants During Lampedusa Visit**
+The first American pope marked July 4 with a pastoral visit to the Italian island of Lampedusa — a key entry point for Mediterranean migrants. He paid tribute to those who lost their lives at sea and called for "compassion and generosity."
+*Source: BBC / Reuters / CNN →* https://www.reuters.com/world/europe/pope-leo-marks-us-anniversary-with-migrant-appeal-lampedusa-2026-07-04/
+
+**6. Keiko Fujimori Declared Winner of Peru's Presidential Election Weeks After Vote**
+The daughter of disgraced former president Alberto Fujimori was declared the winner of a tight presidential race nearly a month after voting, defeating her left-wing opponent in a runoff. Her victory has drawn mixed reactions across Latin America.
+*Source: BBC →* https://www.bbc.com/news/articles/cr5jpvv06e1o
+
+**7. China Launches Coast Guard Patrol East of Taiwan Despite International Pushback**
+Beijing announced a new coast guard patrol east of Taiwan, drawing sharp condemnation from Taipei. The move comes after a Chinese task force operating off Taiwan's coast last month alarmed Western capitals.
+*Source: Reuters →* https://www.reuters.com/world/china/china-launches-coast-guard-patrol-east-taiwan-despite-international-pushback-2026-07-04/
+
+**8. Thousands Protest in Germany as Far-Right AfD Reelects Leaders**
+Clashes broke out between protesters and police at the Alternative for Germany party conference. The AfD reaffirmed its leadership as the party continues to gain ground in polls ahead of upcoming elections.
+*Source: Reuters / CNN →* https://www.reuters.com/world/thousands-protest-germany-against-far-right-afd-2026-07-04/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*Digest compiled from NHK World, Japan Times, Kyodo News, Reuters Japan, The Japan News (Yomiuri), Inquirer, ABS-CBN, Manila Times, BBC News, CNN, and Reuters. Headlines as of July 5, 2026. Reply with a headline number (e.g., "J1", "P3", "G5") for the full article.*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").

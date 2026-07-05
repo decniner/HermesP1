@@ -1,0 +1,83 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Saturday, July 4, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Japanese Wages Rise Over 5% for Third Straight Year
+   Summary: Japan's largest labor union Rengo announced that companies agreed to average wage hikes of 5.01% in this year's spring negotiations — the third consecutive year of raises exceeding 5%. The average monthly increase was ¥16,400 ($102), though the pace slowed slightly from last year's 5.25% as consumer spending remains weak and Middle East conflict threatens to accelerate inflation.
+   Source: https://english.kyodonews.net/articles/-/79182
+
+2. Japan Plans to Sharply Raise Residence Permit Fees for Foreign Nationals
+   Summary: The Japanese government announced a plan to significantly increase fees for residence permits starting in October 2026. The move comes amid broader discussions about immigration policy and Japan's growing foreign worker population.
+   Source: https://www.japantimes.co.jp/news/2026/07/03/japan/society/residence-permit-fees/
+
+3. Narita and Haneda Airports to Be Connected by New Limited Express Train in 2030s
+   Summary: Japan announced plans for a new limited express train linking Tokyo's two major airports, Narita and Haneda, expected to begin service in the 2030s. The connection aims to improve transit efficiency for international travelers and strengthen Tokyo's airport network.
+   Source: https://english.kyodonews.net/articles/-/79188
+
+4. Summer Bonuses at Major Japanese Firms Top ¥1 Million for First Time
+   Summary: Summer bonus payments at major Japanese corporations exceeded ¥1 million ($6,200) for the first time on record, signaling a recovery in corporate earnings despite broader economic pressures from rising prices and global uncertainty.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260703_B3/
+
+5. Author Haruki Murakami Publishes New Novel
+   Summary: Celebrated Japanese writer Haruki Murakami released a new novel, generating excitement among literary fans worldwide. The book adds to his acclaimed body of work that has made him a perennial Nobel Prize contender.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260703_15/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Super Typhoon Bavi Rapidly Intensifies Outside PAR — May Enter by July 8
+   Summary: Tropical cyclone Bavi underwent "explosive intensification," strengthening from a typhoon into a super typhoon with maximum sustained winds of 185 km/h (gusts to 230 km/h). PAGASA warns the storm may enter the Philippine Area of Responsibility by Wednesday, July 8, where it will be locally named Inday, and could approach Northern Luzon.
+   Source: https://www.rappler.com/philippines/weather/super-typhoon-bavi-potential-inday-update-pagasa-forecast-july-3-2026-8pm/
+
+2. Ombudsman Files Plunder Case vs. Sen. Marcoleta and Donors
+   Summary: The Office of the Ombudsman formally filed a plunder case against Sen. Rodante Marcoleta before the Sandiganbayan over P75 million in undeclared funds. The Ombudsman rejected Marcoleta's defense of "utang na loob" (debt of gratitude), stating the evidence left no discretion to look away. Three private individuals were also charged.
+   Source: https://www.philstar.com/headlines/2026/07/04/2539737/ombudsman-files-plunder-raps-vs-marcoleta-donors
+
+3. Canada and Philippines Elevate Ties to Strategic Partnership
+   Summary: President Marcos and Canadian Prime Minister Mark Carney announced the elevation of bilateral relations to a strategic partnership during Marcos's four-day official visit to Canada. The Philippines is Canada's sixth strategic partner, joining Australia, India, Japan, South Korea, and Vietnam, with deepened cooperation across defense and economic sectors.
+   Source: https://www.philstar.com/headlines/2026/07/04/2539729/canada-philippines-newest-strategic-partner
+
+4. Senate Summons VP Sara Duterte to Impeachment Trial on July 6
+   Summary: The Senate impeachment court has formally summoned Vice President Sara Duterte to appear in person or through counsel for her impeachment trial starting Monday, July 6. Sen. Sherwin Gatchalian has been named to preside over the proceedings. Security preparations including road closures near the Senate have been implemented.
+   Source: https://www.philstar.com/headlines/2026/07/04/2539732/senate-summons-vp-sara-trial-july-6
+
+5. Thousands Flock to EDSA for Day 1 of INC Protest Supporting Marcoleta
+   Summary: Thousands of Iglesia Ni Cristo members filled a portion of EDSA as the church held a massive protest in support of Sen. Rodante Marcoleta. The group was later granted a permit for a second day of demonstrations.
+   Source: https://www.rappler.com/philippines/video-thousands-fill-portion-edsa-day-1-inc-protest-marcoleta/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Iran Begins Week of Funeral Ceremonies for Slain Supreme Leader Khamenei
+   Summary: The body of Ayatollah Ali Khamenei lay in state in Tehran as Iran began a week of mass funeral processions for the late Supreme Leader, killed by U.S. and Israeli bombs in February. He will be buried Thursday in Mashhad near Imam Reza's tomb, with ceremonies also scheduled in Qom and Iraq's Najaf and Kerbala.
+   Source: https://www.reuters.com/world/middle-east/irans-slain-leader-khamenei-laid-state-tehran-week-mass-funeral-events-2026-07-03/
+
+2. US Celebrates 250 Years of Independence
+   Summary: The United States marks 250 years since the adoption of the Declaration of Independence on July 4, 1776, with fireworks and parades nationwide. President Trump opened celebrations saying "America is back," though critics accuse him of using the occasion for political gain. A Pew survey shows only 29% of Americans are satisfied with the country's direction.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260704_02/
+
+3. Keiko Fujimori Declared Winner of Peru's Presidential Race
+   Summary: After weeks of ballot review and protests over a razor-thin margin, conservative Keiko Fujimori was officially declared the winner of Peru's presidential election by the country's electoral office. Her victory over leftist Roberto Sanchez follows a contentious recount process.
+   Source: https://www.reuters.com/world/americas/keiko-fujimori-declared-winner-peru-presidential-race-2026-07-03/
+
+4. Ukrainian Woman Suspect in Monaco Parcel Bomb Attack — Interpol Alert Issued
+   Summary: A Ukrainian woman, Anastasiia Berezovska, 39, is the main suspect in a parcel bombing in Monaco that seriously injured a sanctioned Ukrainian multi-millionaire, his partner and son. She is believed to have disguised herself as a man before fleeing to Germany. An Interpol Red Notice has been issued for attempted murder.
+   Source: https://www.bbc.com/news/articles/c4gy603z2qlo
+
+5. At Least 3,700 Excess Deaths Reported During Heatwave in France, Belgium, and Netherlands
+   Summary: A severe European heatwave has caused at least 3,700 excess deaths across France, Belgium, and the Netherlands. Forecasters warn of further extreme temperatures in the coming days as Europe braces for continued hot weather.
+   Source: https://www.reuters.com/business/healthcare-pharmaceuticals/least-3700-excess-deaths-reported-during-heatwave-france-belgium-netherlands-2026-07-03/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
