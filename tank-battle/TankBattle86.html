@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TANK BATTLE '86</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #111; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; font-family: 'Courier New', monospace; overflow: hidden;
+            touch-action: none; user-select: none;
+        }
+        .wrap { text-align: center; position: relative; }
+        canvas {
+            display: block; image-rendering: pixelated; border: 3px solid #555;
+            box-shadow: 0 0 20px rgba(255,200,0,0.2);
+            max-width: 100vw; max-height: 90vh;
+        }
+        #ui {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #ff0; pointer-events: none;
+            text-shadow: 0 0 10px rgba(255,200,0,0.5);
+        }
+        #ui h1 { font-size: 7vw; letter-spacing: 1vw; }
+        #ui p { font-size: 3vw; opacity: 0.8; margin-top: 2vh; }
+        @media (min-width:600px) { #ui h1 { font-size: 48px; } #ui p { font-size: 16px; } }
+        .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        #hud {
+            position: absolute; top: 0.5vh; left: 1vw; right: 1vw;
+            display: flex; justify-content: space-between; color: #ff0;
+            font-size: 3vw; pointer-events: none; text-shadow: 0 0 4px rgba(255,200,0,0.3);
+        }
+        @media (min-width:600px) { #hud { font-size: 14px; } }
+        #dpad {
+            position: absolute; bottom: 2vh; left: 50%; transform: translateX(-50%);
+            display: none; pointer-events: none;
+        }
+        #dpad.show { display: block; }
+        .dpad-row { display: flex; justify-content: center; }
+        .dpad-btn {
+            width: 14vw; height: 14vw; max-width: 60px; max-height: 60px;
+            margin: 2px; background: rgba(255,200,0,0.15); border: 2px solid rgba(255,200,0,0.3);
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            font-size: 5vw; color: rgba(255,200,0,0.5); pointer-events: auto; touch-action: none;
+        }
+        .dpad-btn:active { background: rgba(255,200,0,0.35); }
+        .fire-btn {
+            width: 20vw; height: 20vw; max-width: 80px; max-height: 80px;
+            margin: 2px; background: rgba(255,50,50,0.15); border: 2px solid rgba(255,50,50,0.3);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 4vw; color: rgba(255,50,50,0.5); pointer-events: auto; touch-action: none;
+        }
+        .fire-btn:active { background: rgba(255,50,50,0.35); }
+        @media (pointer: coarse) { #dpad.show { display: block; } }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <canvas id="gc"></canvas>
+    <div id="hud"><span id="sHud">SCORE: 0</span><span id="lHud">LIVES: 3</span><span>LEVEL 1</span></div>
+    <div id="ui">
+        <h1>TANK BATTLE</h1>
+        <p class="blink">PRESS SPACE TO START</p>
+        <p style="margin-top:1vh;font-size:2vw;opacity:0.4;">ARROWS MOVE • SPACE FIRE</p>
+    </div>
+    <div id="dpad" class="show">
+        <div class="dpad-row">
+            <div class="dpad-btn" data-d="u">▲</div>
+        </div>
+        <div class="dpad-row">
+            <div class="dpad-btn" data-d="l">◀</div>
+            <div class="dpad-btn" data-d="d">▼</div>
+            <div class="dpad-btn" data-d="r">▶</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gc');
+const ctx = canvas.getContext('2d');
+const ui = document.getElementById('ui');
+const sHud = document.getElementById('sHud');
+const lHud = document.getElementById('lHud');
+const dpad = document.getElementById('dpad');
+
+const TILE = 32;
+const COLS = 20, ROWS = 17;
+canvas.width = COLS * TILE;
+canvas.height = ROWS * TILE;
+const W = canvas.width, H = canvas.height;
+
+// ── Audio ──
+let actx = null;
+function initA() {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state==='suspended') actx.resume();
+}
+function beep(f,d,t='square',v=0.05) {
+    if(!actx)return; const o=actx.createOscillator(),g=actx.createGain();
+    o.type=t;o.frequency.setValueAtTime(f,actx.currentTime);
+    g.gain.setValueAtTime(v,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+d);
+    o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);
+}
+const SND={shoot:()=>{beep(660,0.06);setTimeout(()=>beep(880,0.04),30);},
+explode:()=>{if(!actx)return;const b=actx.createBuffer(1,actx.sampleRate*0.2,actx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);const s=actx.createBufferSource();s.buffer=b;const g=actx.createGain();g.gain.setValueAtTime(0.08,actx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.2);s.connect(g);g.connect(actx.destination);s.start();},
+hit:()=>{beep(220,0.1,'sawtooth',0.06);setTimeout(()=>beep(180,0.12,'sawtooth',0.04),80);},
+win:()=>{for(let n of [262,330,392,523])setTimeout(()=>beep(n,0.1),60*[262,330,392,523].indexOf(n));},
+over:()=>{[440,370,330,220].forEach((n,i)=>setTimeout(()=>beep(n,0.15),i*150));}};
+
+// ── Game ──
+let state='menu',score=0,lives=3,level=1,frame=0;
+let map=[],tanks=[],bullets=[],explosions=[],bricks=[];
+const player={x:0,y:0,d:0,dir:'u',cd:0,moving:false};
+const keys={};
+
+// Map generator
+function genMap(lv) {
+    map=[]; bricks=[];
+    for(let r=0;r<ROWS;r++){map[r]=[];for(let c=0;c<COLS;c++)map[r][c]=0;}
+    // Border walls
+    for(let r=0;r<ROWS;r++){map[r][0]=1;map[r][COLS-1]=1;}
+    for(let c=0;c<COLS;c++){map[0][c]=1;map[ROWS-1][c]=1;}
+    // Base at bottom center
+    const bx=Math.floor(COLS/2)-1;
+    map[ROWS-2][bx]=2; map[ROWS-2][bx+1]=2; map[ROWS-2][bx+2]=2;
+    map[ROWS-1][bx]=2; map[ROWS-1][bx+2]=2;
+    // Random brick walls
+    const numWalls=6+lv*2;
+    for(let i=0;i<numWalls;i++){
+        let c=2+Math.floor(Math.random()*(COLS-4));
+        let r=2+Math.floor(Math.random()*(ROWS-5));
+        let h=1+Math.floor(Math.random()*2),w=1+Math.floor(Math.random()*3);
+        for(let rr=r;rr<Math.min(r+h,ROWS-2);rr++)
+            for(let cc=c;cc<Math.min(c+w,COLS-2);cc++){
+                if(map[rr][cc]===0)map[rr][cc]=1;
+            }
+    }
+    // Collect brick positions
+    for(let r=0;r<ROWS;r++)
+        for(let c=0;c<COLS;c++)
+            if(map[r][c]===1)bricks.push({x:c*TILE,y:r*TILE,w:TILE,h:TILE,hits:3});
+}
+
+function spawnPlayer() {
+    player.x=1.5*TILE; player.y=(ROWS-3)*TILE;
+    player.d=0; player.dir='u'; player.cd=0; player.moving=false;
+}
+
+function spawnEnemies(num) {
+    tanks=[];
+    for(let i=0;i<num;i++){
+        const x=(1+Math.floor(Math.random()*(COLS-3)))*TILE;
+        const y=(1+Math.floor(Math.random()*3))*TILE;
+        const dirs=['d','l','r','u'];
+        tanks.push({
+            x,y,w:24,h:24,dir:dirs[Math.floor(Math.random()*3)],
+            speed:0.5+Math.random()*0.3,cd:0,alive:true,hp:3,
+            moveTimer:0, changeDir:0,
+        });
+    }
+}
+
+function init() {
+    score=0;lives=3;level=1;
+    genMap(level); spawnPlayer(); spawnEnemies(4);
+    bullets=[]; explosions=[];
+    updateHUD();
+}
+function resetLvl() {
+    genMap(level); spawnPlayer(); spawnEnemies(3+level);
+    bullets=[]; explosions=[];
+}
+function updateHUD() {
+    sHud.textContent='SCORE: '+score;
+    lHud.textContent='LIVES: '+lives;
+}
+
+// ── Drawing ──
+function drawMap() {
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+        const v=map[r][c];
+        if(v===1){
+            ctx.fillStyle='#666';
+            ctx.fillRect(c*TILE,r*TILE,TILE,TILE);
+            ctx.strokeStyle='#555';ctx.lineWidth=1;
+            ctx.strokeRect(c*TILE,r*TILE,TILE,TILE);
+        }else if(v===2){
+            ctx.fillStyle='#0a0';
+            ctx.fillRect(c*TILE,r*TILE,TILE,TILE);
+            ctx.fillStyle='#080';
+            ctx.font='bold 16px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+            ctx.fillText('★',c*TILE+TILE/2,r*TILE+TILE/2);
+        }
+    }
+}
+
+function drawTank(t,isPlayer){
+    const x=t.x+4,y=t.y+4;
+    ctx.save();ctx.translate(x+8,y+8);
+    const ang={u:0,r:Math.PI/2,d:Math.PI,l:-Math.PI/2}[t.dir]||0;
+    ctx.rotate(ang);
+    // Body
+    ctx.fillStyle=isPlayer?'#0f0':'#f44';
+    ctx.fillRect(-8,-6,16,12);
+    ctx.fillStyle=isPlayer?'#0c0':'#c22';
+    ctx.fillRect(-6,-8,12,16);
+    // Turret
+    ctx.fillStyle=isPlayer?'#ff0':'#fa0';
+    ctx.fillRect(-3,-10,6,6);
+    ctx.fillRect(-1,-12,2,4);
+    // Treads
+    ctx.fillStyle=isPlayer?'#080':'#800';
+    ctx.fillRect(-9,-7,3,14);
+    ctx.fillRect(6,-7,3,14);
+    // Highlight
+    ctx.fillStyle=isPlayer?'rgba(0,255,0,0.3)':'rgba(255,0,0,0.3)';
+    ctx.fillRect(-4,-4,8,4);
+    ctx.restore();
+}
+
+function drawBullets(){
+    ctx.fillStyle='#fff';
+    bullets.forEach(b=>{
+        ctx.fillRect(b.x-1.5,b.y-1.5,3,3);
+        ctx.fillStyle='#ff0';
+        ctx.fillRect(b.x-0.5,b.y-0.5,1,1);
+        ctx.fillStyle='#fff';
+    });
+}
+
+function drawExplosions(){
+    explosions.forEach(e=>{
+        const s=e.life/20;
+        ctx.fillStyle=`rgba(255,${150+Math.random()*100},0,${s})`;
+        ctx.beginPath();ctx.arc(e.x,e.y,8+(1-s)*10,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle=`rgba(255,255,0,${s*0.5})`;
+        ctx.beginPath();ctx.arc(e.x,e.y,4+(1-s)*6,0,Math.PI*2);ctx.fill();
+    });
+}
+
+// ── Logic ──
+const DIRS={u:[0,-1],d:[0,1],l:[-1,0],r:[1,0]};
+
+function canMove(x,y,w,h,tanksToSkip=[]){
+    // Map bounds
+    if(x<0||y<0||x+w>W||y+h>H)return false;
+    // Tiles
+    const c1=Math.floor(x/TILE),c2=Math.floor((x+w-1)/TILE);
+    const r1=Math.floor(y/TILE),r2=Math.floor((y+h-1)/TILE);
+    for(let rr=r1;rr<=r2;rr++)for(let cc=c1;cc<=c2;cc++){
+        if(rr<0||rr>=ROWS||cc<0||cc>=COLS)return false;
+        if(map[rr][cc]!==0)return false;
+    }
+    // Other tanks
+    for(let t of tanks){
+        if(!t.alive||tanksToSkip.includes(t))continue;
+        if(x<t.x+t.w&&x+w>t.x&&y<t.y+t.h&&y+h>t.y)return false;
+    }
+    return true;
+}
+
+function moveTank(t,speed,tanksToSkip){
+    const d=DIRS[t.dir];
+    let nx=t.x+d[0]*speed, ny=t.y+d[1]*speed;
+    if(canMove(nx,ny,t.w,t.h,tanksToSkip)){t.x=nx;t.y=ny;return true;}
+    return false;
+}
+
+function playerUpdate(){
+    if(state!=='playing')return;
+    if(player.cd>0)player.cd--;
+    let moved=false;
+    for(let k of ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight']){
+        if(keys[k]){
+            const dirMap={'ArrowUp':'u','ArrowDown':'d','ArrowLeft':'l','ArrowRight':'r'};
+            const nd=dirMap[k];
+            if(nd!==player.dir){player.dir=nd;moveTank(player,2,[]);moved=true;}
+            else if(moveTank(player,2,[]))moved=true;
+            break;
+        }
+    }
+    // Touch dpad
+    for(let d of ['u','d','l','r']){
+        if(touchDir[d]){
+            if(d!==player.dir){player.dir=d;moveTank(player,2,[]);}
+            else moveTank(player,2,[]);
+        }
+    }
+    // Fire
+    if(keys[' ']||touchFire){
+        if(player.cd<=0){
+            const d=DIRS[player.dir];
+            bullets.push({x:player.x+12+d[0]*14,y:player.y+12+d[1]*14,dx:d[0]*5,dy:d[1]*5,owner:'p',life:120});
+            player.cd=15;SND.shoot();
+        }
+    }
+}
+
+function enemyUpdate(){
+    tanks.forEach(t=>{
+        if(!t.alive)return;
+        if(t.cd>0)t.cd--;
+        t.changeDir--;
+        if(t.changeDir<=0){
+            const dirs=['u','d','l','r'];
+            t.dir=dirs[Math.floor(Math.random()*4)];
+            t.changeDir=30+Math.floor(Math.random()*60);
+        }
+        if(!moveTank(t,t.speed,[t])){
+            const dirs=['u','d','l','r'].filter(d=>d!==t.dir);
+            t.dir=dirs[Math.floor(Math.random()*3)];
+        }
+        if(t.cd<=0&&Math.random()<0.02){
+            const d=DIRS[t.dir];
+            bullets.push({x:t.x+12+d[0]*14,y:t.y+12+d[1]*14,dx:d[0]*3.5,dy:d[1]*3.5,owner:'e',life:180});
+            t.cd=40;beep(200,0.04,'square',0.02);
+        }
+    });
+}
+
+function bulletUpdate(){
+    for(let i=bullets.length-1;i>=0;i--){
+        const b=bullets[i];
+        b.x+=b.dx;b.y+=b.dy;b.life--;
+        if(b.life<=0||b.x<0||b.x>W||b.y<0||b.y>H){bullets.splice(i,1);continue;}
+        // Hit bricks
+        const bc=Math.floor(b.x/TILE),br=Math.floor(b.y/TILE);
+        if(br>=0&&br<ROWS&&bc>=0&&bc<COLS&&map[br][bc]===1){
+            map[br][bc]=0;
+            bricks=bricks.filter(bk=>!(bk.x===bc*TILE&&bk.y===br*TILE));
+            explosions.push({x:b.x,y:b.y,life:15});
+            SND.hit();bullets.splice(i,1);continue;
+        }
+        // Hit base
+        if(br>=0&&br<ROWS&&bc>=0&&bc<COLS&&map[br][bc]===2){
+            map[br][bc]=0;
+            explosions.push({x:b.x,y:b.y,life:30});
+            SND.explode();bullets.splice(i,1);
+            state='gameover';ui.style.display='flex';
+            ui.innerHTML=`<h1 style="color:#f44;">GAME OVER</h1><p>BASE DESTROYED!</p><p style="margin-top:2vh;font-size:3vw;" class="blink">SPACE TO RESTART</p>`;
+            SND.over();return;
+        }
+        // Hit tanks
+        if(b.owner==='p'){
+            for(let t of tanks){
+                if(!t.alive)continue;
+                if(b.x>t.x&&b.x<t.x+t.w&&b.y>t.y&&b.y<t.y+t.h){
+                    t.hp--;bullets.splice(i,1);
+                    if(t.hp<=0){
+                        t.alive=false;score+=100;
+                        for(let k=0;k<10;k++)explosions.push({x:t.x+12,y:t.y+12,life:20});
+                        SND.explode();updateHUD();
+                    }else{SND.hit();}
+                    break;
+                }
+            }
+        }else if(b.owner==='e'){
+            if(b.x>player.x&&b.x<player.x+24&&b.y>player.y&&b.y<player.y+24){
+                explosions.push({x:player.x+12,y:player.y+12,life:25});
+                SND.hit();bullets.splice(i,1);
+                lives--;updateHUD();
+                if(lives<=0){state='gameover';ui.style.display='flex';
+                    ui.innerHTML=`<h1 style="color:#f44;">GAME OVER</h1><p>SCORE: ${score}</p><p style="margin-top:2vh;font-size:3vw;" class="blink">SPACE TO RESTART</p>`;
+                    SND.over();
+                }else{
+                    spawnPlayer();invuln=60;
+                }
+            }
+        }
+    }
+}
+
+let invuln=0;
+function update(){
+    if(state!=='playing')return;
+    frame++;
+    if(invuln>0)invuln--;
+    playerUpdate();enemyUpdate();bulletUpdate();
+    // Explosions
+    for(let i=explosions.length-1;i>=0;i--){explosions[i].life--;if(explosions[i].life<=0)explosions.splice(i,1);}
+    // Check win
+    if(tanks.every(t=>!t.alive)){
+        level++;SND.win();
+        setTimeout(()=>{genMap(level);spawnPlayer();spawnEnemies(3+level);bullets=[];explosions=[];updateHUD();},500);
+    }
+}
+
+function draw(){
+    ctx.fillStyle='#222';ctx.fillRect(0,0,W,H);
+    drawMap();
+    tanks.forEach(t=>{if(t.alive)drawTank(t,false);});
+    if(state==='playing')drawTank(player,true);
+    drawBullets();drawExplosions();
+    // Invuln flash
+    if(state==='playing'&&invuln>0&&Math.floor(invuln/6)%2===0){
+        ctx.fillStyle='rgba(0,255,255,0.15)';
+        ctx.fillRect(player.x,player.y,24,24);
+    }
+}
+
+function loop(){update();draw();requestAnimationFrame(loop);}
+
+// ── Input ──
+document.addEventListener('keydown',e=>{
+    keys[e.key]=true;
+    if(e.key===' '){
+        e.preventDefault();initA();
+        if(state==='menu'){state='playing';ui.style.display='none';init();}
+        else if(state==='gameover'){state='playing';ui.style.display='none';init();}
+    }
+});
+document.addEventListener('keyup',e=>{keys[e.key]=false;});
+
+// Touch dpad
+const touchDir={};
+let touchFire=false;
+document.querySelectorAll('.dpad-btn').forEach(b=>{
+    b.addEventListener('touchstart',e=>{e.preventDefault();touchDir[b.dataset.d]=true;});
+    b.addEventListener('touchend',e=>{e.preventDefault();touchDir[b.dataset.d]=false;});
+});
+// Fire via tap on canvas
+canvas.addEventListener('click',()=>{
+    if(state==='menu'||state==='gameover'){
+        initA();state='playing';ui.style.display='none';init();return;
+    }
+    touchFire=true;setTimeout(()=>touchFire=false,50);
+});
+
+// Init
+init();loop();
+</script>
+</body>
+</html>
