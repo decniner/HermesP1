@@ -13,7 +13,3 @@ Thumbs.db
 # Ignore IDE files
 .vscode/
 .idea/
-
-# But DO track Hermes backup env files (critical for recovery)
-!.hermes-backup/**/.env
-!.hermes-backup/**/.env.*
