@@ -139,6 +139,7 @@ command_allowlist:
   - overwrite project env/config via redirection
   - delete in root path
   - script execution via -e/-c flag
+  - git force push (rewrites remote history)
 code_execution:
   timeout: 300
   max_tool_calls: 50
