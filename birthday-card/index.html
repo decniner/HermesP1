@@ -142,15 +142,7 @@ body{display:flex;justify-content:center;align-items:center;min-height:100vh;bac
         <div class="msg-text">Ate, happy happy birthday!<br>Enjoy the day 🙂</div>
       </div>
 
-      <!-- PAGE 6: Angel -->
-      <div class="page page-msg">
-        <div class="msg-border"></div>
-        <div class="msg-avatar">💖</div>
-        <div class="msg-sender">Angel</div>
-        <div class="msg-text">Thank you all ❤️<br>You are all my favorite 🥰<br>I am already blessed to be in this Family 😘</div>
-      </div>
-
-      <!-- PAGE 7: Fe -->
+      <!-- PAGE 6: Fe -->
       <div class="page page-msg">
         <div class="msg-border"></div>
         <div class="msg-avatar">💕</div>
@@ -164,7 +156,7 @@ body{display:flex;justify-content:center;align-items:center;min-height:100vh;bac
   <!-- Dots -->
   <div class="dots" id="dots">
     <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-    <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
   </div>
 
   <!-- Arrows -->
@@ -183,7 +175,7 @@ var a=null;var p=false;function iA(){if(a)return;a=new Audio('birthday-music.mp3
 function pM(){iA();if(!a)return;a.currentTime=0;a.play()['catch'](function(){});p=true}
 function sM(){if(a){a.pause();a.currentTime=0}p=false}
 var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
-var tr=document.getElementById('pages');var dc=document.getElementById('dots');var D=dc?dc.children:[];var si=0;var tl=8;var sx=0;var cx=0;var dr=false;
+var tr=document.getElementById('pages');var dc=document.getElementById('dots');var D=dc?dc.children:[];var si=0;var tl=7;var sx=0;var cx=0;var dr=false;
 var an=document.getElementById('arrowNext');var ap=document.getElementById('arrowPrev');
 function go(n){si=Math.max(0,Math.min(n,tl-1));tr.style.transform='translateX(-'+(si*100)+'%)';for(var j=0;j<D.length;j++){D[j].className=j===si?'dot on':'dot'}if(si>0&&!p){pM();mb.classList.remove('muted')}if(si>0){sC(20)}if(an){an.style.display=si<tl-1?'flex':'none'}if(ap){ap.style.display=si>0?'flex':'none'}}
 function ss(e){sx=e.touches?e.touches[0].clientX:e.clientX;dr=true;tr.style.transition='none';e.stopPropagation()}
