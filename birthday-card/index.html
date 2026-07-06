@@ -246,6 +246,29 @@
   }
   .card.open .carousel-header { opacity: 1; }
 
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(196,78,138,0.15);
+    border: 1px solid rgba(196,78,138,0.2);
+    color: #c44e8a;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.8s, background 0.2s;
+    touch-action: manipulation;
+  }
+  .card.open .close-btn { opacity: 1; }
+  .close-btn:active { background: rgba(196,78,138,0.3); }
+
   .carousel-track-wrap {
     position: absolute;
     top: 50px;
@@ -525,6 +548,8 @@
 
       <div class="carousel-header">✦ Birthday Wishes ✦</div>
 
+      <div class="close-btn" id="closeBtn">✕</div>
+
       <div class="carousel-track-wrap">
         <div class="carousel-track" id="carouselTrack">
 
@@ -612,7 +637,9 @@ function pM(){iA();if(!a)return;a.currentTime=0;a.play()['catch'](function(){});
 function sM(){if(a){a.pause();a.currentTime=0}p=false}
 var cd=document.getElementById('card');var ct=document.getElementById('cardContainer');var o=false;var an=false;
 ct.addEventListener('click',function(e){if(an)return;an=true;if(!o){cd.classList.add('open');o=true;if(!p){pM();document.getElementById('musicBtn').classList.remove('muted')}setTimeout(function(){sC(50)},300);setTimeout(function(){sC(35)},800);setTimeout(function(){sC(40)},4000);setTimeout(function(){an=false},1300)}else{cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}});
+var cr=document.getElementById('carouselTrack');if(cr){cr.addEventListener('touchstart',function(e){e.stopPropagation()});cr.addEventListener('click',function(e){e.stopPropagation()})}
 var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
+var cb=document.getElementById('closeBtn');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();if(o&&!an){an=true;cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}})}
 console.log('🎂 Happy Birthday Angel! 🎂')
 var t=document.getElementById('carouselTrack');var d=document.getElementById('carouselDots');if(t&&d){var D=d.children;t.addEventListener('scroll',function(){var i=Math.round(t.scrollLeft/t.clientWidth);for(var j=0;j<D.length;j++){D[j].className=j===i?'carousel-dot active':'carousel-dot'}})}})();
 </script>
