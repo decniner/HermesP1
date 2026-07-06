@@ -627,7 +627,9 @@
 </button>
 
 <script>
-(function(){'use strict';var f=document.getElementById('floaters');var e=['❤️','✨','🌟','💖','⭐','💕','🌸','🎉'];for(var i=0;i<25;i++){var c=document.createElement('div');c.className='floater';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'%';c.style.fontSize=(Math.random()*14+12)+'px';c.style.setProperty('--fd',(Math.random()*8+6)+'s');c.style.setProperty('--fdelay',(Math.random()*10+2)+'s');f.appendChild(c)}
+(function(){'use strict';
+var f=document.getElementById('floaters');var e=['❤️','✨','🌟','💖','⭐','💕','🌸','🎉'];
+for(var i=0;i<25;i++){var c=document.createElement('div');c.className='floater';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'%';c.style.fontSize=(Math.random()*14+12)+'px';c.style.setProperty('--fd',(Math.random()*8+6)+'s');c.style.setProperty('--fdelay',(Math.random()*10+2)+'s');f.appendChild(c)}
 function sC(n){var C=['#d4af37','#ff6b9d','#c9a030','#ff4757','#9b59b6','#48d1cc','#e056fd','#ffdd59'];for(var i=0;i<n;i++){var e=document.createElement('div');e.className='confetti-piece';var sz=Math.random()*8+5;e.style.width=sz+'px';e.style.height=sz*(Math.random()*0.6+0.5)+'px';e.style.background=C[Math.floor(Math.random()*C.length)];e.style.left=Math.random()*100+'%';e.style.borderRadius=Math.random()>0.5?'50%':'2px';e.style.setProperty('--fall-dur',(Math.random()*2+2)+'s');e.style.animationDelay=Math.random()*0.8+'s';document.body.appendChild(e);requestAnimationFrame(function(){e.classList.add('fall')});setTimeout(function(){if(e.parentNode)e.parentNode.removeChild(e)},5000)}}
 var a=null;var p=false;function iA(){if(a)return;a=new Audio('birthday-music.mp3');a.loop=true;a.volume=0.7;a.preload='auto';a.load()}
 function pM(){iA();if(!a)return;a.currentTime=0;a.play()['catch'](function(){});p=true}
