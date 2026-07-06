@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Windows 95</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;image-rendering:pixelated;}
+html,body{width:100%;height:100%;overflow:hidden;background:#008080;touch-action:none;user-select:none;font-family:'MS Sans Serif','Courier New',Tahoma,sans-serif;font-size:11px;}
+#desktop{width:100%;height:100%;position:relative;background:#008080;overflow:hidden;}
+.icon{position:absolute;width:64px;text-align:center;color:#fff;cursor:pointer;padding:4px;border:1px solid transparent;font-size:11px;text-shadow:1px 1px 1px #000;}
+.icon:active{border:1px dotted #fff;background:rgba(0,0,128,0.3);}
+.icon img{display:block;width:32px;height:32px;margin:0 auto 2px;image-rendering:pixelated;}
+.icon span{display:block;word-wrap:break-word;line-height:1.2;}
+
+/* Taskbar */
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:32px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;padding:2px 2px 0;z-index:9999;}
+#startBtn{height:24px;padding:0 6px;background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;cursor:pointer;display:flex;align-items:center;gap:3px;font-weight:bold;font-size:11px;white-space:nowrap;}
+#startBtn:active{border-color:#808080 #fff #fff #808080;}
+#startBtn img{width:14px;height:14px;}
+#taskDivider{width:2px;height:22px;background:#808080;border-left:1px solid #fff;margin:0 4px;}
+#taskList{display:flex;flex:1;gap:2px;overflow:hidden;align-items:center;}
+.taskBtn{height:24px;padding:0 10px;background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;cursor:pointer;font-size:11px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
+.taskBtn:active,.taskBtn.active{border-color:#808080 #fff #fff #808080;background:#b0b0b0;}
+#tray{height:24px;display:flex;align-items:center;padding:0 6px;background:#c0c0c0;border:2px inset #e0e0e0;font-size:11px;margin-left:auto;min-width:60px;justify-content:center;}
+
+/* Start Menu */
+#startMenu{position:absolute;bottom:34px;left:0;width:200px;background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;z-index:10000;display:none;box-shadow:2px 2px 5px rgba(0,0,0,0.3);}
+#startMenu.show{display:block;}
+#startMenu .title{background:linear-gradient(90deg,#000080,#1084d0);color:#fff;padding:4px 6px;font-weight:bold;font-size:10px;}
+.sm-item{padding:4px 8px 4px 30px;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative;font-size:11px;}
+.sm-item:hover{background:#000080;color:#fff;}
+.sm-item img{width:16px;height:16px;position:absolute;left:6px;}
+.sm-sep{height:2px;background:#808080;border-top:1px solid #fff;margin:2px 4px;}
+
+/* Window */
+.window{position:absolute;background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;z-index:1000;min-width:200px;min-height:100px;}
+.window.active{z-index:2000;border-color:#fff #808080 #808080 #fff;}
+.win-title{height:20px;background:linear-gradient(90deg,#000080,#1084d0);color:#fff;display:flex;align-items:center;padding:0 4px;cursor:move;font-weight:bold;font-size:11px;}
+.win-title.inactive{background:linear-gradient(90deg,#808080,#b0b0b0);}
+.win-title span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.win-btn{width:16px;height:14px;background:#c0c0c0;border:1px solid;border-color:#fff #808080 #808080 #fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;margin-left:2px;}
+.win-btn:active{border-color:#808080 #fff #fff #808080;}
+.win-body{position:relative;overflow:hidden;padding:8px;height:calc(100% - 20px);}
+
+/* BSOD */
+#bsod{position:fixed;top:0;left:0;width:100%;height:100%;background:#0000aa;color:#fff;z-index:99999;display:none;padding:5%;font-family:'Courier New',monospace;font-size:14px;line-height:1.5;}
+#bsod .title{text-align:center;font-size:18px;margin-bottom:20px;}
+#bsod .cursor{animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* Screensaver */
+#screensaver{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:99998;display:none;overflow:hidden;}
+#screensaver canvas{width:100%;height:100%;}
+
+/* Minesweeper */
+#ms-game{padding:4px;font-size:10px;}
+.ms-bar{display:flex;justify-content:space-between;align-items:center;background:#c0c0c0;border:2px inset #e0e0e0;padding:4px;margin-bottom:4px;}
+.ms-board{border:2px inset #e0e0e0;display:grid;gap:0;background:#c0c0c0;}
+.ms-cell{width:22px;height:22px;background:#c0c0c0;border:1px solid;border-color:#fff #808080 #808080 #fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;}
+.ms-cell:active{border-color:#808080 #fff #fff #808080;}
+.ms-cell.revealed{background:#d0d0d0;border:1px solid #808080;cursor:default;}
+.ms-cell.n1{color:#00f;}.ms-cell.n2{color:#080;}.ms-cell.n3{color:#f00;}.ms-cell.n4{color:#008;}.ms-cell.n5{color:#800;}.ms-cell.n6{color:#088;}.ms-cell.mine{background:#f00;}
+
+@media(max-width:600px){
+  .icon{width:54px;font-size:10px;}
+  .icon img{width:28px;height:28px;}
+  #startMenu{width:170px;}
+  .window{min-width:160px;min-height:80px;}
+  .ms-cell{width:20px;height:20px;}
+}
+</style>
+</head>
+<body>
+<div id="desktop">
+  <div class="icon" style="top:10px;left:10px;" ondblclick="openWin('myPc')">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAARklEQVRYhe3WsQ0AIAwDQf8oM0SMQEkpWM/CLt9kL7IslYAJMIF9A/sHScrLItkBzIAZMAPuG3iG3y8mYAJM4PcHewA7igMFSb5wHwAAAABJRU5ErkJggg==" alt="PC">
+    <span>My Computer</span>
+  </div>
+  <div class="icon" style="top:10px;right:10px;" ondblclick="openWin('recycle')">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAARklEQVRYhe3WsQ0AIAwDQf8oM0SMQEkpWM/CLt9kL7IslYAJMIF9A/sHScrLItkBzIAZMAPuG3iG3y8mYAJM4PcHewA7igMFSb5wHwAAAABJRU5ErkJggg==" alt="Bin">
+    <span>Recycle Bin</span>
+  </div>
+
+  <div id="taskbar">
+    <button id="startBtn" onclick="toggleStart()"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAWElEQVQ4y2Ng+M9AAWBigAL4TwFmYKAQMDEwMDCU58czMEC4TAyMwf6eDBBlDAwMDEwMDAz//zNQYgADAwMDmAuRQzIAApgaAEFNqAEYgYmBgeH/f4IBAE8UED+ZYLq0AAAAAElFTkSuQmCC" alt="Start">Start</button>
+    <div id="taskDivider"></div>
+    <div id="taskList"></div>
+    <div id="tray"></div>
+  </div>
+
+  <div id="startMenu">
+    <div class="title">Windows 95</div>
+    <div class="sm-item" onclick="openWin('myPc');toggleStart()"><img src="">My Computer</div>
+    <div class="sm-item" onclick="openWin('recycle');toggleStart()"><img src="">Recycle Bin</div>
+    <div class="sm-sep"></div>
+    <div class="sm-item" onclick="openWin('minesweeper');toggleStart()"><img src="">Minesweeper</div>
+    <div class="sm-sep"></div>
+    <div class="sm-item" onclick="triggerBSOD();toggleStart()">Shut Down...</div>
+  </div>
+</div>
+
+<div id="bsod" onclick="closeBSOD()">
+  <div class="title">Windows</div>
+  <p>A fatal exception 0E has occurred at 0028:C0001E6F in VXD VMM(01) + 000016DE.</p>
+  <p>The current application will be terminated.</p>
+  <p style="margin-top:20px;">* Press any key to restart.</p>
+  <p>* Press CTRL+ALT+DEL again to view the blue screen setup process.</p>
+  <p style="margin-top:30px;" class="cursor">_</p>
+</div>
+
+<div id="screensaver"><canvas id="ssCanvas"></canvas></div>
+
+<script>
+// ── Window Manager ──
+let winId=0,wins={},zIdx=1000,taskMap={};
+
+function toggleStart(){
+  document.getElementById('startMenu').classList.toggle('show');
+}
+
+function openWin(type){
+  document.getElementById('startMenu').classList.remove('show');
+  if(type==='myPc') createWindow('My Computer',200,160,`
+    <div style="padding:8px;font-size:11px;">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;cursor:pointer;" ondblclick="openWin('minesweeper')">
+        💾 <span>Hard Disk (C:)</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;cursor:pointer;" ondblclick="triggerBSOD()">
+        💿 <span>Control Panel</span>
+      </div>
+    </div>
+  `);
+  else if(type==='recycle') createWindow('Recycle Bin',250,180,`
+    <div style="padding:16px;text-align:center;color:#666;font-size:12px;">This folder is empty.</div>
+  `);
+  else if(type==='minesweeper') createWindow('Minesweeper',250,280,`<div id="ms-game"></div>`,()=>initMS());
+}
+
+function createWindow(title,w,h,body,cb){
+  const id='win'+(++winId);
+  const d=document.getElementById('desktop');
+  const win=document.createElement('div');
+  win.className='window active';
+  win.id=id;
+  win.style.width=Math.min(w,window.innerWidth-20)+'px';
+  win.style.height=Math.min(h,window.innerHeight-60)+'px';
+  win.style.left=Math.max(0,30+Math.random()*(window.innerWidth-280))+'px';
+  win.style.top=Math.max(0,20+Math.random()*(window.innerHeight-140))+'px';
+  win.style.zIndex=++zIdx;
+  win.innerHTML=`<div class="win-title" id="${id}_title"><span>${title}</span>
+    <button class="win-btn" onclick="minWin('${id}')">─</button>
+    <button class="win-btn" onclick="maxWin('${id}')">□</button>
+    <button class="win-btn" onclick="closeWin('${id}')">✕</button></div>
+    <div class="win-body" id="${id}_body">${body}</div>`;
+  d.appendChild(win);
+  wins[id]=win;
+  addTask(id,title);
+
+  // Drag
+  dragElement(win,id+'_title');
+
+  // Focus
+  win.addEventListener('mousedown',()=>focusWin(id));
+  win.addEventListener('touchstart',()=>focusWin(id));
+
+  if(cb) setTimeout(cb,50);
+}
+
+function focusWin(id){
+  // Deactivate all windows
+  Object.values(wins).forEach(w=>{
+    w.classList.remove('active');
+    w.style.zIndex=1000;
+    const t=w.querySelector('.win-title');
+    if(t)t.classList.add('inactive');
+  });
+  // Activate target
+  if(!wins[id])return;
+  wins[id].style.zIndex=++zIdx;
+  wins[id].classList.add('active');
+  const t=wins[id].querySelector('.win-title');
+  if(t)t.classList.remove('inactive');
+}
+function closeWin(id){
+  if(!wins[id])return;
+  wins[id].remove();
+  delete wins[id];
+  removeTask(id);
+}
+function minWin(id){
+  if(!wins[id])return;
+  wins[id].style.display='none';
+  const b=document.querySelector(`.taskBtn[data-win="${id}"]`);
+  if(b)b.classList.remove('active');
+}
+function maxWin(id){
+  if(!wins[id])return;
+  const w=wins[id];
+  if(w.dataset.maxed){
+    w.style.width=w.dataset.ow;w.style.height=w.dataset.oh;
+    w.style.left=w.dataset.ol;w.style.top=w.dataset.ot;
+    delete w.dataset.maxed;
+    const btn=w.querySelector('.win-btn:nth-child(2)');
+    if(btn)btn.textContent='□';
+  }else{
+    w.dataset.ow=w.style.width;w.dataset.oh=w.style.height;
+    w.dataset.ol=w.style.left;w.dataset.ot=w.style.top;
+    w.style.width='calc(100% - 8px)';w.style.height='calc(100% - 40px)';
+    w.style.left='4px';w.style.top='4px';
+    w.dataset.maxed=true;
+    const btn=w.querySelector('.win-btn:nth-child(2)');
+    if(btn)btn.textContent='🗗';
+  }
+}
+
+function addTask(id,title){
+  const b=document.createElement('button');
+  b.className='taskBtn active';b.dataset.win=id;
+  b.textContent=title;
+  b.onclick=()=>{
+    const w=wins[id];
+    if(!w){b.remove();return;}
+    if(w.style.display==='none'){w.style.display='';focusWin(id);b.classList.add('active');}
+    else if(w.classList.contains('active')){minWin(id);}
+    else{focusWin(id);b.classList.add('active');}
+  };
+  document.getElementById('taskList').appendChild(b);
+  taskMap[id]=b;
+}
+function removeTask(id){
+  const b=taskMap[id];if(b){b.remove();delete taskMap[id];}
+}
+
+// ── Drag ──
+function dragElement(el,handleId){
+  const h=document.getElementById(handleId);
+  if(!h)return;
+  let x1=0,y1=0,x2=0,y2=0;
+  h.onmousedown=dragStart;
+  h.ontouchstart=e=>{const t=e.touches[0];x2=t.clientX;y2=t.clientY;document.ontouchmove=dragTouch;document.ontouchend=dragEnd;};
+  function dragStart(e){e.preventDefault();x2=e.clientX;y2=e.clientY;document.onmouseup=dragEnd;document.onmousemove=drag;}
+  function drag(e){x1=x2-e.clientX;y1=y2-e.clientY;x2=e.clientX;y2=e.clientY;el.style.left=(el.offsetLeft-x1)+'px';el.style.top=(el.offsetTop-y1)+'px';}
+  function dragTouch(e){e.preventDefault();const t=e.touches[0];x1=x2-t.clientX;y1=y2-t.clientY;x2=t.clientX;y2=t.clientY;el.style.left=(el.offsetLeft-x1)+'px';el.style.top=(el.offsetTop-y1)+'px';}
+  function dragEnd(){document.onmouseup=null;document.onmousemove=null;document.ontouchmove=null;document.ontouchend=null;}
+}
+
+// ── Clock ──
+function updateClock(){
+  const now=new Date();
+  document.getElementById('tray').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(updateClock,10000);updateClock();
+
+// ── Close start menu on click outside ──
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#startBtn')&&!e.target.closest('#startMenu'))
+    document.getElementById('startMenu').classList.remove('show');
+});
+
+// ── BSOD ──
+function triggerBSOD(){
+  document.getElementById('startMenu').classList.remove('show');
+  document.getElementById('bsod').style.display='block';
+}
+function closeBSOD(){
+  document.getElementById('bsod').style.display='none';
+}
+
+// ── Screensaver ──
+let saverOn=false,saverAnim;
+function toggleSaver(){
+  const ss=document.getElementById('screensaver');
+  if(saverOn){ss.style.display='none';saverOn=false;cancelAnimationFrame(saverAnim);return;}
+  ss.style.display='block';saverOn=true;
+  const c=document.getElementById('ssCanvas');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  const ctx=c.getContext('2d');
+  const pipes=[],dirs=[[-1,0],[0,-1],[1,0],[0,1]];
+  class Pipe{constructor(){this.x=Math.floor(Math.random()*20)*20;this.y=Math.floor(Math.random()*20)*20;this.dir=Math.floor(Math.random()*4);this.len=0;this.max=20+Math.random()*40;this.color=`hsl(${Math.floor(Math.random()*360)},80%,50%)`;}
+  update(){this.x+=dirs[this.dir][0]*20;this.y+=dirs[this.dir][1]*20;this.len++;if(Math.random()<0.2)this.dir=(this.dir+1+Math.floor(Math.random()*2)*2)%4;if(this.len>this.max||this.x<0||this.x>c.width||this.y<0||this.y>c.height){this.x=Math.floor(Math.random()*20)*20;this.y=Math.floor(Math.random()*20)*20;this.dir=Math.floor(Math.random()*4);this.len=0;this.max=20+Math.random()*40;this.color=`hsl(${Math.floor(Math.random()*360)},80%,50%)`;}}
+  draw(ctx){ctx.fillStyle=this.color;ctx.shadowBlur=6;ctx.shadowColor=this.color;ctx.fillRect(this.x,this.y,18,18);ctx.shadowBlur=0;}}
+  for(let i=0;i<30;i++)pipes.push(new Pipe());
+  function drawSaver(){ctx.fillStyle='rgba(0,0,0,0.05)';ctx.fillRect(0,0,c.width,c.height);pipes.forEach(p=>{p.update();p.draw(ctx);});saverAnim=requestAnimationFrame(drawSaver);}
+  drawSaver();
+}
+document.addEventListener('mousemove',()=>{if(saverOn)toggleSaver();});
+document.addEventListener('touchstart',()=>{if(saverOn)toggleSaver();});
+
+// ── Minesweeper ──
+let msBoard=[],msRows=9,msCols=9,msMines=10,msRevealed=0,msGameOver=false,msFlagged=0,msTimer=0,msTimerInt=null,msStarted=false;
+
+function initMS(){
+  msRevealed=0;msGameOver=false;msFlagged=0;msTimer=0;msStarted=false;
+  if(msTimerInt)clearInterval(msTimerInt);msTimerInt=null;
+  const g=document.getElementById('ms-game');
+  if(!g)return;
+  msRows=9;msCols=9;msMines=10;
+  msBoard=Array.from({length:msRows},()=>Array.from({length:msCols},()=>({mine:false,revealed:false,flagged:false,adj:0})));
+  // Place mines
+  let placed=0;
+  while(placed<msMines){
+    const r=Math.floor(Math.random()*msRows),c=Math.floor(Math.random()*msCols);
+    if(!msBoard[r][c].mine){msBoard[r][c].mine=true;placed++;}
+  }
+  // Count adj
+  for(let r=0;r<msRows;r++)for(let c=0;c<msCols;c++){
+    if(msBoard[r][c].mine)continue;
+    let n=0;
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+      const nr=r+dr,nc=c+dc;
+      if(nr>=0&&nr<msRows&&nc>=0&&nc<msCols&&msBoard[nr][nc].mine)n++;
+    }
+    msBoard[r][c].adj=n;
+  }
+  renderMS();
+  g.innerHTML='';
+  const bar=document.createElement('div');bar.className='ms-bar';
+  bar.innerHTML=`<span>💣 ${msMines}</span><button style="background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;cursor:pointer;padding:2px 8px;font-size:10px;" onclick="initMS()">😊</button><span id="msTimer">000</span>`;
+  g.appendChild(bar);
+  const board=document.createElement('div');board.className='ms-board';board.id='msBoardDiv';
+  board.style.gridTemplateColumns=`repeat(${msCols},22px)`;
+  for(let r=0;r<msRows;r++)for(let c=0;c<msCols;c++){
+    const cell=document.createElement('div');cell.className='ms-cell';cell.dataset.r=r;cell.dataset.c=c;
+    cell.onclick=()=>msClick(r,c);
+    cell.oncontextmenu=e=>{e.preventDefault();msFlag(r,c);};
+    cell.ontouchstart=e=>{
+      e.preventDefault();
+      const t=e;
+      if(t.touches&&t.touches.length>1){msFlag(r,c);return;}
+      msClick(r,c);
+    };
+    board.appendChild(cell);
+  }
+  g.appendChild(board);
+  renderMS();
+}
+
+function msClick(r,c){
+  if(msGameOver||msBoard[r][c].flagged)return;
+  if(!msStarted){msStarted=true;msTimerInt=setInterval(()=>{
+    msTimer++;const el=document.getElementById('msTimer');
+    if(el)el.textContent=String(msTimer).padStart(3,'0');
+  },1000);}
+  const cell=msBoard[r][c];
+  if(cell.mine){
+    cell.revealed=true;msGameOver=true;
+    // Reveal all
+    for(let ri=0;ri<msRows;ri++)for(let ci=0;ci<msCols;ci++)msBoard[ri][ci].revealed=true;
+    renderMS();
+    const btn=document.querySelector('#ms-game .ms-bar button');
+    if(btn)btn.textContent='💀';
+    if(msTimerInt)clearInterval(msTimerInt);
+    return;
+  }
+  floodFill(r,c);
+  renderMS();
+}
+
+function floodFill(r,c){
+  if(r<0||r>=msRows||c<0||c>=msCols||msBoard[r][c].revealed||msBoard[r][c].flagged)return;
+  msBoard[r][c].revealed=true;msRevealed++;
+  if(msBoard[r][c].adj===0&&!msBoard[r][c].mine)
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)floodFill(r+dr,c+dc);
+  if(msRevealed===msRows*msCols-msMines){
+    const btn=document.querySelector('#ms-game .ms-bar button');
+    if(btn)btn.textContent='😎';
+  }
+}
+
+function msFlag(r,c){
+  if(msGameOver||msBoard[r][c].revealed)return;
+  msBoard[r][c].flagged=!msBoard[r][c].flagged;
+  renderMS();
+}
+
+function renderMS(){
+  const board=document.getElementById('msBoardDiv');
+  if(!board)return;
+  const cells=board.children;
+  let idx=0;
+  for(let r=0;r<msRows;r++)for(let c=0;c<msCols;c++){
+    const cell=msBoard[r][c],el=cells[idx++];
+    if(!el)continue;
+    if(cell.revealed){
+      el.className='ms-cell revealed';
+      if(cell.mine)el.textContent='💣';
+      else if(cell.adj>0){el.textContent=cell.adj;el.className+=' n'+cell.adj;}
+      else el.textContent='';
+    }else if(cell.flagged){
+      el.className='ms-cell';el.textContent='🚩';
+    }else{
+      el.className='ms-cell';el.textContent='';
+    }
+  }
+}
+
+// Open My Computer on load
+setTimeout(()=>openWin('myPc'),300);
+</script>
+</body>
+</html>
