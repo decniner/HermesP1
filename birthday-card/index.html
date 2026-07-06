@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Happy Birthday Angel!</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+
+  /* ===== STARS BACKGROUND ===== */
+  .stars {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* ===== ENVELOPE / CARD WRAPPER ===== */
+  .card-container {
+    position: relative;
+    z-index: 1;
+    width: 340px;
+    height: 480px;
+    perspective: 1200px;
+    cursor: pointer;
+  }
+
+  /* ===== THE CARD ===== */
+  .card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border-radius: 12px;
+  }
+  .card.open {
+    transform: rotateY(-180deg);
+  }
+
+  /* ===== FRONT COVER ===== */
+  .card-front, .card-inside {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+  }
+
+  .card-front {
+    background: linear-gradient(145deg, #ff6b9d, #c44e8a);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.2);
+  }
+
+  /* Front decorative pattern */
+  .front-pattern {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .front-ribbon {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 8px;
+    background: #ffd700;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+  }
+  .front-ribbon::before,
+  .front-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    width: 20px;
+    height: 30px;
+    background: #ffd700;
+    border-radius: 0 0 10px 10px;
+  }
+  .front-ribbon::before { left: -10px; transform: rotate(-15deg); }
+  .front-ribbon::after { right: -10px; transform: rotate(15deg); }
+
+  .tap-icon {
+    font-size: 60px;
+    animation: pulse-tap 1.6s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes pulse-tap {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .front-title {
+    color: #fff;
+    font-size: 28px;
+    font-weight: bold;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    margin-top: 15px;
+    position: relative;
+    z-index: 2;
+    letter-spacing: 2px;
+  }
+  .front-sub {
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    margin-top: 8px;
+    position: relative;
+    z-index: 2;
+    font-style: italic;
+  }
+  .tap-hint {
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    margin-top: 30px;
+    animation: pulse-tap 2s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Sparkles on front */
+  .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    filter: blur(1px);
+    animation: sparkle-float 3s ease-in-out infinite;
+  }
+  @keyframes sparkle-float {
+    0%, 100% { transform: translateY(0) scale(0); opacity: 0; }
+    50% { transform: translateY(-30px) scale(1); opacity: 1; }
+  }
+
+  /* ===== INSIDE (back face) ===== */
+  .card-inside {
+    background: linear-gradient(160deg, #fff8f0, #ffe8d6, #fff0e0);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 35px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .inside-border {
+    position: absolute;
+    top: 12px; left: 12px; right: 12px; bottom: 12px;
+    border: 2px solid rgba(196, 78, 138, 0.3);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .inside-decor-top {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 24px;
+    opacity: 0.5;
+    letter-spacing: 8px;
+  }
+
+  .message {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: none;
+  }
+  .card.open .message {
+    animation: message-in 1.2s ease-out 0.5s forwards;
+  }
+  @keyframes message-in {
+    0% { opacity: 0; transform: translateY(30px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .message .greeting {
+    font-size: 22px;
+    color: #c44e8a;
+    margin-bottom: 15px;
+    font-weight: bold;
+    display: inline-block;
+    background: linear-gradient(90deg, #c44e8a, #e8a0bf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .message .body-text {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #5a3e4a;
+    margin-bottom: 10px;
+  }
+
+  .message .body-text .highlight {
+    display: inline-block;
+    background: linear-gradient(90deg, #ffd70044, #ff6b9d44);
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #c44e8a;
+  }
+
+  .message .rockstar {
+    font-size: 40px;
+    display: block;
+    margin: 12px 0;
+    animation: rockstar-glow 1.8s ease-in-out infinite;
+  }
+  @keyframes rockstar-glow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ffd700); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 16px #ff6b9d); }
+  }
+
+  .message .signature {
+    font-size: 16px;
+    color: #8a6a7a;
+    margin-top: 15px;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .inside-decor-bottom {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 20px;
+    opacity: 0.4;
+    letter-spacing: 6px;
+  }
+
+  /* ===== BALLOONS ===== */
+  .balloon {
+    position: absolute;
+    font-size: 30px;
+    opacity: 0;
+    animation: balloon-rise var(--dur) ease-in var(--delay) infinite;
+  }
+  .card.open .balloon {
+    animation: balloon-rise var(--dur) ease-in var(--delay) infinite;
+  }
+  @keyframes balloon-rise {
+    0% { transform: translateY(100px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-250px) rotate(10deg); opacity: 0; }
+  }
+
+  /* ===== CONFETTI ===== */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+  }
+  .confetti-piece.fall {
+    animation: confetti-fall var(--fall-dur) ease-in forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== FLOATING HEARTS & STARS (after open) ===== */
+  .floaters {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .floater {
+    position: absolute;
+    font-size: 20px;
+    opacity: 0;
+    animation: floater-float var(--fd) ease-in-out var(--fdelay) infinite;
+  }
+  .card.open ~ .floaters .floater,
+  .card.open + .floaters .floater {
+    animation: floater-float var(--fd) ease-in-out var(--fdelay) infinite;
+  }
+  @keyframes floater-float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    20% { opacity: 0.6; transform: translateY(80vh) scale(1); }
+    100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+  }
+
+  /* ===== MUSIC TOGGLE ===== */
+  .music-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 200;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+  }
+  .music-btn:hover, .music-btn:active {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+  }
+  .music-btn.muted {
+    opacity: 0.5;
+  }
+  .music-btn .note-icon {
+    animation: none;
+  }
+  .music-btn:not(.muted) .note-icon {
+    animation: note-spin 3s linear infinite;
+  }
+  @keyframes note-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 420px) {
+    .card-container { width: 290px; height: 430px; }
+    .front-title { font-size: 24px; }
+    .message .greeting { font-size: 19px; }
+    .message .body-text { font-size: 15px; }
+    .message .rockstar { font-size: 34px; }
+  }
+  @media (max-height: 600px) {
+    .card-container { height: 380px; }
+    .message .body-text { font-size: 14px; line-height: 1.5; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars Background -->
+<div class="stars" id="stars"></div>
+
+<!-- Floating Emojis (appear after open) -->
+<div class="floaters" id="floaters"></div>
+
+<!-- Card -->
+<div class="card-container" id="cardContainer">
+  <div class="card" id="card">
+    <!-- FRONT -->
+    <div class="card-front">
+      <div class="front-pattern"></div>
+      <div class="front-ribbon"></div>
+      <div class="tap-icon">🎁</div>
+      <div class="front-title">Happy Birthday!</div>
+      <div class="front-sub">Angel</div>
+      <div class="tap-hint">✨ tap to open ✨</div>
+      <!-- Sparkles -->
+      <div class="sparkle" style="top:15%;left:15%;animation-delay:0s;"></div>
+      <div class="sparkle" style="top:25%;right:20%;animation-delay:0.8s;width:4px;height:4px;"></div>
+      <div class="sparkle" style="top:60%;left:10%;animation-delay:1.6s;"></div>
+      <div class="sparkle" style="bottom:30%;right:15%;animation-delay:0.4s;width:5px;height:5px;"></div>
+      <div class="sparkle" style="top:40%;left:70%;animation-delay:2.2s;width:4px;height:4px;"></div>
+      <div class="sparkle" style="bottom:20%;left:40%;animation-delay:1.2s;"></div>
+    </div>
+    <!-- INSIDE -->
+    <div class="card-inside">
+      <div class="inside-border"></div>
+      <div class="inside-decor-top">✦ ✦ ✦</div>
+
+      <!-- Balloons -->
+      <div class="balloon" style="left:10%;--dur:6s;--delay:0.3s;">🎈</div>
+      <div class="balloon" style="left:30%;--dur:7s;--delay:1.2s;">🎈</div>
+      <div class="balloon" style="right:25%;--dur:8s;--delay:2.5s;">🎈</div>
+      <div class="balloon" style="right:10%;--dur:6.5s;--delay:0.8s;">🎈</div>
+
+      <div class="message">
+        <div class="greeting">Dear Angel,</div>
+        <div class="body-text">
+          Wishing a very happy birthday to the woman who somehow manages to keep <span class="highlight">my brother</span> in line.
+        </div>
+        <div class="body-text" style="margin-top:8px;">
+          You're a <span class="rockstar">🎸 ROCKSTAR! 🎸</span>
+        </div>
+        <div class="signature">— Den</div>
+      </div>
+
+      <div class="inside-decor-bottom">❤ ✿ ❤</div>
+    </div>
+  </div>
+</div>
+
+<!-- Music Toggle -->
+<button class="music-btn" id="musicBtn">
+  <span class="note-icon">🎵</span>
+</button>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== STARS =====
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+    s.style.animationDelay = Math.random() * 5 + 's';
+    starsEl.appendChild(s);
+  }
+
+  // ===== FLOATERS (hearts, stars, sparkles) =====
+  const floatersEl = document.getElementById('floaters');
+  const floaterEmojis = ['❤️', '✨', '🌟', '💖', '⭐', '💕', '🌸', '🎉'];
+  for (let i = 0; i < 30; i++) {
+    const f = document.createElement('div');
+    f.className = 'floater';
+    f.textContent = floaterEmojis[i % floaterEmojis.length];
+    f.style.left = Math.random() * 100 + '%';
+    f.style.fontSize = (Math.random() * 16 + 14) + 'px';
+    f.style.setProperty('--fd', (Math.random() * 8 + 6) + 's');
+    f.style.setProperty('--fdelay', (Math.random() * 10 + 2) + 's');
+    floatersEl.appendChild(f);
+  }
+
+  // ===== CONFETTI =====
+  function spawnConfetti(count) {
+    const colors = ['#ff6b9d', '#ffd700', '#ff8c42', '#ff4757', '#7bed9f', '#70a1ff', '#e056fd', '#ffdd59'];
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const size = Math.random() * 8 + 6;
+      el.style.width = size + 'px';
+      el.style.height = size * (Math.random() * 0.6 + 0.5) + 'px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.left = Math.random() * 100 + '%';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.setProperty('--fall-dur', (Math.random() * 2 + 2) + 's');
+      el.style.animationDelay = (Math.random() * 0.8) + 's';
+      document.body.appendChild(el);
+      // trigger
+      requestAnimationFrame(() => {
+        el.classList.add('fall');
+      });
+      // cleanup
+      setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 5000);
+    }
+  }
+
+  // ===== MUSIC (Web Audio API — Birthday melody) =====
+  let audioCtx = null;
+  let isPlaying = false;
+  let musicInterval = null;
+  let currentNoteIndex = 0;
+
+  // Happy Birthday melody notes [frequency, duration]
+  const birthdayMelody = [
+    // "Happy Birthday to You" — higher octave
+    [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [698, 0.5], [660, 0.8],
+    // "Happy Birthday to You"
+    [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [784, 0.5], [698, 0.8],
+    // "Happy Birthday Dear Angel"
+    [524, 0.3], [524, 0.3], [1046, 0.5], [880, 0.5], [698, 0.5], [660, 0.5], [588, 0.5],
+    // "Happy Birthday to You"
+    [988, 0.3], [988, 0.3], [880, 0.5], [698, 0.5], [784, 0.5], [698, 0.8]
+  ];
+
+  // Chord accompaniment — gentle chime chords that align with melody phrases
+  // Each entry: [root_freq, chord_type, duration_index]
+  // chord_type: 'C'=C major (root, +4, +7 semitones), 'F'=F major, 'G'=G major, 'G7'=G7
+  const chordProgression = [
+    // "Happy Birthday to You"
+    [262, 'C', 0, 2],  [262, 'C', 2, 1], [349, 'F', 3, 1], [262, 'C', 4, 1], [392, 'G', 5, 1], [392, 'G7', 6, 1],
+    // "Happy Birthday to You" (repeat)
+    [262, 'C', 7, 2],  [262, 'C', 9, 1], [349, 'F', 10, 1], [262, 'C', 11, 1], [392, 'G7', 12, 1], [262, 'C', 13, 1],
+    // "Happy Birthday Dear Angel"
+    [262, 'C', 14, 2], [262, 'C', 16, 1], [349, 'F', 17, 1], [262, 'C', 18, 1], [392, 'G7', 19, 1], [262, 'C', 20, 1], [392, 'G7', 21, 1],
+    // "Happy Birthday to You" (final)
+    [392, 'G7', 22, 2], [392, 'G7', 24, 1], [262, 'C', 25, 1], [349, 'F', 26, 1], [392, 'G7', 27, 1], [262, 'C', 28, 1]
+  ];
+
+  // Chord semitone intervals
+  const chordIntervals = {
+    'C':  [0, 4, 7],     // C major: C-E-G
+    'F':  [0, 4, 7],     // F major: F-A-C
+    'G':  [0, 4, 7],     // G major: G-B-D
+    'G7': [0, 4, 7, 10]  // G7: G-B-D-F
+  };
+
+  // Celesta/chime accompaniment — soft bell-like chord notes
+  function playChordChord(rootFreq, chordType, duration) {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const intervals = chordIntervals[chordType];
+    if (!intervals) return;
+
+    intervals.forEach((semitone, idx) => {
+      const freq = rootFreq * Math.pow(2, semitone / 12);
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      // Soft attack, gentle decay — chime-like
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.04 - idx * 0.008, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.7);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    });
+  }
+
+  // Celesta descant — a delicate higher counter-melody that weaves through
+  function playDescant(beatIndex, time) {
+    if (!audioCtx) return;
+    // Only play on certain beats for a twinkling effect
+    const descantNotes = {
+      1:  [1046, 0.12],   // C6
+      4:  [1174, 0.12],   // D6
+      7:  [1398, 0.12],   // F6
+      10: [1244, 0.12],   // E6
+      13: [1568, 0.12],   // G6
+      16: [1398, 0.12],   // F6
+      19: [1046, 0.12],   // C6
+      22: [1174, 0.12],   // D6
+      25: [1398, 0.12],   // F6
+    };
+    if (descantNotes[beatIndex]) {
+      const [freq, dur] = descantNotes[beatIndex];
+      const now = audioCtx.currentTime + time / 1000;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.03, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
+    }
+  }
+
+  // Gentle sustained pad — a warm, soft bed of sound underneath
+  function playPad(rootFreq, duration) {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    // Soft sustained major chord one octave below
+    const notes = [
+      rootFreq * 0.5,
+      rootFreq * 0.5 * Math.pow(2, 4/12),
+      rootFreq * 0.5 * Math.pow(2, 7/12)
+    ];
+    notes.forEach((freq) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      // Very slow attack, long sustain, slow release — like a gentle breath
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.03, now + 0.5);
+      gain.gain.setValueAtTime(0.03, now + duration * 0.6);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    });
+  }
+
+  function playNote(freq, duration) {
+    if (!audioCtx) return;
+    // Classical music box sound: plucked steel tines, bell-like, warm, delicate sustain
+    const now = audioCtx.currentTime;
+
+    // Main tone — pure sine, the tuned steel tine itself
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(freq, now);
+    // Music box tines ring freely with a long, gentle decay
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.30, now + 0.006);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + duration * 1.2);
+    osc1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    osc1.start(now);
+    osc1.stop(now + duration + 0.3);
+
+    // Octave shimmer — slightly detuned for that classic music box ethereal warmth
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(freq * 2.01, now);
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.06, now + 0.008);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.8);
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.start(now);
+    osc2.stop(now + duration + 0.3);
+
+    // Subtle fifth harmonic for that metallic tine ring
+    const osc3 = audioCtx.createOscillator();
+    const gain3 = audioCtx.createGain();
+    osc3.type = 'sine';
+    osc3.frequency.setValueAtTime(freq * 3.02, now);
+    gain3.gain.setValueAtTime(0, now);
+    gain3.gain.linearRampToValueAtTime(0.025, now + 0.005);
+    gain3.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.5);
+    osc3.connect(gain3);
+    gain3.connect(audioCtx.destination);
+    osc3.start(now);
+    osc3.stop(now + duration + 0.2);
+
+    // Gentle mechanical "pluck" — the pin releasing the tine
+    const bufferSize = audioCtx.sampleRate * 0.012;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 10);
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+    const gainN = audioCtx.createGain();
+    gainN.gain.setValueAtTime(0.04, now);
+    gainN.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.setValueAtTime(4000, now);
+    noise.connect(filter);
+    filter.connect(gainN);
+    gainN.connect(audioCtx.destination);
+    noise.start(now);
+  }
+
+  function playMelody() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    isPlaying = true;
+    const tempo = 0.38; // seconds per beat — slow, dreamy music box pace
+
+    function playAll() {
+      let time = 0;
+      let chordIdx = 0;
+      let beatCount = 0;
+      const padRoot = 262; // C4, sustained throughout
+
+      // Start the gentle pad — sustained chord that breathes underneath
+      playPad(padRoot, birthdayMelody.reduce((s, [,d]) => s + d, 0) * tempo + 2);
+
+      birthdayMelody.forEach(([freq, dur], idx) => {
+        const noteDur = dur * tempo;
+
+        // Main melody — music box tine
+        setTimeout(() => playNote(freq, noteDur), time * 1000);
+
+        // Chord accompaniment — celesta chime chords
+        if (chordIdx < chordProgression.length) {
+          const [rFreq, cType, cStart, cLen] = chordProgression[chordIdx];
+          if (beatCount >= cStart + cLen) {
+            chordIdx++;
+          } else if (beatCount === cStart) {
+            const chordDur = cLen * 0.5 * tempo + 0.4;
+            setTimeout(() => playChordChord(rFreq, cType, chordDur), time * 1000);
+            chordIdx++;
+          }
+        }
+
+        // Celesta descant — twinkling high notes scattered through
+        playDescant(beatCount, time * 1000);
+
+        time += noteDur + 0.05;
+        beatCount++;
+      });
+
+      return time;
+    }
+
+    let totalTime = playAll() * 1000 + 3000;
+    musicInterval = setTimeout(function loopFn() {
+      if (!isPlaying) return;
+      const t = playAll();
+      musicInterval = setTimeout(loopFn, t * 1000 + 3000);
+    }, totalTime);
+  }
+
+  function stopMusic() {
+    isPlaying = false;
+    if (musicInterval) {
+      clearTimeout(musicInterval);
+      musicInterval = null;
+    }
+  }
+
+  // ===== CARD OPEN/CLOSE =====
+  const card = document.getElementById('card');
+  const container = document.getElementById('cardContainer');
+  let isOpen = false;
+  let animating = false;
+
+  container.addEventListener('click', function(e) {
+    if (animating) return;
+    animating = true;
+
+    if (!isOpen) {
+      // OPEN
+      card.classList.add('open');
+      isOpen = true;
+
+      // Start music
+      if (!isPlaying) {
+        playMelody();
+        document.getElementById('musicBtn').classList.remove('muted');
+      }
+
+      // Confetti burst 1
+      setTimeout(() => spawnConfetti(60), 300);
+      // Confetti burst 2
+      setTimeout(() => spawnConfetti(40), 800);
+
+      setTimeout(() => { animating = false; }, 1300);
+    } else {
+      // CLOSE
+      card.classList.remove('open');
+      isOpen = false;
+      setTimeout(() => { animating = false; }, 1300);
+    }
+  });
+
+  // ===== MUSIC TOGGLE =====
+  const musicBtn = document.getElementById('musicBtn');
+  musicBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (isPlaying) {
+      stopMusic();
+      musicBtn.classList.add('muted');
+    } else {
+      playMelody();
+      musicBtn.classList.remove('muted');
+    }
+  });
+
+  // Pre-warm audio context on first touch
+  document.addEventListener('touchstart', function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }, { once: true });
+  document.addEventListener('click', function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }, { once: true });
+
+  console.log('🎂 Happy Birthday Angel! 🎂');
+})();
+</script>
+</body>
+</html>
