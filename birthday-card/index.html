@@ -12,163 +12,168 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    background: linear-gradient(160deg, #fce4ec, #f8c8dc, #fce4ec, #f8d0e0);
     font-family: 'Georgia', 'Times New Roman', serif;
     overflow: hidden;
     touch-action: manipulation;
   }
 
-  /* ===== STARS BACKGROUND ===== */
-  .stars {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .star {
-    position: absolute;
-    background: #fff;
-    border-radius: 50%;
-    animation: twinkle var(--duration) ease-in-out infinite alternate;
-  }
-  @keyframes twinkle {
-    0% { opacity: 0.2; transform: scale(0.8); }
-    100% { opacity: 1; transform: scale(1.2); }
-  }
-
-  /* ===== ENVELOPE / CARD WRAPPER ===== */
+  /* ===== CARD CONTAINER ===== */
   .card-container {
     position: relative;
     z-index: 1;
-    width: 340px;
-    height: 480px;
+    width: 360px;
+    height: 520px;
     perspective: 1200px;
     cursor: pointer;
   }
 
-  /* ===== THE CARD ===== */
   .card {
     position: relative;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
     transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    border-radius: 12px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(212,175,55,0.15);
   }
-  .card.open {
-    transform: rotateY(-180deg);
-  }
+  .card.open { transform: rotateY(-180deg); }
 
-  /* ===== FRONT COVER ===== */
   .card-front, .card-inside {
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     backface-visibility: hidden;
-    border-radius: 12px;
+    border-radius: 16px;
+    overflow: hidden;
   }
 
+  /* ===== FRONT COVER ===== */
   .card-front {
-    background: linear-gradient(145deg, #ff6b9d, #c44e8a);
+    background: linear-gradient(160deg, #fce4ec, #fce8ee, #fce4ec);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 30px;
-    overflow: hidden;
-    border: 3px solid rgba(255,255,255,0.2);
+    justify-content: flex-start;
+    padding: 28px 20px 20px;
+    position: relative;
   }
 
-  /* Front decorative pattern */
-  .front-pattern {
+  /* Subtle watercolor texture overlay */
+  .front-texture {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background:
-      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 30%, rgba(248,200,220,0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(248,200,220,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 50% 20%, rgba(255,255,255,0.3) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== TOP TEXT ===== */
+  .front-top-line {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 13px;
+    color: #4a4a4a;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    position: relative;
+    z-index: 2;
+    margin-top: 5px;
+  }
+
+  .front-name {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+    margin-top: 2px;
+    background: linear-gradient(180deg, #d4af37 0%, #c9a030 30%, #b8942e 60%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(212,175,55,0.3), 0 0 40px rgba(212,175,55,0.1);
+    filter: drop-shadow(0 1px 2px rgba(212,175,55,0.2));
+  }
+
+  .front-sub-line {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 13px;
+    color: #4a4a4a;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    position: relative;
+    z-index: 2;
+    margin-top: 2px;
+  }
+
+  .front-birthday {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 3px;
+    position: relative;
+    z-index: 2;
+    margin-top: 0px;
+    background: linear-gradient(180deg, #d4af37 0%, #c9a030 30%, #b8942e 60%, #d4af37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 1px 2px rgba(212,175,55,0.2));
+  }
+
+  /* ===== WREATH SVG ===== */
+  .wreath-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -48%);
+    width: 92%;
+    height: 92%;
+    z-index: 1;
     pointer-events: none;
   }
 
-  .front-ribbon {
+  /* ===== TAP HINT ===== */
+  .tap-hint {
     position: absolute;
-    top: -1px;
+    bottom: 18px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 8px;
-    background: #ffd700;
-    border-radius: 0 0 4px 4px;
-    box-shadow: 0 2px 8px rgba(255,215,0,0.4);
-  }
-  .front-ribbon::before,
-  .front-ribbon::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    width: 20px;
-    height: 30px;
-    background: #ffd700;
-    border-radius: 0 0 10px 10px;
-  }
-  .front-ribbon::before { left: -10px; transform: rotate(-15deg); }
-  .front-ribbon::after { right: -10px; transform: rotate(15deg); }
-
-  .tap-icon {
-    font-size: 60px;
-    animation: pulse-tap 1.6s ease-in-out infinite;
-    position: relative;
-    z-index: 2;
+    font-family: 'Georgia', serif;
+    font-size: 11px;
+    color: #a08090;
+    letter-spacing: 3px;
+    z-index: 3;
+    animation: pulse-tap 2s ease-in-out infinite;
   }
   @keyframes pulse-tap {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.2); opacity: 1; }
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
   }
 
-  .front-title {
-    color: #fff;
-    font-size: 28px;
-    font-weight: bold;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
-    margin-top: 15px;
-    position: relative;
-    z-index: 2;
-    letter-spacing: 2px;
-  }
-  .front-sub {
-    color: rgba(255,255,255,0.85);
-    font-size: 14px;
-    margin-top: 8px;
-    position: relative;
-    z-index: 2;
-    font-style: italic;
-  }
-  .tap-hint {
-    color: rgba(255,255,255,0.7);
-    font-size: 12px;
-    margin-top: 30px;
-    animation: pulse-tap 2s ease-in-out infinite;
-    position: relative;
-    z-index: 2;
-  }
-
-  /* Sparkles on front */
-  .sparkle {
+  /* ===== GOLD SPARKLE DOTS ===== */
+  .gold-dot {
     position: absolute;
-    width: 6px;
-    height: 6px;
-    background: #ffd700;
+    width: 4px; height: 4px;
+    background: #d4af37;
     border-radius: 50%;
-    filter: blur(1px);
-    animation: sparkle-float 3s ease-in-out infinite;
+    z-index: 2;
+    pointer-events: none;
+    animation: dot-twinkle 2.5s ease-in-out infinite alternate;
   }
-  @keyframes sparkle-float {
-    0%, 100% { transform: translateY(0) scale(0); opacity: 0; }
-    50% { transform: translateY(-30px) scale(1); opacity: 1; }
+  @keyframes dot-twinkle {
+    0% { opacity: 0.1; transform: scale(0.5); }
+    100% { opacity: 0.9; transform: scale(1.3); }
   }
 
-  /* ===== INSIDE (back face) ===== */
+  /* ===== INSIDE ===== */
   .card-inside {
     background: linear-gradient(160deg, #fff8f0, #ffe8d6, #fff0e0);
     transform: rotateY(180deg);
@@ -176,28 +181,34 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 35px 30px;
+    padding: 35px 28px;
     position: relative;
     overflow: hidden;
   }
 
   .inside-border {
     position: absolute;
-    top: 12px; left: 12px; right: 12px; bottom: 12px;
-    border: 2px solid rgba(196, 78, 138, 0.3);
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 2px solid rgba(212,175,55,0.25);
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  .inside-border-inner {
+    position: absolute;
+    top: 14px; left: 14px; right: 14px; bottom: 14px;
+    border: 1px solid rgba(212,175,55,0.12);
     border-radius: 8px;
     pointer-events: none;
   }
 
   .inside-decor-top {
     position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
+    top: 18px; left: 0; right: 0;
     text-align: center;
-    font-size: 24px;
-    opacity: 0.5;
-    letter-spacing: 8px;
+    font-size: 16px;
+    color: #d4af37;
+    letter-spacing: 6px;
+    opacity: 0.4;
   }
 
   .message {
@@ -205,10 +216,9 @@
     position: relative;
     z-index: 2;
     opacity: 0;
-    animation: none;
   }
   .card.open .message {
-    animation: message-in 1.2s ease-out 0.5s forwards;
+    animation: message-in 1.2s ease-out 0.4s forwards;
   }
   @keyframes message-in {
     0% { opacity: 0; transform: translateY(30px) scale(0.9); }
@@ -216,46 +226,52 @@
   }
 
   .message .greeting {
-    font-size: 22px;
-    color: #c44e8a;
-    margin-bottom: 15px;
-    font-weight: bold;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 28px;
+    font-style: italic;
+    margin-bottom: 14px;
     display: inline-block;
-    background: linear-gradient(90deg, #c44e8a, #e8a0bf);
+    background: linear-gradient(180deg, #d4af37, #c9a030);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: 1px;
   }
 
   .message .body-text {
+    font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 17px;
-    line-height: 1.7;
-    color: #5a3e4a;
-    margin-bottom: 10px;
+    line-height: 1.8;
+    color: #4a4a4a;
   }
 
   .message .body-text .highlight {
-    display: inline-block;
-    background: linear-gradient(90deg, #ffd70044, #ff6b9d44);
+    display: inline;
+    background: linear-gradient(90deg, #ffd70022, #ff6b9d22);
     padding: 0 4px;
-    border-radius: 3px;
+    border-radius: 2px;
     font-weight: bold;
     color: #c44e8a;
   }
 
-  .message .rockstar {
-    font-size: 40px;
-    display: block;
-    margin: 12px 0;
+  .message .rockstar-line {
+    margin: 12px 0 8px;
+    font-size: 36px;
+    display: inline-block;
+    background: linear-gradient(180deg, #d4af37, #c9a030, #b8942e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     animation: rockstar-glow 1.8s ease-in-out infinite;
   }
   @keyframes rockstar-glow {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ffd700); }
-    50% { transform: scale(1.15); filter: drop-shadow(0 0 16px #ff6b9d); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(212,175,55,0.5)); }
   }
 
   .message .signature {
-    font-size: 16px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 17px;
     color: #8a6a7a;
     margin-top: 15px;
     font-style: italic;
@@ -264,104 +280,76 @@
 
   .inside-decor-bottom {
     position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+    bottom: 18px; left: 0; right: 0;
     text-align: center;
-    font-size: 20px;
-    opacity: 0.4;
-    letter-spacing: 6px;
+    font-size: 14px;
+    color: #d4af37;
+    opacity: 0.35;
+    letter-spacing: 5px;
   }
 
   /* ===== BALLOONS ===== */
   .balloon {
     position: absolute;
-    font-size: 30px;
+    font-size: 26px;
     opacity: 0;
-    animation: balloon-rise var(--dur) ease-in var(--delay) infinite;
   }
   .card.open .balloon {
     animation: balloon-rise var(--dur) ease-in var(--delay) infinite;
   }
   @keyframes balloon-rise {
-    0% { transform: translateY(100px) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.8; }
-    90% { opacity: 0.8; }
-    100% { transform: translateY(-250px) rotate(10deg); opacity: 0; }
+    0% { transform: translateY(80px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.7; }
+    85% { opacity: 0.7; }
+    100% { transform: translateY(-220px) rotate(12deg); opacity: 0; }
   }
 
   /* ===== CONFETTI ===== */
   .confetti-piece {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    top: -20px;
-    pointer-events: none;
-    z-index: 100;
-    opacity: 0;
+    position: fixed; width: 10px; height: 10px;
+    top: -20px; pointer-events: none; z-index: 100; opacity: 0;
   }
   .confetti-piece.fall {
     animation: confetti-fall var(--fall-dur) ease-in forwards;
   }
   @keyframes confetti-fall {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
   }
 
-  /* ===== FLOATING HEARTS & STARS (after open) ===== */
+  /* ===== FLOATERS ===== */
   .floaters {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    z-index: 50;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 50;
   }
   .floater {
-    position: absolute;
-    font-size: 20px;
-    opacity: 0;
-    animation: floater-float var(--fd) ease-in-out var(--fdelay) infinite;
-  }
-  .card.open ~ .floaters .floater,
-  .card.open + .floaters .floater {
+    position: absolute; font-size: 18px; opacity: 0;
     animation: floater-float var(--fd) ease-in-out var(--fdelay) infinite;
   }
   @keyframes floater-float {
     0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    20% { opacity: 0.6; transform: translateY(80vh) scale(1); }
-    100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+    20% { opacity: 0.5; transform: translateY(75vh) scale(1); }
+    100% { transform: translateY(-10vh) scale(0.4); opacity: 0; }
   }
 
   /* ===== MUSIC TOGGLE ===== */
   .music-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 200;
-    width: 50px;
-    height: 50px;
+    position: fixed; bottom: 25px; right: 25px;
+    z-index: 200; width: 50px; height: 50px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(212,175,55,0.3);
+    background: rgba(255,255,255,0.15);
     backdrop-filter: blur(8px);
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    touch-action: manipulation;
+    color: #d4af37; font-size: 22px;
+    cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.3s ease; touch-action: manipulation;
   }
   .music-btn:hover, .music-btn:active {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(212,175,55,0.5);
   }
-  .music-btn.muted {
-    opacity: 0.5;
-  }
-  .music-btn .note-icon {
-    animation: none;
-  }
+  .music-btn.muted { opacity: 0.4; }
   .music-btn:not(.muted) .note-icon {
     animation: note-spin 3s linear infinite;
   }
@@ -370,13 +358,13 @@
     100% { transform: rotate(360deg); }
   }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width: 420px) {
-    .card-container { width: 290px; height: 430px; }
-    .front-title { font-size: 24px; }
-    .message .greeting { font-size: 19px; }
+    .card-container { width: 300px; height: 460px; }
+    .front-name { font-size: 34px; }
+    .front-birthday { font-size: 22px; }
+    .message .greeting { font-size: 24px; }
     .message .body-text { font-size: 15px; }
-    .message .rockstar { font-size: 34px; }
+    .message .rockstar-line { font-size: 28px; }
   }
   @media (max-height: 600px) {
     .card-container { height: 380px; }
@@ -386,37 +374,216 @@
 </head>
 <body>
 
-<!-- Stars Background -->
-<div class="stars" id="stars"></div>
-
-<!-- Floating Emojis (appear after open) -->
+<!-- Floaters -->
 <div class="floaters" id="floaters"></div>
 
 <!-- Card -->
 <div class="card-container" id="cardContainer">
   <div class="card" id="card">
-    <!-- FRONT -->
+
+    <!-- ===== FRONT ===== -->
     <div class="card-front">
-      <div class="front-pattern"></div>
-      <div class="front-ribbon"></div>
-      <div class="tap-icon">🎁</div>
-      <div class="front-title">Happy Birthday!</div>
-      <div class="front-sub">Angel</div>
-      <div class="tap-hint">✨ tap to open ✨</div>
-      <!-- Sparkles -->
-      <div class="sparkle" style="top:15%;left:15%;animation-delay:0s;"></div>
-      <div class="sparkle" style="top:25%;right:20%;animation-delay:0.8s;width:4px;height:4px;"></div>
-      <div class="sparkle" style="top:60%;left:10%;animation-delay:1.6s;"></div>
-      <div class="sparkle" style="bottom:30%;right:15%;animation-delay:0.4s;width:5px;height:5px;"></div>
-      <div class="sparkle" style="top:40%;left:70%;animation-delay:2.2s;width:4px;height:4px;"></div>
-      <div class="sparkle" style="bottom:20%;left:40%;animation-delay:1.2s;"></div>
+      <div class="front-texture"></div>
+
+      <div class="front-top-line">to a fantastic</div>
+      <div class="front-name">Angel</div>
+      <div class="front-sub-line">on your</div>
+      <div class="front-birthday">Birthday</div>
+
+      <!-- Wreath SVG -->
+      <svg class="wreath-svg" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Double gold ring frame -->
+        <circle cx="150" cy="210" r="120" stroke="#d4af37" stroke-width="0.8" opacity="0.3"/>
+        <circle cx="150" cy="210" r="116" stroke="#d4af37" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="150" cy="210" r="112" stroke="#d4af37" stroke-width="0.6" opacity="0.2"/>
+
+        <!-- === FLOWERS === -->
+
+        <!-- Top Right: Purple pansy -->
+        <g transform="translate(215, 130)">
+          <ellipse cx="-6" cy="-4" rx="10" ry="7" fill="#9b59b6" transform="rotate(-30)" opacity="0.9"/>
+          <ellipse cx="6" cy="-4" rx="10" ry="7" fill="#8e44ad" transform="rotate(30)" opacity="0.9"/>
+          <ellipse cx="0" cy="4" rx="8" ry="6" fill="#a569bd" opacity="0.85"/>
+          <circle cx="0" cy="0" r="4" fill="#f1c40f"/>
+        </g>
+
+        <!-- Top Right: Magenta hibiscus -->
+        <g transform="translate(240, 150)">
+          <ellipse cx="-8" cy="-2" rx="11" ry="6" fill="#c2185b" transform="rotate(-20)" opacity="0.85"/>
+          <ellipse cx="8" cy="-2" rx="11" ry="6" fill="#d81b60" transform="rotate(20)" opacity="0.85"/>
+          <ellipse cx="0" cy="6" rx="9" ry="5" fill="#ad1457" opacity="0.8"/>
+          <circle cx="0" cy="0" r="3" fill="#4a0e2e"/>
+        </g>
+
+        <!-- Right: White anemone -->
+        <g transform="translate(258, 200)">
+          <ellipse cx="-5" cy="-5" rx="9" ry="6" fill="#fff" transform="rotate(-45)" opacity="0.9"/>
+          <ellipse cx="5" cy="-5" rx="9" ry="6" fill="#fefefe" transform="rotate(45)" opacity="0.9"/>
+          <ellipse cx="0" cy="5" rx="8" ry="5" fill="#f5f5f5" opacity="0.85"/>
+          <circle cx="0" cy="0" r="3.5" fill="#2c3e50"/>
+          <!-- Gold stamens -->
+          <line x1="0" y1="0" x2="-3" y2="-5" stroke="#d4af37" stroke-width="0.5"/>
+          <line x1="0" y1="0" x2="3" y2="-4" stroke="#d4af37" stroke-width="0.5"/>
+          <line x1="0" y1="0" x2="0" y2="-5" stroke="#d4af37" stroke-width="0.5"/>
+        </g>
+
+        <!-- Bottom Right: Red berries -->
+        <g transform="translate(245, 268)">
+          <circle cx="-4" cy="-3" r="4" fill="#dc143c"/>
+          <circle cx="4" cy="-2" r="3.5" fill="#e74c3c"/>
+          <circle cx="0" cy="4" r="3.5" fill="#c0392b"/>
+          <circle cx="-7" cy="2" r="3" fill="#e74c3c"/>
+        </g>
+
+        <!-- Bottom Center: Large white anemone -->
+        <g transform="translate(150, 320)">
+          <ellipse cx="-7" cy="-6" rx="11" ry="7" fill="#fff" transform="rotate(-35)" opacity="0.95"/>
+          <ellipse cx="7" cy="-6" rx="11" ry="7" fill="#fefefe" transform="rotate(35)" opacity="0.95"/>
+          <ellipse cx="-8" cy="4" rx="10" ry="6" fill="#f8f8f8" transform="rotate(-70)" opacity="0.9"/>
+          <ellipse cx="8" cy="4" rx="10" ry="6" fill="#f5f5f5" transform="rotate(70)" opacity="0.9"/>
+          <circle cx="0" cy="0" r="4.5" fill="#2c3e50"/>
+          <line x1="0" y1="0" x2="-4" y2="-6" stroke="#d4af37" stroke-width="0.6"/>
+          <line x1="0" y1="0" x2="4" y2="-5" stroke="#d4af37" stroke-width="0.6"/>
+          <line x1="0" y1="0" x2="0" y2="-6" stroke="#d4af37" stroke-width="0.6"/>
+          <line x1="0" y1="0" x2="-3" y2="5" stroke="#d4af37" stroke-width="0.6"/>
+          <line x1="0" y1="0" x2="3" y2="4" stroke="#d4af37" stroke-width="0.6"/>
+        </g>
+
+        <!-- Bottom Left: Magenta flower -->
+        <g transform="translate(60, 290)">
+          <ellipse cx="-7" cy="-3" rx="10" ry="6" fill="#d81b60" transform="rotate(-25)" opacity="0.85"/>
+          <ellipse cx="7" cy="-3" rx="10" ry="6" fill="#c2185b" transform="rotate(25)" opacity="0.85"/>
+          <ellipse cx="0" cy="5" rx="8" ry="5" fill="#ad1457" opacity="0.8"/>
+          <circle cx="0" cy="0" r="3" fill="#f1c40f"/>
+        </g>
+
+        <!-- Left: Purple flower -->
+        <g transform="translate(40, 210)">
+          <ellipse cx="-4" cy="-5" rx="9" ry="6" fill="#a569bd" transform="rotate(-40)" opacity="0.9"/>
+          <ellipse cx="4" cy="-5" rx="9" ry="6" fill="#8e44ad" transform="rotate(40)" opacity="0.9"/>
+          <ellipse cx="0" cy="4" rx="7" ry="5" fill="#7d3c98" opacity="0.85"/>
+          <circle cx="0" cy="0" r="3" fill="#f39c12"/>
+        </g>
+
+        <!-- Top Left: White flower -->
+        <g transform="translate(60, 132)">
+          <ellipse cx="-5" cy="-4" rx="8" ry="5" fill="#fff" transform="rotate(-30)" opacity="0.9"/>
+          <ellipse cx="5" cy="-4" rx="8" ry="5" fill="#fefefe" transform="rotate(30)" opacity="0.9"/>
+          <ellipse cx="0" cy="4" rx="7" ry="4" fill="#f5f5f5" opacity="0.85"/>
+          <circle cx="0" cy="0" r="2.5" fill="#f1c40f"/>
+        </g>
+
+        <!-- === LEAVES === -->
+
+        <!-- Teal leaves - left -->
+        <g transform="translate(42, 170)">
+          <ellipse cx="0" cy="0" rx="12" ry="4" fill="#48d1cc" transform="rotate(-60)" opacity="0.6"/>
+          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#40c4c0" transform="rotate(-20)" opacity="0.5"/>
+        </g>
+        <g transform="translate(50, 250)">
+          <ellipse cx="0" cy="0" rx="11" ry="4" fill="#48d1cc" transform="rotate(30)" opacity="0.55"/>
+          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#40c4c0" transform="rotate(60)" opacity="0.5"/>
+        </g>
+        <!-- Teal leaves - right -->
+        <g transform="translate(250, 240)">
+          <ellipse cx="0" cy="0" rx="11" ry="3.5" fill="#48d1cc" transform="rotate(50)" opacity="0.55"/>
+          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#40c4c0" transform="rotate(10)" opacity="0.5"/>
+        </g>
+        <g transform="translate(240, 175)">
+          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#48d1cc" transform="rotate(-40)" opacity="0.55"/>
+        </g>
+
+        <!-- Green leaves -->
+        <g transform="translate(90, 110)">
+          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#7cb342" transform="rotate(40)" opacity="0.5"/>
+        </g>
+        <g transform="translate(210, 105)">
+          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#7cb342" transform="rotate(-30)" opacity="0.5"/>
+        </g>
+        <g transform="translate(260, 220)">
+          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#7cb342" transform="rotate(70)" opacity="0.5"/>
+        </g>
+        <g transform="translate(45, 230)">
+          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#7cb342" transform="rotate(-50)" opacity="0.5"/>
+        </g>
+
+        <!-- Gold/olive leaves -->
+        <g transform="translate(100, 330)">
+          <ellipse cx="0" cy="0" rx="10" ry="3" fill="#c9a030" transform="rotate(-30)" opacity="0.45"/>
+        </g>
+        <g transform="translate(200, 325)">
+          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#b8942e" transform="rotate(35)" opacity="0.45"/>
+        </g>
+        <g transform="translate(35, 195)">
+          <ellipse cx="0" cy="0" rx="8" ry="2.5" fill="#c9a030" transform="rotate(80)" opacity="0.4"/>
+        </g>
+        <g transform="translate(265, 195)">
+          <ellipse cx="0" cy="0" rx="8" ry="2.5" fill="#b8942e" transform="rotate(-80)" opacity="0.4"/>
+        </g>
+
+        <!-- Gold fern fronds -->
+        <g transform="translate(130, 95)" opacity="0.35">
+          <path d="M0,0 Q10,-8 20,-5 Q15,-3 10,-2 Q18,0 25,2 Q16,3 8,2 Q14,5 20,8 Q10,5 0,0Z" fill="#d4af37"/>
+        </g>
+        <g transform="translate(175, 330)" opacity="0.35">
+          <path d="M0,0 Q-10,8 -20,5 Q-15,3 -10,2 Q-18,0 -25,-2 Q-16,-3 -8,-2 Q-14,-5 -20,-8 Q-10,-5 0,0Z" fill="#d4af37"/>
+        </g>
+
+        <!-- === BUTTERFLIES === -->
+
+        <!-- Left butterfly -->
+        <g transform="translate(55, 155)" opacity="0.7">
+          <path d="M0,0 Q-8,-6 -10,-12 Q-6,-8 0,-4 Q6,-8 10,-12 Q8,-6 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+          <path d="M0,0 Q-6,3 -8,8 Q-4,5 0,2 Q4,5 8,8 Q6,3 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+          <line x1="0" y1="0" x2="-2" y2="-2" stroke="#d4af37" stroke-width="0.5"/>
+          <!-- Antennae -->
+          <path d="M-3,-10 Q-5,-14 -4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
+          <path d="M3,-10 Q5,-14 4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
+        </g>
+
+        <!-- Right butterfly -->
+        <g transform="translate(245, 185)" opacity="0.7">
+          <path d="M0,0 Q8,-6 10,-12 Q6,-8 0,-4 Q-6,-8 -10,-12 Q-8,-6 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+          <path d="M0,0 Q6,3 8,8 Q4,5 0,2 Q-4,5 -8,8 Q-6,3 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
+          <line x1="0" y1="0" x2="2" y2="-2" stroke="#d4af37" stroke-width="0.5"/>
+          <path d="M-3,-10 Q-5,-14 -4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
+          <path d="M3,-10 Q5,-14 4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
+        </g>
+
+        <!-- Small buds -->
+        <circle cx="225" cy="285" r="3" fill="#e91e63" opacity="0.5"/>
+        <circle cx="80" cy="310" r="2.5" fill="#e91e63" opacity="0.45"/>
+        <circle cx="195" cy="100" r="2.5" fill="#e91e63" opacity="0.45"/>
+        <circle cx="100" cy="325" r="2" fill="#e91e63" opacity="0.4"/>
+        <circle cx="240" cy="255" r="2" fill="#9b59b6" opacity="0.4"/>
+      </svg>
+
+      <!-- Gold sparkle dots -->
+      <div class="gold-dot" style="top:12%;left:18%;animation-delay:0s;"></div>
+      <div class="gold-dot" style="top:8%;right:25%;animation-delay:0.6s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:20%;left:8%;animation-delay:1.2s;"></div>
+      <div class="gold-dot" style="top:15%;right:10%;animation-delay:0.3s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:40%;left:5%;animation-delay:0.9s;"></div>
+      <div class="gold-dot" style="top:55%;right:4%;animation-delay:1.5s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:70%;left:6%;animation-delay:0.4s;"></div>
+      <div class="gold-dot" style="top:82%;right:12%;animation-delay:1.1s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:78%;left:15%;animation-delay:1.8s;"></div>
+      <div class="gold-dot" style="top:45%;right:8%;animation-delay:0.2s;"></div>
+      <div class="gold-dot" style="top:25%;left:22%;animation-delay:0.7s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:88%;left:40%;animation-delay:1.3s;"></div>
+      <div class="gold-dot" style="top:10%;left:45%;animation-delay:0.5s;width:3px;height:3px;"></div>
+      <div class="gold-dot" style="top:60%;right:5%;animation-delay:1.6s;"></div>
+      <div class="gold-dot" style="top:35%;right:18%;animation-delay:0.8s;"></div>
+
+      <div class="tap-hint">✦ tap to open ✦</div>
     </div>
-    <!-- INSIDE -->
+
+    <!-- ===== INSIDE ===== -->
     <div class="card-inside">
       <div class="inside-border"></div>
+      <div class="inside-border-inner"></div>
       <div class="inside-decor-top">✦ ✦ ✦</div>
 
-      <!-- Balloons -->
       <div class="balloon" style="left:10%;--dur:6s;--delay:0.3s;">🎈</div>
       <div class="balloon" style="left:30%;--dur:7s;--delay:1.2s;">🎈</div>
       <div class="balloon" style="right:25%;--dur:8s;--delay:2.5s;">🎈</div>
@@ -428,8 +595,9 @@
           Wishing a very happy birthday to the woman who somehow manages to keep <span class="highlight">my brother</span> in line.
         </div>
         <div class="body-text" style="margin-top:8px;">
-          You're a <span class="rockstar">🎸 ROCKSTAR! 🎸</span>
+          You're a
         </div>
+        <div class="rockstar-line">🎸 ROCKSTAR! 🎸</div>
         <div class="signature">— Den</div>
       </div>
 
@@ -438,7 +606,6 @@
   </div>
 </div>
 
-<!-- Music Toggle -->
 <button class="music-btn" id="musicBtn">
   <span class="note-icon">🎵</span>
 </button>
@@ -447,30 +614,15 @@
 (function() {
   'use strict';
 
-  // ===== STARS =====
-  const starsEl = document.getElementById('stars');
-  for (let i = 0; i < 80; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 3 + 1;
-    s.style.width = size + 'px';
-    s.style.height = size + 'px';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    s.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-    s.style.animationDelay = Math.random() * 5 + 's';
-    starsEl.appendChild(s);
-  }
-
-  // ===== FLOATERS (hearts, stars, sparkles) =====
+  // ===== FLOATERS =====
   const floatersEl = document.getElementById('floaters');
   const floaterEmojis = ['❤️', '✨', '🌟', '💖', '⭐', '💕', '🌸', '🎉'];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 25; i++) {
     const f = document.createElement('div');
     f.className = 'floater';
     f.textContent = floaterEmojis[i % floaterEmojis.length];
     f.style.left = Math.random() * 100 + '%';
-    f.style.fontSize = (Math.random() * 16 + 14) + 'px';
+    f.style.fontSize = (Math.random() * 14 + 12) + 'px';
     f.style.setProperty('--fd', (Math.random() * 8 + 6) + 's');
     f.style.setProperty('--fdelay', (Math.random() * 10 + 2) + 's');
     floatersEl.appendChild(f);
@@ -478,11 +630,11 @@
 
   // ===== CONFETTI =====
   function spawnConfetti(count) {
-    const colors = ['#ff6b9d', '#ffd700', '#ff8c42', '#ff4757', '#7bed9f', '#70a1ff', '#e056fd', '#ffdd59'];
+    const colors = ['#d4af37', '#ff6b9d', '#c9a030', '#ff4757', '#9b59b6', '#48d1cc', '#e056fd', '#ffdd59'];
     for (let i = 0; i < count; i++) {
       const el = document.createElement('div');
       el.className = 'confetti-piece';
-      const size = Math.random() * 8 + 6;
+      const size = Math.random() * 8 + 5;
       el.style.width = size + 'px';
       el.style.height = size * (Math.random() * 0.6 + 0.5) + 'px';
       el.style.background = colors[Math.floor(Math.random() * colors.length)];
@@ -491,73 +643,50 @@
       el.style.setProperty('--fall-dur', (Math.random() * 2 + 2) + 's');
       el.style.animationDelay = (Math.random() * 0.8) + 's';
       document.body.appendChild(el);
-      // trigger
-      requestAnimationFrame(() => {
-        el.classList.add('fall');
-      });
-      // cleanup
-      setTimeout(() => {
-        if (el.parentNode) el.parentNode.removeChild(el);
-      }, 5000);
+      requestAnimationFrame(() => el.classList.add('fall'));
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 5000);
     }
   }
 
-  // ===== MUSIC (Web Audio API — Birthday melody) =====
+  // ===== MUSIC (classical music box) =====
   let audioCtx = null;
   let isPlaying = false;
   let musicInterval = null;
-  let currentNoteIndex = 0;
 
-  // Happy Birthday melody notes [frequency, duration]
   const birthdayMelody = [
-    // "Happy Birthday to You" — higher octave
     [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [698, 0.5], [660, 0.8],
-    // "Happy Birthday to You"
     [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [784, 0.5], [698, 0.8],
-    // "Happy Birthday Dear Angel"
     [524, 0.3], [524, 0.3], [1046, 0.5], [880, 0.5], [698, 0.5], [660, 0.5], [588, 0.5],
-    // "Happy Birthday to You"
     [988, 0.3], [988, 0.3], [880, 0.5], [698, 0.5], [784, 0.5], [698, 0.8]
   ];
 
-  // Chord accompaniment — gentle chime chords that align with melody phrases
-  // Each entry: [root_freq, chord_type, duration_index]
-  // chord_type: 'C'=C major (root, +4, +7 semitones), 'F'=F major, 'G'=G major, 'G7'=G7
   const chordProgression = [
-    // "Happy Birthday to You"
     [262, 'C', 0, 2],  [262, 'C', 2, 1], [349, 'F', 3, 1], [262, 'C', 4, 1], [392, 'G', 5, 1], [392, 'G7', 6, 1],
-    // "Happy Birthday to You" (repeat)
     [262, 'C', 7, 2],  [262, 'C', 9, 1], [349, 'F', 10, 1], [262, 'C', 11, 1], [392, 'G7', 12, 1], [262, 'C', 13, 1],
-    // "Happy Birthday Dear Angel"
     [262, 'C', 14, 2], [262, 'C', 16, 1], [349, 'F', 17, 1], [262, 'C', 18, 1], [392, 'G7', 19, 1], [262, 'C', 20, 1], [392, 'G7', 21, 1],
-    // "Happy Birthday to You" (final)
     [392, 'G7', 22, 2], [392, 'G7', 24, 1], [262, 'C', 25, 1], [349, 'F', 26, 1], [392, 'G7', 27, 1], [262, 'C', 28, 1]
   ];
 
-  // Chord semitone intervals
   const chordIntervals = {
-    'C':  [0, 4, 7],     // C major: C-E-G
-    'F':  [0, 4, 7],     // F major: F-A-C
-    'G':  [0, 4, 7],     // G major: G-B-D
-    'G7': [0, 4, 7, 10]  // G7: G-B-D-F
+    'C':  [0, 4, 7],
+    'F':  [0, 4, 7],
+    'G':  [0, 4, 7],
+    'G7': [0, 4, 7, 10]
   };
 
-  // Celesta/chime accompaniment — soft bell-like chord notes
   function playChordChord(rootFreq, chordType, duration) {
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
     const intervals = chordIntervals[chordType];
     if (!intervals) return;
-
     intervals.forEach((semitone, idx) => {
       const freq = rootFreq * Math.pow(2, semitone / 12);
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
-      // Soft attack, gentle decay — chime-like
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.04 - idx * 0.008, now + 0.01);
+      gain.gain.linearRampToValueAtTime(0.035 - idx * 0.007, now + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.7);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -566,20 +695,12 @@
     });
   }
 
-  // Celesta descant — a delicate higher counter-melody that weaves through
   function playDescant(beatIndex, time) {
     if (!audioCtx) return;
-    // Only play on certain beats for a twinkling effect
     const descantNotes = {
-      1:  [1046, 0.12],   // C6
-      4:  [1174, 0.12],   // D6
-      7:  [1398, 0.12],   // F6
-      10: [1244, 0.12],   // E6
-      13: [1568, 0.12],   // G6
-      16: [1398, 0.12],   // F6
-      19: [1046, 0.12],   // C6
-      22: [1174, 0.12],   // D6
-      25: [1398, 0.12],   // F6
+      1:  [1046, 0.12], 4:  [1174, 0.12], 7:  [1398, 0.12],
+      10: [1244, 0.12], 13: [1568, 0.12], 16: [1398, 0.12],
+      19: [1046, 0.12], 22: [1174, 0.12], 25: [1398, 0.12],
     };
     if (descantNotes[beatIndex]) {
       const [freq, dur] = descantNotes[beatIndex];
@@ -589,7 +710,7 @@
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.03, now + 0.005);
+      gain.gain.linearRampToValueAtTime(0.025, now + 0.005);
       gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -598,11 +719,9 @@
     }
   }
 
-  // Gentle sustained pad — a warm, soft bed of sound underneath
   function playPad(rootFreq, duration) {
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
-    // Soft sustained major chord one octave below
     const notes = [
       rootFreq * 0.5,
       rootFreq * 0.5 * Math.pow(2, 4/12),
@@ -613,10 +732,9 @@
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
-      // Very slow attack, long sustain, slow release — like a gentle breath
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.03, now + 0.5);
-      gain.gain.setValueAtTime(0.03, now + duration * 0.6);
+      gain.gain.linearRampToValueAtTime(0.02, now + 0.5);
+      gain.gain.setValueAtTime(0.02, now + duration * 0.6);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -627,15 +745,13 @@
 
   function playNote(freq, duration) {
     if (!audioCtx) return;
-    // Classical music box sound: plucked steel tines, bell-like, warm, delicate sustain
     const now = audioCtx.currentTime;
 
-    // Main tone — pure sine, the tuned steel tine itself
+    // Main music box tine
     const osc1 = audioCtx.createOscillator();
     const gain1 = audioCtx.createGain();
     osc1.type = 'sine';
     osc1.frequency.setValueAtTime(freq, now);
-    // Music box tines ring freely with a long, gentle decay
     gain1.gain.setValueAtTime(0, now);
     gain1.gain.linearRampToValueAtTime(0.30, now + 0.006);
     gain1.gain.exponentialRampToValueAtTime(0.001, now + duration * 1.2);
@@ -644,7 +760,7 @@
     osc1.start(now);
     osc1.stop(now + duration + 0.3);
 
-    // Octave shimmer — slightly detuned for that classic music box ethereal warmth
+    // Octave shimmer
     const osc2 = audioCtx.createOscillator();
     const gain2 = audioCtx.createGain();
     osc2.type = 'sine';
@@ -657,7 +773,7 @@
     osc2.start(now);
     osc2.stop(now + duration + 0.3);
 
-    // Subtle fifth harmonic for that metallic tine ring
+    // Metallic fifth harmonic
     const osc3 = audioCtx.createOscillator();
     const gain3 = audioCtx.createGain();
     osc3.type = 'sine';
@@ -670,12 +786,12 @@
     osc3.start(now);
     osc3.stop(now + duration + 0.2);
 
-    // Gentle mechanical "pluck" — the pin releasing the tine
-    const bufferSize = audioCtx.sampleRate * 0.012;
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    // Mechanical pluck sound
+    const bufSize = audioCtx.sampleRate * 0.012;
+    const buffer = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 10);
+    for (let i = 0; i < bufSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 10);
     }
     const noise = audioCtx.createBufferSource();
     noise.buffer = buffer;
@@ -692,49 +808,36 @@
   }
 
   function playMelody() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
     isPlaying = true;
-    const tempo = 0.38; // seconds per beat — slow, dreamy music box pace
+    const tempo = 0.38;
 
     function playAll() {
       let time = 0;
       let chordIdx = 0;
       let beatCount = 0;
-      const padRoot = 262; // C4, sustained throughout
-
-      // Start the gentle pad — sustained chord that breathes underneath
+      const padRoot = 262;
       playPad(padRoot, birthdayMelody.reduce((s, [,d]) => s + d, 0) * tempo + 2);
 
-      birthdayMelody.forEach(([freq, dur], idx) => {
+      birthdayMelody.forEach(([freq, dur]) => {
         const noteDur = dur * tempo;
-
-        // Main melody — music box tine
         setTimeout(() => playNote(freq, noteDur), time * 1000);
 
-        // Chord accompaniment — celesta chime chords
         if (chordIdx < chordProgression.length) {
           const [rFreq, cType, cStart, cLen] = chordProgression[chordIdx];
-          if (beatCount >= cStart + cLen) {
-            chordIdx++;
-          } else if (beatCount === cStart) {
+          if (beatCount >= cStart + cLen) { chordIdx++; }
+          else if (beatCount === cStart) {
             const chordDur = cLen * 0.5 * tempo + 0.4;
             setTimeout(() => playChordChord(rFreq, cType, chordDur), time * 1000);
             chordIdx++;
           }
         }
 
-        // Celesta descant — twinkling high notes scattered through
         playDescant(beatCount, time * 1000);
-
         time += noteDur + 0.05;
         beatCount++;
       });
-
       return time;
     }
 
@@ -748,10 +851,7 @@
 
   function stopMusic() {
     isPlaying = false;
-    if (musicInterval) {
-      clearTimeout(musicInterval);
-      musicInterval = null;
-    }
+    if (musicInterval) { clearTimeout(musicInterval); musicInterval = null; }
   }
 
   // ===== CARD OPEN/CLOSE =====
@@ -765,27 +865,18 @@
     animating = true;
 
     if (!isOpen) {
-      // OPEN
       card.classList.add('open');
       isOpen = true;
-
-      // Start music
-      if (!isPlaying) {
-        playMelody();
-        document.getElementById('musicBtn').classList.remove('muted');
-      }
-
-      // Confetti burst 1
-      setTimeout(() => spawnConfetti(60), 300);
-      // Confetti burst 2
-      setTimeout(() => spawnConfetti(40), 800);
-
-      setTimeout(() => { animating = false; }, 1300);
+      if (!isPlaying) { playMelody(); document.getElementById('musicBtn').classList.remove('muted'); }
+      setTimeout(() => spawnConfetti(50), 300);
+      setTimeout(() => spawnConfetti(35), 800);
+      // Second confetti burst at end of song
+      setTimeout(() => spawnConfetti(40), 4000);
+      setTimeout(() => animating = false, 1300);
     } else {
-      // CLOSE
       card.classList.remove('open');
       isOpen = false;
-      setTimeout(() => { animating = false; }, 1300);
+      setTimeout(() => animating = false, 1300);
     }
   });
 
@@ -793,26 +884,13 @@
   const musicBtn = document.getElementById('musicBtn');
   musicBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    if (isPlaying) {
-      stopMusic();
-      musicBtn.classList.add('muted');
-    } else {
-      playMelody();
-      musicBtn.classList.remove('muted');
-    }
+    if (isPlaying) { stopMusic(); musicBtn.classList.add('muted'); }
+    else { playMelody(); musicBtn.classList.remove('muted'); }
   });
 
-  // Pre-warm audio context on first touch
-  document.addEventListener('touchstart', function initAudio() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-  }, { once: true });
-  document.addEventListener('click', function initAudio() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-  }, { once: true });
+  // Pre-warm audio context
+  document.addEventListener('touchstart', function init() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }, { once: true });
+  document.addEventListener('click', function init() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }, { once: true });
 
   console.log('🎂 Happy Birthday Angel! 🎂');
 })();
