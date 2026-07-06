@@ -128,6 +128,44 @@
     filter: drop-shadow(0 1px 2px rgba(212,175,55,0.2));
   }
 
+  /* ===== PHOTO FRAME ===== */
+  .photo-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -48%);
+    width: 200px;
+    height: 200px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .photo-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(212,175,55,0.5);
+    box-shadow: 0 0 20px rgba(212,175,55,0.15), 0 4px 15px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  .photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-ring {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: calc(100% + 20px);
+    height: calc(100% + 20px);
+    pointer-events: none;
+  }
+
   /* ===== WREATH SVG ===== */
   .wreath-svg {
     position: absolute;
@@ -362,6 +400,8 @@
     .card-container { width: 300px; height: 460px; }
     .front-name { font-size: 34px; }
     .front-birthday { font-size: 22px; }
+    .photo-frame { width: 160px; height: 160px; }
+    .photo-ring { top: -8px; left: -8px; width: calc(100% + 16px); height: calc(100% + 16px); }
     .message .greeting { font-size: 24px; }
     .message .body-text { font-size: 15px; }
     .message .rockstar-line { font-size: 28px; }
@@ -390,173 +430,27 @@
       <div class="front-sub-line">on your</div>
       <div class="front-birthday">Birthday</div>
 
-      <!-- Wreath SVG -->
-      <svg class="wreath-svg" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Double gold ring frame -->
-        <circle cx="150" cy="210" r="120" stroke="#d4af37" stroke-width="0.8" opacity="0.3"/>
-        <circle cx="150" cy="210" r="116" stroke="#d4af37" stroke-width="1.5" opacity="0.5"/>
-        <circle cx="150" cy="210" r="112" stroke="#d4af37" stroke-width="0.6" opacity="0.2"/>
-
-        <!-- === FLOWERS === -->
-
-        <!-- Top Right: Purple pansy -->
-        <g transform="translate(215, 130)">
-          <ellipse cx="-6" cy="-4" rx="10" ry="7" fill="#9b59b6" transform="rotate(-30)" opacity="0.9"/>
-          <ellipse cx="6" cy="-4" rx="10" ry="7" fill="#8e44ad" transform="rotate(30)" opacity="0.9"/>
-          <ellipse cx="0" cy="4" rx="8" ry="6" fill="#a569bd" opacity="0.85"/>
-          <circle cx="0" cy="0" r="4" fill="#f1c40f"/>
-        </g>
-
-        <!-- Top Right: Magenta hibiscus -->
-        <g transform="translate(240, 150)">
-          <ellipse cx="-8" cy="-2" rx="11" ry="6" fill="#c2185b" transform="rotate(-20)" opacity="0.85"/>
-          <ellipse cx="8" cy="-2" rx="11" ry="6" fill="#d81b60" transform="rotate(20)" opacity="0.85"/>
-          <ellipse cx="0" cy="6" rx="9" ry="5" fill="#ad1457" opacity="0.8"/>
-          <circle cx="0" cy="0" r="3" fill="#4a0e2e"/>
-        </g>
-
-        <!-- Right: White anemone -->
-        <g transform="translate(258, 200)">
-          <ellipse cx="-5" cy="-5" rx="9" ry="6" fill="#fff" transform="rotate(-45)" opacity="0.9"/>
-          <ellipse cx="5" cy="-5" rx="9" ry="6" fill="#fefefe" transform="rotate(45)" opacity="0.9"/>
-          <ellipse cx="0" cy="5" rx="8" ry="5" fill="#f5f5f5" opacity="0.85"/>
-          <circle cx="0" cy="0" r="3.5" fill="#2c3e50"/>
-          <!-- Gold stamens -->
-          <line x1="0" y1="0" x2="-3" y2="-5" stroke="#d4af37" stroke-width="0.5"/>
-          <line x1="0" y1="0" x2="3" y2="-4" stroke="#d4af37" stroke-width="0.5"/>
-          <line x1="0" y1="0" x2="0" y2="-5" stroke="#d4af37" stroke-width="0.5"/>
-        </g>
-
-        <!-- Bottom Right: Red berries -->
-        <g transform="translate(245, 268)">
-          <circle cx="-4" cy="-3" r="4" fill="#dc143c"/>
-          <circle cx="4" cy="-2" r="3.5" fill="#e74c3c"/>
-          <circle cx="0" cy="4" r="3.5" fill="#c0392b"/>
-          <circle cx="-7" cy="2" r="3" fill="#e74c3c"/>
-        </g>
-
-        <!-- Bottom Center: Large white anemone -->
-        <g transform="translate(150, 320)">
-          <ellipse cx="-7" cy="-6" rx="11" ry="7" fill="#fff" transform="rotate(-35)" opacity="0.95"/>
-          <ellipse cx="7" cy="-6" rx="11" ry="7" fill="#fefefe" transform="rotate(35)" opacity="0.95"/>
-          <ellipse cx="-8" cy="4" rx="10" ry="6" fill="#f8f8f8" transform="rotate(-70)" opacity="0.9"/>
-          <ellipse cx="8" cy="4" rx="10" ry="6" fill="#f5f5f5" transform="rotate(70)" opacity="0.9"/>
-          <circle cx="0" cy="0" r="4.5" fill="#2c3e50"/>
-          <line x1="0" y1="0" x2="-4" y2="-6" stroke="#d4af37" stroke-width="0.6"/>
-          <line x1="0" y1="0" x2="4" y2="-5" stroke="#d4af37" stroke-width="0.6"/>
-          <line x1="0" y1="0" x2="0" y2="-6" stroke="#d4af37" stroke-width="0.6"/>
-          <line x1="0" y1="0" x2="-3" y2="5" stroke="#d4af37" stroke-width="0.6"/>
-          <line x1="0" y1="0" x2="3" y2="4" stroke="#d4af37" stroke-width="0.6"/>
-        </g>
-
-        <!-- Bottom Left: Magenta flower -->
-        <g transform="translate(60, 290)">
-          <ellipse cx="-7" cy="-3" rx="10" ry="6" fill="#d81b60" transform="rotate(-25)" opacity="0.85"/>
-          <ellipse cx="7" cy="-3" rx="10" ry="6" fill="#c2185b" transform="rotate(25)" opacity="0.85"/>
-          <ellipse cx="0" cy="5" rx="8" ry="5" fill="#ad1457" opacity="0.8"/>
-          <circle cx="0" cy="0" r="3" fill="#f1c40f"/>
-        </g>
-
-        <!-- Left: Purple flower -->
-        <g transform="translate(40, 210)">
-          <ellipse cx="-4" cy="-5" rx="9" ry="6" fill="#a569bd" transform="rotate(-40)" opacity="0.9"/>
-          <ellipse cx="4" cy="-5" rx="9" ry="6" fill="#8e44ad" transform="rotate(40)" opacity="0.9"/>
-          <ellipse cx="0" cy="4" rx="7" ry="5" fill="#7d3c98" opacity="0.85"/>
-          <circle cx="0" cy="0" r="3" fill="#f39c12"/>
-        </g>
-
-        <!-- Top Left: White flower -->
-        <g transform="translate(60, 132)">
-          <ellipse cx="-5" cy="-4" rx="8" ry="5" fill="#fff" transform="rotate(-30)" opacity="0.9"/>
-          <ellipse cx="5" cy="-4" rx="8" ry="5" fill="#fefefe" transform="rotate(30)" opacity="0.9"/>
-          <ellipse cx="0" cy="4" rx="7" ry="4" fill="#f5f5f5" opacity="0.85"/>
-          <circle cx="0" cy="0" r="2.5" fill="#f1c40f"/>
-        </g>
-
-        <!-- === LEAVES === -->
-
-        <!-- Teal leaves - left -->
-        <g transform="translate(42, 170)">
-          <ellipse cx="0" cy="0" rx="12" ry="4" fill="#48d1cc" transform="rotate(-60)" opacity="0.6"/>
-          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#40c4c0" transform="rotate(-20)" opacity="0.5"/>
-        </g>
-        <g transform="translate(50, 250)">
-          <ellipse cx="0" cy="0" rx="11" ry="4" fill="#48d1cc" transform="rotate(30)" opacity="0.55"/>
-          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#40c4c0" transform="rotate(60)" opacity="0.5"/>
-        </g>
-        <!-- Teal leaves - right -->
-        <g transform="translate(250, 240)">
-          <ellipse cx="0" cy="0" rx="11" ry="3.5" fill="#48d1cc" transform="rotate(50)" opacity="0.55"/>
-          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#40c4c0" transform="rotate(10)" opacity="0.5"/>
-        </g>
-        <g transform="translate(240, 175)">
-          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#48d1cc" transform="rotate(-40)" opacity="0.55"/>
-        </g>
-
-        <!-- Green leaves -->
-        <g transform="translate(90, 110)">
-          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#7cb342" transform="rotate(40)" opacity="0.5"/>
-        </g>
-        <g transform="translate(210, 105)">
-          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#7cb342" transform="rotate(-30)" opacity="0.5"/>
-        </g>
-        <g transform="translate(260, 220)">
-          <ellipse cx="0" cy="0" rx="10" ry="3.5" fill="#7cb342" transform="rotate(70)" opacity="0.5"/>
-        </g>
-        <g transform="translate(45, 230)">
-          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#7cb342" transform="rotate(-50)" opacity="0.5"/>
-        </g>
-
-        <!-- Gold/olive leaves -->
-        <g transform="translate(100, 330)">
-          <ellipse cx="0" cy="0" rx="10" ry="3" fill="#c9a030" transform="rotate(-30)" opacity="0.45"/>
-        </g>
-        <g transform="translate(200, 325)">
-          <ellipse cx="0" cy="0" rx="9" ry="3" fill="#b8942e" transform="rotate(35)" opacity="0.45"/>
-        </g>
-        <g transform="translate(35, 195)">
-          <ellipse cx="0" cy="0" rx="8" ry="2.5" fill="#c9a030" transform="rotate(80)" opacity="0.4"/>
-        </g>
-        <g transform="translate(265, 195)">
-          <ellipse cx="0" cy="0" rx="8" ry="2.5" fill="#b8942e" transform="rotate(-80)" opacity="0.4"/>
-        </g>
-
-        <!-- Gold fern fronds -->
-        <g transform="translate(130, 95)" opacity="0.35">
-          <path d="M0,0 Q10,-8 20,-5 Q15,-3 10,-2 Q18,0 25,2 Q16,3 8,2 Q14,5 20,8 Q10,5 0,0Z" fill="#d4af37"/>
-        </g>
-        <g transform="translate(175, 330)" opacity="0.35">
-          <path d="M0,0 Q-10,8 -20,5 Q-15,3 -10,2 Q-18,0 -25,-2 Q-16,-3 -8,-2 Q-14,-5 -20,-8 Q-10,-5 0,0Z" fill="#d4af37"/>
-        </g>
-
-        <!-- === BUTTERFLIES === -->
-
-        <!-- Left butterfly -->
-        <g transform="translate(55, 155)" opacity="0.7">
-          <path d="M0,0 Q-8,-6 -10,-12 Q-6,-8 0,-4 Q6,-8 10,-12 Q8,-6 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
-          <path d="M0,0 Q-6,3 -8,8 Q-4,5 0,2 Q4,5 8,8 Q6,3 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
-          <line x1="0" y1="0" x2="-2" y2="-2" stroke="#d4af37" stroke-width="0.5"/>
-          <!-- Antennae -->
-          <path d="M-3,-10 Q-5,-14 -4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
-          <path d="M3,-10 Q5,-14 4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
-        </g>
-
-        <!-- Right butterfly -->
-        <g transform="translate(245, 185)" opacity="0.7">
-          <path d="M0,0 Q8,-6 10,-12 Q6,-8 0,-4 Q-6,-8 -10,-12 Q-8,-6 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
-          <path d="M0,0 Q6,3 8,8 Q4,5 0,2 Q-4,5 -8,8 Q-6,3 0,0Z" fill="none" stroke="#d4af37" stroke-width="0.8"/>
-          <line x1="0" y1="0" x2="2" y2="-2" stroke="#d4af37" stroke-width="0.5"/>
-          <path d="M-3,-10 Q-5,-14 -4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
-          <path d="M3,-10 Q5,-14 4,-16" stroke="#d4af37" stroke-width="0.4" fill="none"/>
-        </g>
-
-        <!-- Small buds -->
-        <circle cx="225" cy="285" r="3" fill="#e91e63" opacity="0.5"/>
-        <circle cx="80" cy="310" r="2.5" fill="#e91e63" opacity="0.45"/>
-        <circle cx="195" cy="100" r="2.5" fill="#e91e63" opacity="0.45"/>
-        <circle cx="100" cy="325" r="2" fill="#e91e63" opacity="0.4"/>
-        <circle cx="240" cy="255" r="2" fill="#9b59b6" opacity="0.4"/>
-      </svg>
+      <!-- Circular photo frame -->
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <img src="angel-photo.jpeg" alt="Angel" class="photo-img">
+        </div>
+        <!-- Gold ornamental ring -->
+        <svg class="photo-ring" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="93" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.6"/>
+          <circle cx="100" cy="100" r="97" fill="none" stroke="#d4af37" stroke-width="1" opacity="0.3" stroke-dasharray="3,4"/>
+          <!-- Small decorative diamonds around the ring -->
+          <polygon points="100,4 103,7 100,10 97,7" fill="#d4af37" opacity="0.5"/>
+          <polygon points="100,190 103,193 100,196 97,193" fill="#d4af37" opacity="0.5"/>
+          <polygon points="4,100 7,103 10,100 7,97" fill="#d4af37" opacity="0.5"/>
+          <polygon points="190,100 193,103 196,100 193,97" fill="#d4af37" opacity="0.5"/>
+          <!-- Corner diamonds -->
+          <polygon points="30,30 33,33 30,36 27,33" fill="#d4af37" opacity="0.4"/>
+          <polygon points="170,30 173,33 170,36 167,33" fill="#d4af37" opacity="0.4"/>
+          <polygon points="30,170 33,173 30,176 27,173" fill="#d4af37" opacity="0.4"/>
+          <polygon points="170,170 173,173 170,176 167,173" fill="#d4af37" opacity="0.4"/>
+        </svg>
+      </div>
 
       <!-- Gold sparkle dots -->
       <div class="gold-dot" style="top:12%;left:18%;animation-delay:0s;"></div>
