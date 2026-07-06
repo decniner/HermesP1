@@ -211,15 +211,13 @@
     100% { opacity: 0.9; transform: scale(1.3); }
   }
 
-  /* ===== INSIDE ===== */
+  /* ===== INSIDE / CAROUSEL ===== */
   .card-inside {
     background: linear-gradient(160deg, #fff8f0, #ffe8d6, #fff0e0);
     transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 35px 28px;
+    padding: 0;
     position: relative;
     overflow: hidden;
   }
@@ -230,100 +228,145 @@
     border: 2px solid rgba(212,175,55,0.25);
     border-radius: 10px;
     pointer-events: none;
+    z-index: 1;
   }
-  .inside-border-inner {
+
+  .carousel-header {
     position: absolute;
-    top: 14px; left: 14px; right: 14px; bottom: 14px;
-    border: 1px solid rgba(212,175,55,0.12);
+    top: 20px; left: 0; right: 0;
+    text-align: center;
+    font-size: 13px;
+    color: #c44e8a;
+    letter-spacing: 2px;
+    z-index: 5;
+    pointer-events: none;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.6s;
+  }
+  .card.open .carousel-header { opacity: 1; }
+
+  .carousel-track-wrap {
+    position: absolute;
+    top: 50px;
+    left: 14px;
+    right: 14px;
+    bottom: 48px;
+    overflow: hidden;
     border-radius: 8px;
+    z-index: 2;
+  }
+
+  .carousel-track {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    height: 100%;
+    scroll-behavior: smooth;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+
+  .carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 18px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .card.open .carousel-slide {
+    animation: slide-fade-in 0.6s ease forwards;
+  }
+  .carousel-slide:first-child { animation-delay: 0.3s; }
+  .carousel-slide:nth-child(2) { animation-delay: 0.35s; }
+  .carousel-slide:nth-child(3) { animation-delay: 0.4s; }
+  .carousel-slide:nth-child(4) { animation-delay: 0.45s; }
+  .carousel-slide:nth-child(5) { animation-delay: 0.5s; }
+  .carousel-slide:nth-child(6) { animation-delay: 0.55s; }
+  .carousel-slide:nth-child(7) { animation-delay: 0.6s; }
+
+  @keyframes slide-fade-in {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .slide-sender {
+    font-family: 'Georgia', serif;
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+    color: #c44e8a;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #c44e8a, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+
+  .slide-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c44e8a, #d4af37);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(196,78,138,0.3);
+  }
+
+  .slide-message {
+    font-family: 'Georgia', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4a4a4a;
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+  .slide-message .highlight {
+    color: #c44e8a;
+    font-weight: bold;
+  }
+
+  .slide-emoji {
+    font-size: 28px;
+    margin-top: 6px;
+  }
+
+  /* Carousel dots */
+  .carousel-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 5;
     pointer-events: none;
   }
-
-  .inside-decor-top {
-    position: absolute;
-    top: 18px; left: 0; right: 0;
-    text-align: center;
-    font-size: 16px;
-    color: #d4af37;
-    letter-spacing: 6px;
-    opacity: 0.4;
+  .carousel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(196,78,138,0.25);
+    transition: all 0.3s ease;
+    pointer-events: none;
   }
-
-  .message {
-    text-align: center;
-    position: relative;
-    z-index: 2;
-    opacity: 0;
-  }
-  .card.open .message {
-    animation: message-in 1.2s ease-out 0.4s forwards;
-  }
-  @keyframes message-in {
-    0% { opacity: 0; transform: translateY(30px) scale(0.9); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  .message .greeting {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 28px;
-    font-style: italic;
-    margin-bottom: 14px;
-    display: inline-block;
-    background: linear-gradient(180deg, #d4af37, #c9a030);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 1px;
-  }
-
-  .message .body-text {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 17px;
-    line-height: 1.8;
-    color: #4a4a4a;
-  }
-
-  .message .body-text .highlight {
-    display: inline;
-    background: linear-gradient(90deg, #ffd70022, #ff6b9d22);
-    padding: 0 4px;
-    border-radius: 2px;
-    font-weight: bold;
-    color: #c44e8a;
-  }
-
-  .message .rockstar-line {
-    margin: 12px 0 8px;
-    font-size: 36px;
-    display: inline-block;
-    background: linear-gradient(180deg, #d4af37, #c9a030, #b8942e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: rockstar-glow 1.8s ease-in-out infinite;
-  }
-  @keyframes rockstar-glow {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(212,175,55,0.3)); }
-    50% { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(212,175,55,0.5)); }
-  }
-
-  .message .signature {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 17px;
-    color: #8a6a7a;
-    margin-top: 15px;
-    font-style: italic;
-    letter-spacing: 1px;
-  }
-
-  .inside-decor-bottom {
-    position: absolute;
-    bottom: 18px; left: 0; right: 0;
-    text-align: center;
-    font-size: 14px;
-    color: #d4af37;
-    opacity: 0.35;
-    letter-spacing: 5px;
+  .carousel-dot.active {
+    background: #c44e8a;
+    width: 18px;
+    border-radius: 4px;
   }
 
   /* ===== BALLOONS ===== */
@@ -402,9 +445,13 @@
     .front-birthday { font-size: 22px; }
     .photo-frame { width: 160px; height: 160px; }
     .photo-ring { top: -8px; left: -8px; width: calc(100% + 16px); height: calc(100% + 16px); }
-    .message .greeting { font-size: 24px; }
-    .message .body-text { font-size: 15px; }
-    .message .rockstar-line { font-size: 28px; }
+    .carousel-track-wrap { top: 44px; bottom: 42px; }
+    .carousel-header { font-size: 11px; top: 16px; }
+    .slide-sender { font-size: 16px; }
+    .slide-message { font-size: 13px; }
+    .slide-avatar { width: 36px; height: 36px; font-size: 17px; }
+    .carousel-dot { width: 6px; height: 6px; }
+    .carousel-dot.active { width: 14px; }
   }
   @media (max-height: 600px) {
     .card-container { height: 380px; }
@@ -475,27 +522,80 @@
     <!-- ===== INSIDE ===== -->
     <div class="card-inside">
       <div class="inside-border"></div>
-      <div class="inside-border-inner"></div>
-      <div class="inside-decor-top">✦ ✦ ✦</div>
 
+      <div class="carousel-header">✦ Birthday Wishes ✦</div>
+
+      <div class="carousel-track-wrap">
+        <div class="carousel-track" id="carouselTrack">
+
+          <!-- 1. Dindo -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">😎</div>
+            <div class="slide-sender">Dindo</div>
+            <div class="slide-message">Happy birthday Angel!!! Enjoy your special day.</div>
+          </div>
+
+          <!-- 2. Dietrich -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">😄</div>
+            <div class="slide-sender">Dietrich</div>
+            <div class="slide-message">Happy happy Birthday Ate Angel !!! Enjoy and have blast! 🎉🥳🎂🎁😘</div>
+          </div>
+
+          <!-- 3. Tricia -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">🥰</div>
+            <div class="slide-sender">Tricia</div>
+            <div class="slide-message">Happy birthday ate Angel have a blast! Stay healthy and safe always 🥰❤️</div>
+          </div>
+
+          <!-- 4. Den -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">🤘</div>
+            <div class="slide-sender">Den</div>
+            <div class="slide-message">Wishing a very happy birthday to the woman who somehow manages to keep <span class="highlight">my brother</span> in line. You're a rockstar!</div>
+          </div>
+
+          <!-- 5. Chan -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">🙂</div>
+            <div class="slide-sender">Chan</div>
+            <div class="slide-message">Ate, happy happy birthday! Enjoy the day 🙂</div>
+          </div>
+
+          <!-- 6. Angel's Reply -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">💖</div>
+            <div class="slide-sender">Angel</div>
+            <div class="slide-message">Thank you all ❤️ You are all my favorite 🥰 I am already blessed to be in this Family 😘</div>
+          </div>
+
+          <!-- 7. Fe -->
+          <div class="carousel-slide">
+            <div class="slide-avatar">💕</div>
+            <div class="slide-sender">Fe</div>
+            <div class="slide-message">Happy bday ate angel, mag bday ka hanggat gusto mo! From all of us, we love you. 💖💖💖💖🥳🥳🥳🥳</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Dots -->
+      <div class="carousel-dots" id="carouselDots">
+        <span class="carousel-dot active"></span>
+        <span class="carousel-dot"></span>
+        <span class="carousel-dot"></span>
+        <span class="carousel-dot"></span>
+        <span class="carousel-dot"></span>
+        <span class="carousel-dot"></span>
+        <span class="carousel-dot"></span>
+      </div>
+
+      <!-- Balloons -->
       <div class="balloon" style="left:10%;--dur:6s;--delay:0.3s;">🎈</div>
       <div class="balloon" style="left:30%;--dur:7s;--delay:1.2s;">🎈</div>
       <div class="balloon" style="right:25%;--dur:8s;--delay:2.5s;">🎈</div>
       <div class="balloon" style="right:10%;--dur:6.5s;--delay:0.8s;">🎈</div>
-
-      <div class="message">
-        <div class="greeting">Dear Angel,</div>
-        <div class="body-text">
-          Wishing a very happy birthday to the woman who somehow manages to keep <span class="highlight">my brother</span> in line.
-        </div>
-        <div class="body-text" style="margin-top:8px;">
-          You're a
-        </div>
-        <div class="rockstar-line">🎸 ROCKSTAR! 🎸</div>
-        <div class="signature">— Den</div>
-      </div>
-
-      <div class="inside-decor-bottom">❤ ✿ ❤</div>
     </div>
   </div>
 </div>
@@ -513,7 +613,8 @@ function sM(){if(a){a.pause();a.currentTime=0}p=false}
 var cd=document.getElementById('card');var ct=document.getElementById('cardContainer');var o=false;var an=false;
 ct.addEventListener('click',function(e){if(an)return;an=true;if(!o){cd.classList.add('open');o=true;if(!p){pM();document.getElementById('musicBtn').classList.remove('muted')}setTimeout(function(){sC(50)},300);setTimeout(function(){sC(35)},800);setTimeout(function(){sC(40)},4000);setTimeout(function(){an=false},1300)}else{cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}});
 var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
-console.log('🎂 Happy Birthday Angel! 🎂')})();
+console.log('🎂 Happy Birthday Angel! 🎂')
+var t=document.getElementById('carouselTrack');var d=document.getElementById('carouselDots');if(t&&d){var D=d.children;t.addEventListener('scroll',function(){var i=Math.round(t.scrollLeft/t.clientWidth);for(var j=0;j<D.length;j++){D[j].className=j===i?'carousel-dot active':'carousel-dot'}})}})();
 </script>
 </body>
 </html>
