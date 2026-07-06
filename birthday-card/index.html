@@ -542,210 +542,36 @@
     }
   }
 
-  // ===== MUSIC (classical music box) =====
-  let audioCtx = null;
+  // ===== BACKGROUND MUSIC (HTML5 Audio) =====
+  let audioEl = null;
   let isPlaying = false;
-  let musicInterval = null;
 
-  const birthdayMelody = [
-    [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [698, 0.5], [660, 0.8],
-    [524, 0.3], [524, 0.3], [588, 0.5], [524, 0.5], [784, 0.5], [698, 0.8],
-    [524, 0.3], [524, 0.3], [1046, 0.5], [880, 0.5], [698, 0.5], [660, 0.5], [588, 0.5],
-    [988, 0.3], [988, 0.3], [880, 0.5], [698, 0.5], [784, 0.5], [698, 0.8]
-  ];
+  function initAudio() {
+    if (audioEl) return;
+    audioEl = new Audio('birthday-music.mp3');
+    audioEl.loop = true;
+    audioEl.volume = 0.7;
+    audioEl.preload = 'auto';
+    // Load it so it's ready when tapped
+    audioEl.load();
+  }
 
-  const chordProgression = [
-    [262, 'C', 0, 2],  [262, 'C', 2, 1], [349, 'F', 3, 1], [262, 'C', 4, 1], [392, 'G', 5, 1], [392, 'G7', 6, 1],
-    [262, 'C', 7, 2],  [262, 'C', 9, 1], [349, 'F', 10, 1], [262, 'C', 11, 1], [392, 'G7', 12, 1], [262, 'C', 13, 1],
-    [262, 'C', 14, 2], [262, 'C', 16, 1], [349, 'F', 17, 1], [262, 'C', 18, 1], [392, 'G7', 19, 1], [262, 'C', 20, 1], [392, 'G7', 21, 1],
-    [392, 'G7', 22, 2], [392, 'G7', 24, 1], [262, 'C', 25, 1], [349, 'F', 26, 1], [392, 'G7', 27, 1], [262, 'C', 28, 1]
-  ];
-
-  const chordIntervals = {
-    'C':  [0, 4, 7],
-    'F':  [0, 4, 7],
-    'G':  [0, 4, 7],
-    'G7': [0, 4, 7, 10]
-  };
-
-  function playChordChord(rootFreq, chordType, duration) {
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const intervals = chordIntervals[chordType];
-    if (!intervals) return;
-    intervals.forEach((semitone, idx) => {
-      const freq = rootFreq * Math.pow(2, semitone / 12);
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.035 - idx * 0.007, now + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.7);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + duration);
+  function playMusic() {
+    initAudio();
+    if (!audioEl) return;
+    audioEl.currentTime = 0;
+    audioEl.play().catch(function(e) {
+      console.log('Audio play blocked, waiting for user interaction');
     });
-  }
-
-  function playDescant(beatIndex, time) {
-    if (!audioCtx) return;
-    const descantNotes = {
-      1:  [1046, 0.12], 4:  [1174, 0.12], 7:  [1398, 0.12],
-      10: [1244, 0.12], 13: [1568, 0.12], 16: [1398, 0.12],
-      19: [1046, 0.12], 22: [1174, 0.12], 25: [1398, 0.12],
-    };
-    if (descantNotes[beatIndex]) {
-      const [freq, dur] = descantNotes[beatIndex];
-      const now = audioCtx.currentTime + time / 1000;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.025, now + 0.005);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + dur);
-    }
-  }
-
-  function playPad(rootFreq, duration) {
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const notes = [
-      rootFreq * 0.5,
-      rootFreq * 0.5 * Math.pow(2, 4/12),
-      rootFreq * 0.5 * Math.pow(2, 7/12)
-    ];
-    notes.forEach((freq) => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.02, now + 0.5);
-      gain.gain.setValueAtTime(0.02, now + duration * 0.6);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + duration);
-    });
-  }
-
-  function playNote(freq, duration) {
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-
-    // Main music box tine
-    const osc1 = audioCtx.createOscillator();
-    const gain1 = audioCtx.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(freq, now);
-    gain1.gain.setValueAtTime(0, now);
-    gain1.gain.linearRampToValueAtTime(0.30, now + 0.006);
-    gain1.gain.exponentialRampToValueAtTime(0.001, now + duration * 1.2);
-    osc1.connect(gain1);
-    gain1.connect(audioCtx.destination);
-    osc1.start(now);
-    osc1.stop(now + duration + 0.3);
-
-    // Octave shimmer
-    const osc2 = audioCtx.createOscillator();
-    const gain2 = audioCtx.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(freq * 2.01, now);
-    gain2.gain.setValueAtTime(0, now);
-    gain2.gain.linearRampToValueAtTime(0.06, now + 0.008);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.8);
-    osc2.connect(gain2);
-    gain2.connect(audioCtx.destination);
-    osc2.start(now);
-    osc2.stop(now + duration + 0.3);
-
-    // Metallic fifth harmonic
-    const osc3 = audioCtx.createOscillator();
-    const gain3 = audioCtx.createGain();
-    osc3.type = 'sine';
-    osc3.frequency.setValueAtTime(freq * 3.02, now);
-    gain3.gain.setValueAtTime(0, now);
-    gain3.gain.linearRampToValueAtTime(0.025, now + 0.005);
-    gain3.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.5);
-    osc3.connect(gain3);
-    gain3.connect(audioCtx.destination);
-    osc3.start(now);
-    osc3.stop(now + duration + 0.2);
-
-    // Mechanical pluck sound
-    const bufSize = audioCtx.sampleRate * 0.012;
-    const buffer = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 10);
-    }
-    const noise = audioCtx.createBufferSource();
-    noise.buffer = buffer;
-    const gainN = audioCtx.createGain();
-    gainN.gain.setValueAtTime(0.04, now);
-    gainN.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.setValueAtTime(4000, now);
-    noise.connect(filter);
-    filter.connect(gainN);
-    gainN.connect(audioCtx.destination);
-    noise.start(now);
-  }
-
-  function playMelody() {
-    if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    if (audioCtx.state === 'suspended') { audioCtx.resume(); }
     isPlaying = true;
-    const tempo = 0.38;
-
-    function playAll() {
-      let time = 0;
-      let chordIdx = 0;
-      let beatCount = 0;
-      const padRoot = 262;
-      playPad(padRoot, birthdayMelody.reduce((s, [,d]) => s + d, 0) * tempo + 2);
-
-      birthdayMelody.forEach(([freq, dur]) => {
-        const noteDur = dur * tempo;
-        setTimeout(() => playNote(freq, noteDur), time * 1000);
-
-        if (chordIdx < chordProgression.length) {
-          const [rFreq, cType, cStart, cLen] = chordProgression[chordIdx];
-          if (beatCount >= cStart + cLen) { chordIdx++; }
-          else if (beatCount === cStart) {
-            const chordDur = cLen * 0.5 * tempo + 0.4;
-            setTimeout(() => playChordChord(rFreq, cType, chordDur), time * 1000);
-            chordIdx++;
-          }
-        }
-
-        playDescant(beatCount, time * 1000);
-        time += noteDur + 0.05;
-        beatCount++;
-      });
-      return time;
-    }
-
-    let totalTime = playAll() * 1000 + 3000;
-    musicInterval = setTimeout(function loopFn() {
-      if (!isPlaying) return;
-      const t = playAll();
-      musicInterval = setTimeout(loopFn, t * 1000 + 3000);
-    }, totalTime);
   }
 
   function stopMusic() {
+    if (audioEl) {
+      audioEl.pause();
+      audioEl.currentTime = 0;
+    }
     isPlaying = false;
-    if (musicInterval) { clearTimeout(musicInterval); musicInterval = null; }
   }
 
   // ===== CARD OPEN/CLOSE =====
@@ -761,7 +587,7 @@
     if (!isOpen) {
       card.classList.add('open');
       isOpen = true;
-      if (!isPlaying) { playMelody(); document.getElementById('musicBtn').classList.remove('muted'); }
+      if (!isPlaying) { playMusic(); document.getElementById('musicBtn').classList.remove('muted'); }
       setTimeout(() => spawnConfetti(50), 300);
       setTimeout(() => spawnConfetti(35), 800);
       // Second confetti burst at end of song
@@ -779,12 +605,8 @@
   musicBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     if (isPlaying) { stopMusic(); musicBtn.classList.add('muted'); }
-    else { playMelody(); musicBtn.classList.remove('muted'); }
+    else { playMusic(); musicBtn.classList.remove('muted'); }
   });
-
-  // Pre-warm audio context
-  document.addEventListener('touchstart', function init() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }, { once: true });
-  document.addEventListener('click', function init() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }, { once: true });
 
   console.log('🎂 Happy Birthday Angel! 🎂');
 })();
