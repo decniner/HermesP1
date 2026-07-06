@@ -5,644 +5,176 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Happy Birthday Angel!</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(160deg,#fce4ec,#f8c8dc,#fce4ec,#f8d0e0);font-family:'Georgia','Times New Roman',serif;overflow:hidden;touch-action:manipulation}
+.book{position:relative;z-index:1;width:360px;height:520px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.15);overflow:hidden}
+.pages-wrap{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:16px}
+.pages{display:flex;height:100%;transition:transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);touch-action:none;user-select:none;-webkit-user-select:none}
+.page{flex:0 0 100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;position:relative;overflow:hidden}
+/* Page shadow */
+.page::after{content:'';position:absolute;top:0;left:0;bottom:0;width:8px;background:linear-gradient(to right,rgba(0,0,0,0.06),transparent);pointer-events:none;z-index:2}
+.page:first-child::after{display:none}
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(160deg, #fce4ec, #f8c8dc, #fce4ec, #f8d0e0);
-    font-family: 'Georgia', 'Times New Roman', serif;
-    overflow: hidden;
-    touch-action: manipulation;
-  }
+/* COVER PAGE */
+.page-cover{background:linear-gradient(160deg,#fce4ec,#fce8ee,#fce4ec);padding:28px 20px;justify-content:flex-start}
+.cover-texture{position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 30%,rgba(248,200,220,0.4) 0%,transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(248,200,220,0.3) 0%,transparent 50%),radial-gradient(circle at 50% 20%,rgba(255,255,255,0.3) 0%,transparent 40%);pointer-events:none}
+.cover-line{font-size:13px;color:#4a4a4a;letter-spacing:2px;position:relative;z-index:2;margin-top:12px}
+.cover-name{font-size:40px;font-weight:bold;font-style:italic;letter-spacing:2px;position:relative;z-index:2;background:linear-gradient(180deg,#d4af37,#c9a030,#b8942e,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 2px rgba(212,175,55,0.2))}
+.cover-bday{font-size:26px;font-weight:bold;font-style:italic;letter-spacing:3px;position:relative;z-index:2;background:linear-gradient(180deg,#d4af37,#c9a030,#b8942e,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 1px 2px rgba(212,175,55,0.2))}
+.photo-frame{position:relative;z-index:2;width:180px;height:180px;margin:10px 0;pointer-events:none}
+.photo-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;border:3px solid rgba(212,175,55,0.5);box-shadow:0 0 20px rgba(212,175,55,0.15),0 4px 15px rgba(0,0,0,0.1)}
+.photo-img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-swipe{font-size:11px;color:#a08090;letter-spacing:2px;position:absolute;bottom:16px;z-index:3;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 
-  /* ===== CARD CONTAINER ===== */
-  .card-container {
-    position: relative;
-    z-index: 1;
-    width: 360px;
-    height: 520px;
-    perspective: 1200px;
-    cursor: pointer;
-  }
+/* MESSAGE PAGES */
+.page-msg{background:linear-gradient(160deg,#fff8f0,#ffe8d6,#fff0e0)}
+.msg-border{position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:2px solid rgba(212,175,55,0.25);border-radius:10px;pointer-events:none}
+.msg-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#c44e8a,#d4af37);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px;color:#fff;box-shadow:0 3px 10px rgba(196,78,138,0.3);position:relative;z-index:2}
+.msg-sender{font-size:20px;font-weight:bold;font-style:italic;background:linear-gradient(90deg,#c44e8a,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;position:relative;z-index:2}
+.msg-text{font-size:16px;line-height:1.7;color:#4a4a4a;text-align:center;max-width:100%;word-wrap:break-word;position:relative;z-index:2}
+.msg-text .hl{color:#c44e8a;font-weight:bold}
 
-  .card {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15),
-                0 0 0 1px rgba(212,175,55,0.15);
-  }
-  .card.open { transform: rotateY(-180deg); }
+/* NAV DOTS */
+.dots{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:10;pointer-events:none}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(196,78,138,0.25);transition:all 0.3s ease}
+.dot.on{background:#c44e8a;width:16px;border-radius:3px}
 
-  .card-front, .card-inside {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    backface-visibility: hidden;
-    border-radius: 16px;
-    overflow: hidden;
-  }
+/* MUSIC BTN */
+.music-btn{position:fixed;bottom:22px;right:22px;z-index:200;width:44px;height:44px;border-radius:50%;border:2px solid rgba(212,175,55,0.3);background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#d4af37;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;touch-action:manipulation}
+.music-btn.muted{opacity:0.4}
+.music-btn:not(.muted) .note{animation:spin 3s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-  /* ===== FRONT COVER ===== */
-  .card-front {
-    background: linear-gradient(160deg, #fce4ec, #fce8ee, #fce4ec);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 28px 20px 20px;
-    position: relative;
-  }
+/* FLOATERS */
+.floaters{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:50}
+.floater{position:absolute;opacity:0;animation:ffloat var(--fd) ease-in-out var(--fdelay) infinite}
+@keyframes ffloat{0%{transform:translateY(100vh) scale(0);opacity:0}20%{opacity:0.4;transform:translateY(75vh) scale(1)}100%{transform:translateY(-10vh) scale(0.3);opacity:0}}
 
-  /* Subtle watercolor texture overlay */
-  .front-texture {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      radial-gradient(ellipse at 20% 30%, rgba(248,200,220,0.4) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, rgba(248,200,220,0.3) 0%, transparent 50%),
-      radial-gradient(circle at 50% 20%, rgba(255,255,255,0.3) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: 0;
-  }
+/* CONFETTI */
+.confetti{position:fixed;width:8px;height:8px;top:-20px;pointer-events:none;z-index:100;opacity:0}
+.confetti.fall{animation:cfal var(--fd) ease-in forwards}
+@keyframes cfal{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
 
-  /* ===== TOP TEXT ===== */
-  .front-top-line {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 13px;
-    color: #4a4a4a;
-    letter-spacing: 2px;
-    text-transform: lowercase;
-    position: relative;
-    z-index: 2;
-    margin-top: 5px;
-  }
-
-  .front-name {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 42px;
-    font-weight: bold;
-    font-style: italic;
-    letter-spacing: 2px;
-    position: relative;
-    z-index: 2;
-    margin-top: 2px;
-    background: linear-gradient(180deg, #d4af37 0%, #c9a030 30%, #b8942e 60%, #d4af37 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 20px rgba(212,175,55,0.3), 0 0 40px rgba(212,175,55,0.1);
-    filter: drop-shadow(0 1px 2px rgba(212,175,55,0.2));
-  }
-
-  .front-sub-line {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 13px;
-    color: #4a4a4a;
-    letter-spacing: 2px;
-    text-transform: lowercase;
-    position: relative;
-    z-index: 2;
-    margin-top: 2px;
-  }
-
-  .front-birthday {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 28px;
-    font-weight: bold;
-    font-style: italic;
-    letter-spacing: 3px;
-    position: relative;
-    z-index: 2;
-    margin-top: 0px;
-    background: linear-gradient(180deg, #d4af37 0%, #c9a030 30%, #b8942e 60%, #d4af37 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 1px 2px rgba(212,175,55,0.2));
-  }
-
-  /* ===== PHOTO FRAME ===== */
-  .photo-frame {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -48%);
-    width: 200px;
-    height: 200px;
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  .photo-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid rgba(212,175,55,0.5);
-    box-shadow: 0 0 20px rgba(212,175,55,0.15), 0 4px 15px rgba(0,0,0,0.1);
-    position: relative;
-  }
-
-  .photo-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .photo-ring {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    width: calc(100% + 20px);
-    height: calc(100% + 20px);
-    pointer-events: none;
-  }
-
-  /* ===== WREATH SVG ===== */
-  .wreath-svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -48%);
-    width: 92%;
-    height: 92%;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  /* ===== TAP HINT ===== */
-  .tap-hint {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Georgia', serif;
-    font-size: 11px;
-    color: #a08090;
-    letter-spacing: 3px;
-    z-index: 3;
-    animation: pulse-tap 2s ease-in-out infinite;
-  }
-  @keyframes pulse-tap {
-    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
-  }
-
-  /* ===== GOLD SPARKLE DOTS ===== */
-  .gold-dot {
-    position: absolute;
-    width: 4px; height: 4px;
-    background: #d4af37;
-    border-radius: 50%;
-    z-index: 2;
-    pointer-events: none;
-    animation: dot-twinkle 2.5s ease-in-out infinite alternate;
-  }
-  @keyframes dot-twinkle {
-    0% { opacity: 0.1; transform: scale(0.5); }
-    100% { opacity: 0.9; transform: scale(1.3); }
-  }
-
-  /* ===== INSIDE / CAROUSEL ===== */
-  .card-inside {
-    background: linear-gradient(160deg, #fff8f0, #ffe8d6, #fff0e0);
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .inside-border {
-    position: absolute;
-    top: 10px; left: 10px; right: 10px; bottom: 10px;
-    border: 2px solid rgba(212,175,55,0.25);
-    border-radius: 10px;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .carousel-header {
-    position: absolute;
-    top: 20px; left: 0; right: 0;
-    text-align: center;
-    font-size: 13px;
-    color: #c44e8a;
-    letter-spacing: 2px;
-    z-index: 5;
-    pointer-events: none;
-    font-style: italic;
-    opacity: 0;
-    transition: opacity 0.8s ease 0.6s;
-  }
-  .card.open .carousel-header { opacity: 1; }
-
-  .close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(196,78,138,0.15);
-    border: 1px solid rgba(196,78,138,0.2);
-    color: #c44e8a;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.6s ease 0.8s, background 0.2s;
-    touch-action: manipulation;
-  }
-  .card.open .close-btn { opacity: 1; }
-  .close-btn:active { background: rgba(196,78,138,0.3); }
-
-  .carousel-track-wrap {
-    position: absolute;
-    top: 50px;
-    left: 14px;
-    right: 14px;
-    bottom: 48px;
-    border-radius: 8px;
-    z-index: 2;
-    overflow: hidden;
-  }
-
-  .carousel-track {
-    display: flex;
-    height: 100%;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  .carousel-slide {
-    flex: 0 0 100%;
-    scroll-snap-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 18px;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-  }
-  .card.open .carousel-slide {
-    animation: slide-fade-in 0.6s ease forwards;
-  }
-  .carousel-slide:first-child { animation-delay: 0.3s; }
-  .carousel-slide:nth-child(2) { animation-delay: 0.35s; }
-  .carousel-slide:nth-child(3) { animation-delay: 0.4s; }
-  .carousel-slide:nth-child(4) { animation-delay: 0.45s; }
-  .carousel-slide:nth-child(5) { animation-delay: 0.5s; }
-  .carousel-slide:nth-child(6) { animation-delay: 0.55s; }
-  .carousel-slide:nth-child(7) { animation-delay: 0.6s; }
-
-  @keyframes slide-fade-in {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-
-  .slide-sender {
-    font-family: 'Georgia', serif;
-    font-size: 18px;
-    font-weight: bold;
-    font-style: italic;
-    color: #c44e8a;
-    margin-bottom: 8px;
-    background: linear-gradient(90deg, #c44e8a, #d4af37);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 1px;
-  }
-
-  .slide-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #c44e8a, #d4af37);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    margin-bottom: 8px;
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(196,78,138,0.3);
-  }
-
-  .slide-message {
-    font-family: 'Georgia', serif;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #4a4a4a;
-    max-width: 100%;
-    word-wrap: break-word;
-  }
-  .slide-message .highlight {
-    color: #c44e8a;
-    font-weight: bold;
-  }
-
-  .slide-emoji {
-    font-size: 28px;
-    margin-top: 6px;
-  }
-
-  /* Carousel dots */
-  .carousel-dots {
-    position: absolute;
-    bottom: 16px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    z-index: 5;
-    pointer-events: none;
-  }
-  .carousel-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(196,78,138,0.25);
-    transition: all 0.3s ease;
-    pointer-events: none;
-  }
-  .carousel-dot.active {
-    background: #c44e8a;
-    width: 18px;
-    border-radius: 4px;
-  }
-
-  /* ===== BALLOONS ===== */
-  .balloon {
-    position: absolute;
-    font-size: 26px;
-    opacity: 0;
-  }
-  .card.open .balloon {
-    animation: balloon-rise var(--dur) ease-in var(--delay) infinite;
-  }
-  @keyframes balloon-rise {
-    0% { transform: translateY(80px) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.7; }
-    85% { opacity: 0.7; }
-    100% { transform: translateY(-220px) rotate(12deg); opacity: 0; }
-  }
-
-  /* ===== CONFETTI ===== */
-  .confetti-piece {
-    position: fixed; width: 10px; height: 10px;
-    top: -20px; pointer-events: none; z-index: 100; opacity: 0;
-  }
-  .confetti-piece.fall {
-    animation: confetti-fall var(--fall-dur) ease-in forwards;
-  }
-  @keyframes confetti-fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-  }
-
-  /* ===== FLOATERS ===== */
-  .floaters {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none; z-index: 50;
-  }
-  .floater {
-    position: absolute; font-size: 18px; opacity: 0;
-    animation: floater-float var(--fd) ease-in-out var(--fdelay) infinite;
-  }
-  @keyframes floater-float {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    20% { opacity: 0.5; transform: translateY(75vh) scale(1); }
-    100% { transform: translateY(-10vh) scale(0.4); opacity: 0; }
-  }
-
-  /* ===== MUSIC TOGGLE ===== */
-  .music-btn {
-    position: fixed; bottom: 25px; right: 25px;
-    z-index: 200; width: 50px; height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(212,175,55,0.3);
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    color: #d4af37; font-size: 22px;
-    cursor: pointer; display: flex;
-    align-items: center; justify-content: center;
-    transition: all 0.3s ease; touch-action: manipulation;
-  }
-  .music-btn:hover, .music-btn:active {
-    background: rgba(255,255,255,0.25);
-    border-color: rgba(212,175,55,0.5);
-  }
-  .music-btn.muted { opacity: 0.4; }
-  .music-btn:not(.muted) .note-icon {
-    animation: note-spin 3s linear infinite;
-  }
-  @keyframes note-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  @media (max-width: 420px) {
-    .card-container { width: 300px; height: 460px; }
-    .front-name { font-size: 34px; }
-    .front-birthday { font-size: 22px; }
-    .photo-frame { width: 160px; height: 160px; }
-    .photo-ring { top: -8px; left: -8px; width: calc(100% + 16px); height: calc(100% + 16px); }
-    .carousel-track-wrap { top: 44px; bottom: 42px; }
-    .carousel-header { font-size: 11px; top: 16px; }
-    .slide-sender { font-size: 16px; }
-    .slide-message { font-size: 13px; }
-    .slide-avatar { width: 36px; height: 36px; font-size: 17px; }
-    .carousel-dot { width: 6px; height: 6px; }
-    .carousel-dot.active { width: 14px; }
-  }
-  @media (max-height: 600px) {
-    .card-container { height: 380px; }
-    .message .body-text { font-size: 14px; line-height: 1.5; }
-  }
+@media(max-width:420px){
+.book{width:300px;height:460px}
+.cover-name{font-size:32px}
+.cover-bday{font-size:20px}
+.photo-frame{width:155px;height:155px}
+.msg-text{font-size:14px}
+.msg-avatar{width:40px;height:40px;font-size:20px}
+.dot{width:5px;height:5px}
+.dot.on{width:13px}
+}
+@media(max-height:600px){
+.book{height:380px}
+.msg-text{font-size:13px;line-height:1.5}
+}
 </style>
 </head>
 <body>
 
-<!-- Floaters -->
 <div class="floaters" id="floaters"></div>
 
-<!-- Card -->
-<div class="card-container" id="cardContainer">
-  <div class="card" id="card">
+<div class="book" id="book">
+  <div class="pages-wrap">
+    <div class="pages" id="pages">
 
-    <!-- ===== FRONT ===== -->
-    <div class="card-front">
-      <div class="front-texture"></div>
-
-      <div class="front-top-line">to a fantastic</div>
-      <div class="front-name">Angel</div>
-      <div class="front-sub-line">on your</div>
-      <div class="front-birthday">Birthday</div>
-
-      <!-- Circular photo frame -->
-      <div class="photo-frame">
-        <div class="photo-inner">
-          <img src="angel-photo.jpeg" alt="Angel" class="photo-img">
+      <!-- PAGE 0: COVER -->
+      <div class="page page-cover">
+        <div class="cover-texture"></div>
+        <div class="cover-line">to a fantastic</div>
+        <div class="cover-name">Angel</div>
+        <div class="cover-line">on your</div>
+        <div class="cover-bday">Birthday</div>
+        <div class="photo-frame">
+          <div class="photo-inner"><img src="angel-photo.jpeg" alt="Angel" class="photo-img"></div>
         </div>
-        <!-- Gold ornamental ring -->
-        <svg class="photo-ring" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="93" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.6"/>
-          <circle cx="100" cy="100" r="97" fill="none" stroke="#d4af37" stroke-width="1" opacity="0.3" stroke-dasharray="3,4"/>
-          <!-- Small decorative diamonds around the ring -->
-          <polygon points="100,4 103,7 100,10 97,7" fill="#d4af37" opacity="0.5"/>
-          <polygon points="100,190 103,193 100,196 97,193" fill="#d4af37" opacity="0.5"/>
-          <polygon points="4,100 7,103 10,100 7,97" fill="#d4af37" opacity="0.5"/>
-          <polygon points="190,100 193,103 196,100 193,97" fill="#d4af37" opacity="0.5"/>
-          <!-- Corner diamonds -->
-          <polygon points="30,30 33,33 30,36 27,33" fill="#d4af37" opacity="0.4"/>
-          <polygon points="170,30 173,33 170,36 167,33" fill="#d4af37" opacity="0.4"/>
-          <polygon points="30,170 33,173 30,176 27,173" fill="#d4af37" opacity="0.4"/>
-          <polygon points="170,170 173,173 170,176 167,173" fill="#d4af37" opacity="0.4"/>
-        </svg>
+        <div class="cover-swipe">✦ swipe to open ✦</div>
       </div>
 
-      <!-- Gold sparkle dots -->
-      <div class="gold-dot" style="top:12%;left:18%;animation-delay:0s;"></div>
-      <div class="gold-dot" style="top:8%;right:25%;animation-delay:0.6s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:20%;left:8%;animation-delay:1.2s;"></div>
-      <div class="gold-dot" style="top:15%;right:10%;animation-delay:0.3s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:40%;left:5%;animation-delay:0.9s;"></div>
-      <div class="gold-dot" style="top:55%;right:4%;animation-delay:1.5s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:70%;left:6%;animation-delay:0.4s;"></div>
-      <div class="gold-dot" style="top:82%;right:12%;animation-delay:1.1s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:78%;left:15%;animation-delay:1.8s;"></div>
-      <div class="gold-dot" style="top:45%;right:8%;animation-delay:0.2s;"></div>
-      <div class="gold-dot" style="top:25%;left:22%;animation-delay:0.7s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:88%;left:40%;animation-delay:1.3s;"></div>
-      <div class="gold-dot" style="top:10%;left:45%;animation-delay:0.5s;width:3px;height:3px;"></div>
-      <div class="gold-dot" style="top:60%;right:5%;animation-delay:1.6s;"></div>
-      <div class="gold-dot" style="top:35%;right:18%;animation-delay:0.8s;"></div>
+      <!-- PAGE 1: Dindo -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">😎</div>
+        <div class="msg-sender">Dindo</div>
+        <div class="msg-text">Happy birthday Angel!!!<br>Enjoy your special day.</div>
+      </div>
 
-      <div class="tap-hint">✦ tap to open ✦</div>
+      <!-- PAGE 2: Dietrich -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">😄</div>
+        <div class="msg-sender">Dietrich</div>
+        <div class="msg-text">Happy happy Birthday Ate Angel !!!<br>Enjoy and have blast! 🎉🥳🎂🎁😘</div>
+      </div>
+
+      <!-- PAGE 3: Tricia -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">🥰</div>
+        <div class="msg-sender">Tricia</div>
+        <div class="msg-text">Happy birthday ate Angel have a blast! Stay healthy and safe always 🥰❤️</div>
+      </div>
+
+      <!-- PAGE 4: Den -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">🤘</div>
+        <div class="msg-sender">Den</div>
+        <div class="msg-text">Wishing a very happy birthday to the woman who somehow manages to keep <span class="hl">my brother</span> in line. You're a rockstar!</div>
+      </div>
+
+      <!-- PAGE 5: Chan -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">🙂</div>
+        <div class="msg-sender">Chan</div>
+        <div class="msg-text">Ate, happy happy birthday!<br>Enjoy the day 🙂</div>
+      </div>
+
+      <!-- PAGE 6: Angel -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">💖</div>
+        <div class="msg-sender">Angel</div>
+        <div class="msg-text">Thank you all ❤️<br>You are all my favorite 🥰<br>I am already blessed to be in this Family 😘</div>
+      </div>
+
+      <!-- PAGE 7: Fe -->
+      <div class="page page-msg">
+        <div class="msg-border"></div>
+        <div class="msg-avatar">💕</div>
+        <div class="msg-sender">Fe</div>
+        <div class="msg-text">Happy bday ate angel, mag bday ka hanggat gusto mo!<br>From all of us, we love you. 💖💖💖💖🥳🥳🥳🥳</div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- ===== INSIDE ===== -->
-    <div class="card-inside">
-      <div class="inside-border"></div>
-
-      <div class="carousel-header">✦ Birthday Wishes ✦</div>
-
-      <div class="close-btn" id="closeBtn">✕</div>
-
-      <div class="carousel-track-wrap">
-        <div class="carousel-track" id="carouselTrack">
-
-          <!-- 1. Dindo -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">😎</div>
-            <div class="slide-sender">Dindo</div>
-            <div class="slide-message">Happy birthday Angel!!! Enjoy your special day.</div>
-          </div>
-
-          <!-- 2. Dietrich -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">😄</div>
-            <div class="slide-sender">Dietrich</div>
-            <div class="slide-message">Happy happy Birthday Ate Angel !!! Enjoy and have blast! 🎉🥳🎂🎁😘</div>
-          </div>
-
-          <!-- 3. Tricia -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">🥰</div>
-            <div class="slide-sender">Tricia</div>
-            <div class="slide-message">Happy birthday ate Angel have a blast! Stay healthy and safe always 🥰❤️</div>
-          </div>
-
-          <!-- 4. Den -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">🤘</div>
-            <div class="slide-sender">Den</div>
-            <div class="slide-message">Wishing a very happy birthday to the woman who somehow manages to keep <span class="highlight">my brother</span> in line. You're a rockstar!</div>
-          </div>
-
-          <!-- 5. Chan -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">🙂</div>
-            <div class="slide-sender">Chan</div>
-            <div class="slide-message">Ate, happy happy birthday! Enjoy the day 🙂</div>
-          </div>
-
-          <!-- 6. Angel's Reply -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">💖</div>
-            <div class="slide-sender">Angel</div>
-            <div class="slide-message">Thank you all ❤️ You are all my favorite 🥰 I am already blessed to be in this Family 😘</div>
-          </div>
-
-          <!-- 7. Fe -->
-          <div class="carousel-slide">
-            <div class="slide-avatar">💕</div>
-            <div class="slide-sender">Fe</div>
-            <div class="slide-message">Happy bday ate angel, mag bday ka hanggat gusto mo! From all of us, we love you. 💖💖💖💖🥳🥳🥳🥳</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Dots -->
-      <div class="carousel-dots" id="carouselDots">
-        <span class="carousel-dot active"></span>
-        <span class="carousel-dot"></span>
-        <span class="carousel-dot"></span>
-        <span class="carousel-dot"></span>
-        <span class="carousel-dot"></span>
-        <span class="carousel-dot"></span>
-        <span class="carousel-dot"></span>
-      </div>
-
-      <!-- Balloons -->
-      <div class="balloon" style="left:10%;--dur:6s;--delay:0.3s;">🎈</div>
-      <div class="balloon" style="left:30%;--dur:7s;--delay:1.2s;">🎈</div>
-      <div class="balloon" style="right:25%;--dur:8s;--delay:2.5s;">🎈</div>
-      <div class="balloon" style="right:10%;--dur:6.5s;--delay:0.8s;">🎈</div>
-    </div>
+  <!-- Dots -->
+  <div class="dots" id="dots">
+    <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
   </div>
 </div>
 
-<button class="music-btn" id="musicBtn">
-  <span class="note-icon">🎵</span>
-</button>
+<button class="music-btn muted" id="musicBtn"><span class="note">🎵</span></button>
 
 <script>
 (function(){'use strict';
 var f=document.getElementById('floaters');var e=['❤️','✨','🌟','💖','⭐','💕','🌸','🎉'];
-for(var i=0;i<25;i++){var c=document.createElement('div');c.className='floater';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'%';c.style.fontSize=(Math.random()*14+12)+'px';c.style.setProperty('--fd',(Math.random()*8+6)+'s');c.style.setProperty('--fdelay',(Math.random()*10+2)+'s');f.appendChild(c)}
-function sC(n){var C=['#d4af37','#ff6b9d','#c9a030','#9b59b6','#48d1cc','#ffdd59'];for(var i=0;i<n;i++){var e=document.createElement('div');e.className='confetti-piece';var sz=Math.random()*7+4;e.style.width=sz+'px';e.style.height=sz*(Math.random()*0.5+0.5)+'px';e.style.background=C[i%C.length];e.style.left=Math.random()*100+'%';e.style.borderRadius=Math.random()>0.5?'50%':'2px';e.style.setProperty('--fall-dur',(Math.random()*2+2)+'s');e.style.animationDelay=Math.random()*0.8+'s';document.body.appendChild(e);requestAnimationFrame(function(){e.classList.add('fall')});setTimeout(function(){if(e.parentNode)e.parentNode.removeChild(e)},5000)}}
+for(var i=0;i<20;i++){var c=document.createElement('div');c.className='floater';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'%';c.style.fontSize=(Math.random()*14+12)+'px';c.style.setProperty('--fd',(Math.random()*8+6)+'s');c.style.setProperty('--fdelay',(Math.random()*10+2)+'s');f.appendChild(c)}
+function sC(n){var C=['#d4af37','#ff6b9d','#c9a030','#9b59b6','#48d1cc','#ffdd59'];for(var i=0;i<n;i++){var e=document.createElement('div');e.className='confetti';var sz=Math.random()*7+4;e.style.width=sz+'px';e.style.height=sz*(Math.random()*0.5+0.5)+'px';e.style.background=C[i%C.length];e.style.left=Math.random()*100+'%';e.style.borderRadius=Math.random()>0.5?'50%':'2px';e.style.setProperty('--fd',(Math.random()*2+2)+'s');e.style.animationDelay=Math.random()*0.8+'s';document.body.appendChild(e);requestAnimationFrame(function(){e.classList.add('fall')});setTimeout(function(){if(e.parentNode)e.parentNode.removeChild(e)},5000)}}
 var a=null;var p=false;function iA(){if(a)return;a=new Audio('birthday-music.mp3');a.loop=true;a.volume=0.7;a.preload='auto';a.load()}
 function pM(){iA();if(!a)return;a.currentTime=0;a.play()['catch'](function(){});p=true}
 function sM(){if(a){a.pause();a.currentTime=0}p=false}
-var cd=document.getElementById('card');var ct=document.getElementById('cardContainer');var o=false;var an=false;
-ct.addEventListener('click',function(e){if(an)return;an=true;if(!o){cd.classList.add('open');o=true;if(!p){pM();document.getElementById('musicBtn').classList.remove('muted')}setTimeout(function(){sC(50)},300);setTimeout(function(){sC(35)},800);setTimeout(function(){sC(40)},4000);setTimeout(function(){an=false},1300)}else{cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}});
-var cb=document.getElementById('closeBtn');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();if(o&&!an){an=true;cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}})}
 var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
-var tr=document.getElementById('carouselTrack');var dc=document.getElementById('carouselDots');var D=dc?dc.children:[];var si=0;var tl=D.length||7;var sx=0;var cx=0;var dr=false;
-function go(n){si=Math.max(0,Math.min(n,tl-1));tr.style.transform='translateX(-'+(si*100)+'%)';for(var j=0;j<D.length;j++){D[j].className=j===si?'carousel-dot active':'carousel-dot'}}
+var tr=document.getElementById('pages');var dc=document.getElementById('dots');var D=dc?dc.children:[];var si=0;var tl=8;var sx=0;var cx=0;var dr=false;
+function go(n){si=Math.max(0,Math.min(n,tl-1));tr.style.transform='translateX(-'+(si*100)+'%)';for(var j=0;j<D.length;j++){D[j].className=j===si?'dot on':'dot'}if(si>0&&!p){pM();mb.classList.remove('muted')}if(si>0){sC(20)}}
 function ss(e){sx=e.touches?e.touches[0].clientX:e.clientX;dr=true;tr.style.transition='none';e.stopPropagation()}
 function sm(e){if(!dr)return;cx=e.touches?e.touches[0].clientX:e.clientX;var df=cx-sx;var p=(-si*tr.clientWidth+df)/tr.clientWidth*100;tr.style.transform='translateX('+p+'%)'}
-function se(e){if(!dr)return;dr=false;tr.style.transition='transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';var df=cx-sx;if(df>40)go(si+1);else if(df<-40)go(si-1);else go(si)}
+function se(e){if(!dr)return;dr=false;tr.style.transition='transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';var df=cx-sx;if(df>50)go(si+1);else if(df<-50)go(si-1);else go(si)}
 if(tr){tr.addEventListener('touchstart',ss);tr.addEventListener('touchmove',sm);tr.addEventListener('touchend',se);tr.addEventListener('mousedown',ss);tr.addEventListener('mousemove',sm);tr.addEventListener('mouseup',se);tr.addEventListener('mouseleave',se)}
 go(0);console.log('🎂')})();
 </script>
