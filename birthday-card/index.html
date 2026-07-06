@@ -642,7 +642,7 @@ var tr=document.getElementById('carouselTrack');var dc=document.getElementById('
 function go(n){si=Math.max(0,Math.min(n,tl-1));tr.style.transform='translateX(-'+(si*100)+'%)';for(var j=0;j<D.length;j++){D[j].className=j===si?'carousel-dot active':'carousel-dot'}}
 function ss(e){sx=e.touches?e.touches[0].clientX:e.clientX;dr=true;tr.style.transition='none';e.stopPropagation()}
 function sm(e){if(!dr)return;cx=e.touches?e.touches[0].clientX:e.clientX;var df=cx-sx;var p=(-si*tr.clientWidth+df)/tr.clientWidth*100;tr.style.transform='translateX('+p+'%)'}
-function se(e){if(!dr)return;dr=false;tr.style.transition='transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';var df=cx-sx;if(df<-40)go(si+1);else if(df>40)go(si-1);else go(si)}
+function se(e){if(!dr)return;dr=false;tr.style.transition='transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';var df=cx-sx;if(df>40)go(si+1);else if(df<-40)go(si-1);else go(si)}
 if(tr){tr.addEventListener('touchstart',ss);tr.addEventListener('touchmove',sm);tr.addEventListener('touchend',se);tr.addEventListener('mousedown',ss);tr.addEventListener('mousemove',sm);tr.addEventListener('mouseup',se);tr.addEventListener('mouseleave',se)}
 go(0);console.log('🎂')})();
 </script>
