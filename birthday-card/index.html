@@ -275,23 +275,19 @@
     left: 14px;
     right: 14px;
     bottom: 48px;
-    overflow: hidden;
     border-radius: 8px;
     z-index: 2;
+    overflow: hidden;
   }
 
   .carousel-track {
     display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
     height: 100%;
-    scroll-behavior: smooth;
-    touch-action: pan-x;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .carousel-track::-webkit-scrollbar { display: none; }
 
   .carousel-slide {
     flex: 0 0 100%;
@@ -638,11 +634,15 @@ function pM(){iA();if(!a)return;a.currentTime=0;a.play()['catch'](function(){});
 function sM(){if(a){a.pause();a.currentTime=0}p=false}
 var cd=document.getElementById('card');var ct=document.getElementById('cardContainer');var o=false;var an=false;
 ct.addEventListener('click',function(e){if(an)return;an=true;if(!o){cd.classList.add('open');o=true;if(!p){pM();document.getElementById('musicBtn').classList.remove('muted')}setTimeout(function(){sC(50)},300);setTimeout(function(){sC(35)},800);setTimeout(function(){sC(40)},4000);setTimeout(function(){an=false},1300)}else{cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}});
-var cr=document.getElementById('carouselTrack');if(cr){cr.addEventListener('touchstart',function(e){e.stopPropagation()});cr.addEventListener('click',function(e){e.stopPropagation()})}
-var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
 var cb=document.getElementById('closeBtn');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();if(o&&!an){an=true;cd.classList.remove('open');o=false;setTimeout(function(){an=false},1300)}})}
-console.log('🎂 Happy Birthday Angel! 🎂')
-var t=document.getElementById('carouselTrack');var d=document.getElementById('carouselDots');if(t&&d){var D=d.children;t.addEventListener('scroll',function(){var i=Math.round(t.scrollLeft/t.clientWidth);for(var j=0;j<D.length;j++){D[j].className=j===i?'carousel-dot active':'carousel-dot'}})}})();
+var mb=document.getElementById('musicBtn');mb.addEventListener('click',function(e){e.stopPropagation();if(p){sM();mb.classList.add('muted')}else{pM();mb.classList.remove('muted')}})
+var tr=document.getElementById('carouselTrack');var dc=document.getElementById('carouselDots');var D=dc?dc.children:[];var si=0;var tl=D.length||7;var sx=0;var cx=0;var dr=false;
+function go(n){si=Math.max(0,Math.min(n,tl-1));tr.style.transform='translateX(-'+(si*100)+'%)';for(var j=0;j<D.length;j++){D[j].className=j===si?'carousel-dot active':'carousel-dot'}}
+function ss(e){sx=e.touches?e.touches[0].clientX:e.clientX;dr=true;tr.style.transition='none';e.stopPropagation()}
+function sm(e){if(!dr)return;cx=e.touches?e.touches[0].clientX:e.clientX;var df=cx-sx;var p=(-si*tr.clientWidth+df)/tr.clientWidth*100;tr.style.transform='translateX('+p+'%)'}
+function se(e){if(!dr)return;dr=false;tr.style.transition='transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';var df=cx-sx;if(df<-40)go(si+1);else if(df>40)go(si-1);else go(si)}
+if(tr){tr.addEventListener('touchstart',ss);tr.addEventListener('touchmove',sm);tr.addEventListener('touchend',se);tr.addEventListener('mousedown',ss);tr.addEventListener('mousemove',sm);tr.addEventListener('mouseup',se);tr.addEventListener('mouseleave',se)}
+go(0);console.log('🎂 Happy Birthday Angel! 🎂')})();
 </script>
 </body>
 </html>
