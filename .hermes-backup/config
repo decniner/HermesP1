@@ -133,13 +133,14 @@ skills:
 approvals:
   destructive_slash_confirm: false
 command_allowlist:
-  - execute_code
-  - recursive delete
-  - stop/restart hermes gateway (kills running agents)
   - overwrite project env/config via redirection
+  - stop/restart hermes gateway (kills running agents)
   - delete in root path
-  - script execution via -e/-c flag
+  - recursive delete
+  - execute_code
+  - SQL TRUNCATE
   - git force push (rewrites remote history)
+  - script execution via -e/-c flag
 code_execution:
   timeout: 300
   max_tool_calls: 50

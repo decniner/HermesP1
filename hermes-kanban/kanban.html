@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>📋 Kanban Board</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#eee;font-family:'Courier New',monospace;padding:10px;}
+h1{color:#ff0;font-size:18px;margin-bottom:4px;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+#balance{padding:4px 10px;background:#1a1a1a;border:1px solid #333;border-radius:4px;font-size:12px;color:#0ff;cursor:pointer;user-select:none;white-space:nowrap;}
+#balance:hover{border-color:#0ff;}
+#balance .amt{font-weight:bold;color:#0ff;}
+#balance .label{color:#888;}
+#balance.loading{color:#888;}
+#balance.error{color:#f44;border-color:#f44;}
+h2{color:#fa0;font-size:14px;margin:10px 0 6px;border-bottom:1px solid #333;padding-bottom:4px;cursor:pointer;user-select:none;}
+h2:hover{color:#ff0;}
+h2::before{content:attr(data-icon);margin-right:6px;}
+.section{overflow:hidden;transition:max-height 0.3s ease;}
+.section.collapsed{max-height:0!important;}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:10px;}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;}
+.running .dot{background:#ff0;}
+.done .dot{background:#0f0;}
+.archived .dot{background:#666;}
+.ready .dot{background:#0ff;}
+.todo .dot{background:#55f;}
+.blocked .dot{background:#f44;}
+.task{padding:8px;margin:4px 0;border-left:4px solid #555;background:#1a1a1a;border-radius:3px;}
+.task.running{border-color:#ff0;background:#1a1a00;}
+.task.done{border-color:#0f0;background:#001a00;opacity:0.7;}
+.task.archived{border-color:#555;background:#0a0a0a;opacity:0.35;}
+.task.ready{border-color:#0ff;background:#001a1a;}
+.task.blocked{border-color:#f44;background:#1a0000;}
+.task.todo{border-color:#55f;background:#00001a;}
+.job{padding:6px 8px;margin:3px 0;background:#0a0a0a;border-left:4px solid #555;border-radius:3px;}
+.job.ok{border-color:#0f0;}
+.job.fail{border-color:#f44;}
+.job.disabled{border-color:#444;opacity:0.4;}
+.task-id,.job-id{font-size:9px;color:#555;}
+.task-title,.job-name{font-size:13px;}
+.job-schedule{font-size:9px;color:#888;}
+.job-status{font-size:9px;font-weight:bold;margin-top:2px;}
+.job-status.ok{color:#0f0;}
+.job-status.fail{color:#f44;}
+.job-status.disabled{color:#555;}
+.task-body{font-size:10px;color:#777;margin-top:2px;}
+.status{font-size:10px;font-weight:bold;margin-top:4px;}
+.status.running{color:#ff0;}
+.status.done{color:#0f0;}
+.status.archived{color:#555;}
+.status.ready{color:#0ff;}
+.status.blocked{color:#f44;}
+.status.todo{color:#55f;}
+.footer{text-align:center;color:#333;font-size:9px;margin-top:20px;}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>📋 Hermes Dashboard</h1>
+<div id="balance" onclick="loadBalance()" title="DeepSeek API Balance">⟳</div>
+</div>
+<div class="legend">
+<span class="running"><span class="dot"></span>Running</span>
+<span class="done"><span class="dot"></span>Done</span>
+<span class="ready"><span class="dot"></span>Ready</span>
+<span class="todo"><span class="dot"></span>Todo</span>
+<span class="blocked"><span class="dot"></span>Blocked</span>
+<span class="archived"><span class="dot"></span>Archived</span>
+</div>
+<h2 onclick="toggle('taskSec')" data-icon="📌"> Tasks</h2>
+<div id="taskSec" class="section"><div id="board"></div></div>
+<h2 onclick="toggle('cronSec')" data-icon="⏰"> Cron Jobs</h2>
+<div id="cronSec" class="section"><div id="cron"></div></div>
+<p class="footer" id="time"></p>
+<script>
+async function loadBoard(){
+    try{
+        const r=await fetch('/kanban.json?t='+Date.now());
+        const data=await r.json();
+        const tasks=Array.isArray(data)?data:(data.tasks||[]);
+        const board=document.getElementById('board');
+        board.innerHTML='';
+        if(tasks.length>0){
+            tasks.forEach(t=>{
+                const div=document.createElement('div');
+                div.className='task '+t.status;
+                div.innerHTML='<div class="task-id">#'+t.id.slice(-6)+'</div>'+
+                    '<div class="task-title">'+t.title+'</div>'+
+                    (t.body?'<div class="task-body">'+t.body+'</div>':'')+
+                    '<div class="status '+t.status+'">'+t.status+(t.assignee?' | '+t.assignee:'')+'</div>';
+                board.appendChild(div);
+            });
+        }else{
+            board.innerHTML='<p style="color:#666;">No tasks</p>';
+        }
+    }catch(e){
+        document.getElementById('board').innerHTML='<p style="color:#f44;">Error</p>';
+    }
+    try{
+        const r=await fetch('/cron.json?t='+Date.now());
+        const data=await r.json();
+        const jobs=Array.isArray(data)?data:(data.jobs||[]);
+        const cronDiv=document.getElementById('cron');
+        cronDiv.innerHTML='';
+        if(jobs.length>0){
+            jobs.forEach(j=>{
+                const cls=j.enabled?(j.last_status==='fail'?'fail':'ok'):'disabled';
+                const div=document.createElement('div');
+                div.className='job '+cls;
+                const next=j.next_run_at?new Date(j.next_run_at).toLocaleString('ja-JP'):'-';
+                const last=j.last_run_at?new Date(j.last_run_at).toLocaleString('ja-JP'):'never';
+                div.innerHTML='<div class="job-name">'+j.name+'</div>'+
+                    '<div class="job-schedule">⏰ '+j.schedule+' | Next: '+next+'</div>'+
+                    '<div class="job-schedule">🔄 Last: '+last+'</div>'+
+                    '<div class="job-status '+cls+'">'+(j.enabled?(j.state||'active'):'disabled')+'</div>';
+                cronDiv.appendChild(div);
+            });
+        }else{
+            cronDiv.innerHTML='<p style="color:#666;">No cron jobs</p>';
+        }
+    }catch(e){
+        document.getElementById('cron').innerHTML='<p style="color:#f44;">Error loading</p>';
+    }
+    document.getElementById('time').textContent=new Date().toLocaleString('ja-JP');
+}
+loadBoard();
+setInterval(loadBoard,5000);
+
+async function loadBalance(){
+    const el=document.getElementById('balance');
+    el.className='loading';
+    el.textContent='⟳';
+    try{
+        const r=await fetch('/balance.json?t='+Date.now());
+        const data=await r.json();
+        if(data.error){
+            el.className='error';
+            el.textContent='⚠ '+data.error;
+            return;
+        }
+        const bi=data.balance_infos&&data.balance_infos[0];
+        if(bi){
+            el.className='';
+            el.innerHTML='<span class="label">DeepSeek</span> <span class="amt">$'+bi.total_balance+'</span>';
+        }else{
+            el.className='error';
+            el.textContent='⚠ No data';
+        }
+    }catch(e){
+        el.className='error';
+        el.textContent='⚠ Err';
+    }
+}
+loadBalance();
+
+function toggle(id){
+    const el=document.getElementById(id);
+    el.classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>

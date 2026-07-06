@@ -22,15 +22,15 @@
       "schedule_display": "0 7 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-04T02:23:42.023900+09:00",
-      "next_run_at": "2026-07-06T07:00:00+09:00",
-      "last_run_at": "2026-07-05T07:09:40.581529+09:00",
+      "next_run_at": "2026-07-07T07:00:00+09:00",
+      "last_run_at": "2026-07-06T07:02:30.600205+09:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -75,7 +75,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-05T22:08:40.382058+09:00",
-      "next_run_at": "2026-07-06T21:00:00+09:00",
+      "next_run_at": "2026-07-07T21:00:00+09:00",
       "last_run_at": "2026-07-05T22:10:00.947607+09:00",
       "last_status": "ok",
       "last_error": null,
@@ -91,7 +91,102 @@
       "enabled_toolsets": null,
       "workdir": null,
       "fire_claim": null
+    },
+    {
+      "id": "6c56272ed624",
+      "name": "Kanban Status Report",
+      "prompt": "Show the current kanban board status to the user",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "kanban_report.py",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * *",
+        "display": "0 9 * * *"
+      },
+      "schedule_display": "0 9 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-07-05T22:37:53.591189+09:00",
+      "next_run_at": "2026-07-07T09:00:00+09:00",
+      "last_run_at": "2026-07-06T09:00:47.616837+09:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "telegram:6912295778",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6912295778",
+        "chat_name": "Den",
+        "thread_id": null,
+        "user_id": "6912295778"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
+    },
+    {
+      "id": "b430b87580f1",
+      "name": "Daily AI Prompts Curation",
+      "prompt": "You are running a daily curation job for Hermes Agent AI prompts.\n\n## Your Task\nSearch Reddit for the **top 5 most useful AI prompts for Hermes Agent** that have been posted recently. These must be **strictly relevant to Hermes Agent** \u2014 system prompts, tool-use prompts, agentic workflows, agent orchestration prompts, function-calling templates, chain-of-thought prompts for agents, or any prompt designed to improve how an AI agent (especially one like Hermes Agent) behaves, thinks, or uses tools.\n\n## Source\n**Reddit only** \u2014 search these subreddits for recent posts:\n- r/LocalLLaMA\n- r/PromptEngineering\n- r/ArtificialIntelligence\n- r/ClaudeAI\n- r/LangChain\n- r/ollama\n- Any other AI/agent-focused subreddit you find\n\n## Filter Criteria\nONLY include prompts that are:\n- Useful for **Hermes Agent specifically** (system prompts, tool-use prompts, agentic workflows, function-calling templates)\n- NOT general ChatGPT prompts, NOT prompt injection content, NOT generic \"write better\" prompts\n- Focus on: system prompt design, tool-use behavior, agent orchestration, chain-of-thought for agents, function-calling, reflection patterns, task decomposition prompts\n\n## Output Format \u2014 Discord post (use markdown)\nPost exactly 5 items in this format:\n\n### \ud83d\udd25 Daily AI Prompts \u2014 [Today's Date]\n\n**1. [Prompt Name/Title]**\n\ud83d\udcdd **Summary:** [2-3 sentence description of what this prompt does and why it's useful for Hermes Agent]\n\ud83d\udccb **Prompt:**\n```\n[The actual prompt text, exactly as found]\n```\n\ud83d\udd17 **Source:** [Reddit post URL]\n\n**2. [Prompt Name/Title]**\n...\n\n---\n\nIf you cannot find 5 high-quality prompts, include what you found (minimum 2) and note \"Only [N] high-quality Reddit posts found today.\"\n\nAfter curating, add a brief footer: `Curated daily by Hermes Agent | #ai-prompts | Source: Reddit`\n\nIMPORTANT: Use web_search (with site:reddit.com) and web_extract to read the actual Reddit posts. Do NOT fabricate prompts \u2014 every prompt must be sourced from a real Reddit post you extracted. If you can't find real prompts from any source, say so honestly rather than inventing.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": "deepseek",
+      "model_snapshot": "deepseek-v4-flash",
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 7 * * *",
+        "display": "0 7 * * *"
+      },
+      "schedule_display": "0 7 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-07-06T01:10:19.812620+09:00",
+      "next_run_at": "2026-07-07T07:00:00+09:00",
+      "last_run_at": "2026-07-06T07:12:28.205106+09:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "discord:1523359256345182269",
+      "origin": {
+        "platform": "discord",
+        "chat_id": "1523358901817573620",
+        "chat_name": "Hermes_Agent / #projects / Lets start a project for gathering very useful AI prompts for Hermes Agent ev...",
+        "thread_id": "1523358901817573620",
+        "user_id": "447408967556005898"
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal"
+      ],
+      "workdir": null,
+      "fire_claim": null
     }
   ],
-  "updated_at": "2026-07-05T22:10:00.948608+09:00"
+  "updated_at": "2026-07-06T21:00:17.580280+09:00"
 }

@@ -14,6 +14,10 @@ Gmail auto-cleanup uses IMAP. Protected senders: Payroll.Japan@hays.co.jp, Miki.
 §
 Den expects QA/testing on any code or game before delivery. Do not skip QA.
 §
-Gmail protected senders (never auto-delete): Payroll.Japan@hays.co.jp, Miki.Sawafuji@hays.co.jp, denver.sanchez@nomura.com, noreply@travelsure.ph, decniner@gmail.com. Also protect: .gov, .ac.jp, .edu, mufg.jp, Google security alerts, personal email providers (gmail.com, yahoo.co.jp), subjects with bank/school/tax/invoice/bill.
+Kanban at http://192.168.3.72:8321/kanban — create a kanban task for each request. Cron: News 7am, Report 9am, Backup 9pm JST.
 §
-Has dedicated Telegram bot profiles: news-bot (daily news digest at 7am JST for Japan/PH/global headlines), price-bot (product price comparison searching Japanese and international sites). All use separate Telegram bot tokens.
+Project workflow: When Den explains a new project, I MUST NOT propose plans or code immediately. Instead, ask clarifying questions ONE TOPIC AT A TIME until I have a 100% complete understanding of what we're building and what the end product should look like. No assumptions or guesses, even small ones. Only after full understanding, write down the complete project vision in a clear, AI-readable format before any implementation.
+§
+Kanban preference: minimal labels (no "USD" if "$" shown), load-once balance widget (manual refresh only).
+§
+Kanban tasks must use correct status from the start — use --initial-status running for active/scheduled tasks, so kanban always reflects actual status.
