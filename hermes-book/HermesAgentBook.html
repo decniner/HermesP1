@@ -468,7 +468,321 @@ deliver='telegram:6912295778'</pre>
 <li>Clone backup repo</li>
 <li>Copy <code>.hermes-backup/</code> → <code>~/.hermes/</code></li>
 <li>Recreate <code>.env</code> from key list</li>
-<li>All skills, memories, configs, profiles restored</li></ol>
+|<li>All skills, memories, configs, profiles restored</li></ol>
+`]],
+['Top 20 Community Use Cases',[`
+<h2>Overview</h2>
+<p>These use cases are sourced from the official Hermes Agent community — Reddit, Discord, X/Twitter, GitHub, YouTube, and blogs. Each includes the original story and exact configuration steps so you can replicate them.</p>
+
+<h2>1. Daily Inbox Summary to Slack</h2>
+<p><b>Source:</b> Anthony Maio (Substack) · <a href="https://anthonymaio.substack.com/p/getting-started-with-hermes-agent">Read original</a></p>
+<p>\"An agent that grows with you — it literally writes markdown skill files when it solves hard problems. Natural-language cron: 'every weekday at 9am, summarize my inbox and post to Slack.'\"</p>
+<p><b>Setup:</b></p><pre>cronjob action='create' schedule='0 9 * * 1-5'
+  prompt='Check my email inbox via IMAP. Summarize
+    the most important unread emails. Post the
+    summary to Slack via webhook.'
+  name='Inbox Summary'
+deliver='slack:#general'</pre>
+<p>Create a Slack webhook at <code>https://api.slack.com/apps</code> and configure the Slack gateway in your config.yaml.</p>
+
+<h2>2. Automated Research Loops (GitHub + ArXiv)</h2>
+<p><b>Source:</b> Reddit r/hermesagent · <a href="https://www.reddit.com/r/hermesagent/comments/1sgvxju/im_curious_what_are_your_top_3_use_cases_for/">Read original</a></p>
+<p>\"My top use case is Automated Research Loops. I have it monitor specific GitHub repos and arxiv papers — the time saved on boring monitoring is huge.\"</p>
+<p><b>Setup:</b></p><pre>cronjob action='create' schedule='0 8 * * 1-5'
+  prompt='Check these GitHub repos for new commits:
+    nousresearch/hermes-agent, nousresearch/hermes-function-calling.
+    Also check arxiv for new papers on "agentic AI"
+    and "tool-use LLMs". Summarize what is new
+    compared to my last check (use session_search).
+    Highlight anything I should look at.'
+  name='Daily Research Scan'</pre>
+
+<h2>3. Self-Hosted Google Drive (Nextcloud + LibreOffice)</h2>
+<p><b>Source:</b> Discord @salma.1492</p>
+<p>\"I set up my agent with Nextcloud and LibreOffice so I can basically get the same functionality as Google Drive with Google Docs.\"</p>
+<p><b>Setup:</b></p><pre># Install Nextcloud on your server or local machine
+# Create a Nextcloud skill:
+skill_manage action='create' name='nextcloud'
+  content='---
+name: nextcloud
+---
+# Nextcloud Integration
+Use WebDAV to read/write files to Nextcloud.
+Base URL: http://localhost:8080/remote.php/dav/files/USER/
+Use terminal with curl for WebDAV operations.'</pre>
+
+`,`<h2>4. Landing Page Builder (Google → Build → Deploy → Notify)</h2>
+<p><b>Source:</b> X/Twitter @emmagine79</p>
+<p>\"Told it to Google me and then build a landing page based on what it found — it ran the searches, found kinks, created the page, SSH'd into my VPS, uploaded the page, then texted me when it was done. What?!\"</p>
+<p><b>Setup:</b></p><pre>prompt='Research my online presence by searching
+  for "Denver Sanchez SRE Japan". Build a single
+  landing page HTML file showcasing my work
+  experience and skills. Then SCP it to my VPS
+  at user@my-server.com:/var/www/html/ and text
+  me when done.'</pre>
+<p>Pre-requisite: Configure SSH key access to your VPS and set up Telegram delivery.</p>
+
+<h2>5. Turkish Locale Skill Pack</h2>
+<p><b>Source:</b> Discord @erhnysr</p>
+<p>\"Built a complete Turkish locale skill pack — real-time market data in TRY, Turkish news sources (Hürriyet, Bloomberg HT, NTV), daily PNG briefing cards, Telegram cron automation, zero external API keys.\"</p>
+<p><b>Setup:</b></p><pre>skill_manage action='create' name='turkish-locale'
+  content='---
+name: turkish-locale
+---
+# Turkish Market & News
+Sources: hurriyet.com.tr, bloomberght.com, ntv.com.tr
+Currency: TRY
+Use web_search with site: filters for each source.
+Format daily briefings as PNG cards via image_generate.'</pre>
+
+<h2>6. Weather Trading Bot</h2>
+<p><b>Source:</b> X/Twitter @DeRonin_</p>
+<p>\"I turned $100 into $216 in less than 48 hours with a self-learning weather trading bot. Hermes scans weather markets every 60 mins, compares 3 forecast sources per location, buys undervalued temperature buckets and flips for profit.\"</p>
+<p><b>Setup:</b></p><pre>cronjob action='create' schedule='0 * * * *'
+  prompt='Check weather derivative markets for
+    temperature bucket pricing. Compare 3 forecast
+    sources per location. Buy undervalued buckets
+    if expected value is positive. Review what
+    worked and adjust strategy notes.'
+  name='Weather Trading Bot'</pre>
+
+`,`<h2>7. Private Web Search with SearXNG</h2>
+<p><b>Source:</b> Discord @flensbo</p>
+<p>\"I set up my Hermes Agents with local SearXNG (in a container that they share) before ddgs was added, because I thought all API use of DDG was paid.\"</p>
+<p><b>Setup:</b></p><pre># Run SearXNG in Docker:
+docker run -d --name searxng -p 8080:8080
+  searxng/searxng
+
+# Configure Hermes to use it:
+config:
+  tools:
+    web_search:
+      backend: searxng
+      base_url: http://localhost:8080</pre>
+
+<h2>8. Voice Interface for Terminal Accessibility</h2>
+<p><b>Source:</b> Discord @timmmie</p>
+<p>\"I can't type well so being able to use voice from a terminal window is huge for me.\"</p>
+<p><b>Setup:</b></p><pre>hermes setup tools
+# Enable the hermes-whisper-cpp addon:
+# Installs local speech-to-text via whisper.cpp
+# Speak instead of typing commands
+
+# Or use your phone as a microphone:
+# Run Hermes via Telegram bot and use voice messages</pre>
+
+<h2>9. TouchDesigner Generative Visuals via MCP</h2>
+<p><b>Source:</b> GitHub @SHL0MS · <a href="https://github.com/NousResearch/hermes-agent/pull/16768">Read original</a></p>
+<p>Built a TouchDesigner MCP skill enabling Hermes to control generative/interactive media projects in TouchDesigner in real time.</p>
+<p><b>Setup:</b></p><pre># Install the TouchDesigner MCP skill:
+skill_manage action='create' name='touchdesigner'
+  content='---
+name: touchdesigner
+---
+# TouchDesigner MCP Integration
+Connect to TouchDesigner via MCP server.
+Use for generative visuals, audio-reactive
+graphics, and interactive installations.
+See touchdesigner-mcp skill for full reference.'</pre>
+
+`,`<h2>10. Three-Layer Memory Kernel</h2>
+<p><b>Source:</b> Discord @lauratom</p>
+<p>\"I spent 200-400 hours writing a memory kernel for Hermes — 3 layers: L1 Hindsight, L2 Graphiti, L3 MemPalace.\"</p>
+<p><b>Setup:</b></p><pre># Each layer serves a different purpose:
+# L1 (Hindsight): Short-term conversation context
+# L2 (Graphiti): Knowledge graph relationships
+# L3 (MemPalace): Long-term structured memories
+
+# Configure in config.yaml:
+memory:
+  backend: layered
+  layers:
+    - hindsight
+    - graphiti
+    - mempalace</pre>
+
+<h2>11. Kubernetes Deployment for Daily Briefing</h2>
+<p><b>Source:</b> Discord @m05tr0</p>
+<p>\"I really like running agents on my local cluster instead of my laptop for isolation. Just finished deploying Hermes on my local k8s cluster for a daily cybersecurity + AI briefing.\"</p>
+<p><b>Setup:</b></p><pre># Deploy Hermes on Kubernetes:
+kubectl create deployment hermes --image=hermes-agent
+kubectl expose deployment hermes --port=8080
+
+# Create a ConfigMap for your config.yaml:
+kubectl create configmap hermes-config
+  --from-file=config.yaml
+
+# Schedule the daily briefing:
+cronjob action='create' schedule='0 7 * * *'
+  prompt='Gather cybersecurity news and AI
+    developments from the last 24 hours.
+    Format as a daily briefing.'
+  name='Daily Briefing'</pre>
+
+`,`<h2>12. Raspberry Pi 5 Running Hermes 24/7</h2>
+<p><b>Source:</b> Discord @winterwarrior</p>
+<p>\"I built a Raspberry Pi 5 to run Hermes on 24/7. It's my first time diving into trying a real AI agent and so far I'm enjoying it. Much better than OpenClaw.\"</p>
+<p><b>Setup:</b></p><pre># On Raspberry Pi 5 (8GB RAM recommended):
+sudo apt install python3-pip git
+pip install hermes-agent
+
+# Configure lightweight model for Pi:
+model:
+  default: llama3.2:3b
+  provider: custom:ollama
+  base_url: http://localhost:11434/v1
+
+# Enable gateway for remote access:
+gateway:
+  platforms:
+    telegram:
+      enabled: true
+      bot_token_env: TELEGRAM_BOT_TOKEN</pre>
+
+<h2>13. Cross-Platform Task Management (Obsidian + Apple Calendar + Signal)</h2>
+<p><b>Source:</b> Discord @kouff</p>
+<p>\"I told Hermes to use Obsidian to manage my tasks and cross-check with my Apple Calendar — it confirmed the workflow and started executing.\"</p>
+<p><b>Setup:</b></p><pre># Create a unified task management skill:
+skill_manage action='create' name='task-manager'
+  content='---
+name: task-manager
+---
+# Cross-Platform Task Management
+- Read/write tasks to Obsidian vault
+- Cross-reference with Apple Calendar
+- Send reminders via Signal gateway
+- Log completed tasks with timestamps
+Use cron for recurring task reviews.'</pre>
+
+`,`<h2>14. Bedtime Stories Generator</h2>
+<p><b>Source:</b> GitHub @kovern · <a href="https://github.com/NousResearch/hermes-agent/issues/17177">Read original</a></p>
+<p>\"Three days ago I asked Hermes to write a little tale for my daughter. A day later I asked again — very similar, same protagonist name. It remembered.\"</p>
+<p><b>Setup:</b></p><pre>prompt='Write a children\\'s bedtime story about
+  [protagonist name]. The story should be
+  3-5 minutes long when read aloud, have a
+  positive moral lesson, and include the
+  characters [character list]. Use the memory
+  of previous stories to maintain continuity.'
+
+# Generate a custom illustrated storybook:
+prompt='Take the story you just wrote and
+  create an HTML storybook page with pictures
+  generated by the image tool. Make it
+  printable as a booklet.'</pre>
+
+<h2>15. Weekly YouTube Video Research</h2>
+<p><b>Source:</b> YouTube Metics Media</p>
+<p>\"Research the top trending AI tools and come back with the top three that would make for an interesting tutorial video. Create a skill based on your approach and set up a weekly cron job.\"</p>
+<p><b>Setup:</b></p><pre># Create a research skill:
+skill_manage action='create' name='youtube-research'
+  content='---
+name: youtube-research
+---
+# YouTube Video Research
+1. Search for trending AI tools/products
+2. Filter by: tutorial potential, audience
+3. Rank top 3 by interest + feasibility
+4. Draft video outline for each
+5. Check what competitors have covered
+
+# Schedule weekly:
+cronjob action='create' schedule='0 9 * * 1'
+  prompt='Use the youtube-research skill to find
+    this week\\'s top 3 trending AI tools for a
+    tutorial video. Report findings.'
+  name='Weekly Vid Research'</pre>
+
+`,`<h2>16. Roofing Lead-Gen App with Hermes</h2>
+<p><b>Source:</b> Discord @cyberfarmacist</p>
+<p>\"One of the apps I'm working on helps my friend who owns a remodeling company find work. Specifically roofing work. I wondered if I could build it with Hermes.\"</p>
+<p><b>Setup:</b></p><pre>prompt='Build a web app for a roofing company
+  that helps find leads. Features needed:
+  1. Lead capture form (name, phone, address)
+  2. Dashboard showing active leads
+  3. Map view of lead locations
+  4. Status tracking (new/contacted/quoted/won)
+  5. Export to CSV. Save as single HTML file
+  with localStorage for data persistence.'</pre>
+
+<h2>17. Meta Ads Marketing Kit</h2>
+<p><b>Source:</b> Discord @masonjames</p>
+<p>\"Meta released their official CLI & MCP so I built a Hermes skill pack to connect and provide great defaults.\"</p>
+<p><b>Setup:</b></p><pre># Install the Meta Ads Kit:
+# Connects Hermes to Meta Ads Manager via CLI/MCP
+# Enables: campaign creation, ad copy generation,
+# performance analysis, budget optimization
+
+skill_manage action='create' name='meta-ads'
+  content='---
+name: meta-ads
+---
+# Meta Ads Integration
+Use Meta CLI to manage ad campaigns.
+- Create campaigns from briefs
+- Generate ad copy variants
+- Analyze performance data
+- Suggest budget reallocation'</pre>
+
+`,`<h2>18. Converse Mode (Think Before Acting)</h2>
+<p><b>Source:</b> Discord @ibrandis</p>
+<p>\"My Hermes agent used to start executing the moment I hit enter. I built converse mode — one plugin, two commands. The agent won't touch a single tool until you say so.\"</p>
+<p><b>Setup:</b></p><pre># Install the Converse Mode plugin:
+# Prevents tool execution until explicitly approved
+# Two commands:
+# /plan  - Agent outlines approach without tools
+# /go    - Agent executes the approved plan
+
+# Configuration:
+plugins:
+  - converse-mode
+
+# Usage:
+# User: /plan Build a landing page
+# Agent: Here\\'s my plan: 1) Design layout
+#   2) Write HTML 3) Deploy. Approve?
+# User: /go
+# Agent: [executes all steps]</pre>
+
+<h2>19. Hackathon Automation Agent</h2>
+<p><b>Source:</b> Discord @0xchauncy</p>
+<p>\"I've been working with my Hermes agent Reina, and she's been on a bender with hackathons. Note that certain hackathons might provision API keys that would only be shown once.\"</p>
+<p><b>Setup:</b></p><pre># Create a hackathon skill:
+skill_manage action='create' name='hackathon'
+  content='---
+name: hackathon
+---
+# Hackathon Mode
+- Rapid prototyping with delegate_task for
+  parallel feature development
+- Use kanban swarm for multi-worker features
+- Auto-commit to GitHub every 30 minutes
+- Generate README and demo video on completion
+
+# Quick start:
+prompt='I\\'m joining a hackathon. Set up a
+  project scaffold for [app idea] with:
+  1. Git repo initialized
+  2. Basic project structure
+  3. Kanban board with tasks
+  4. Cron job for auto-commits'</pre>
+
+`,`<h2>20. Supabase CRM Dashboard + HyperFrame Videos</h2>
+<p><b>Source:</b> YouTube WorldofAI · <a href="https://www.youtube.com/watch?v=YBp_PXBbe80">Watch original</a></p>
+<p>\"Used the Hermes Desktop App to recursively generate a CRM dashboard where each build reuses components from prior generations. It can also build full videos using official HyperFrame skills.\"</p>
+<p><b>Setup:</b></p><pre>prompt='Build a CRM dashboard with Supabase backend.
+  Features: contact management, deal tracking,
+  pipeline view, activity logging. Use Supabase
+  for auth and data storage. Generate a dashboard
+  page that shows key metrics.'
+
+# For HyperFrame video generation:
+prompt='Create a 60-second product demo video
+  for my CRM app using the HyperFrame skill.
+  Include: intro animation, feature walkthrough,
+  call-to-action screen.'</pre>
+
+<p>These 20 use cases represent the most popular and impactful ways the Hermes Agent community is using the tool. Each one demonstrates a different capability — from automation and research to creative work and business operations.</p>
+<p>Most of the stories were sourced from the official <a href="https://hermes-agent.nousresearch.com/docs/user-stories">Hermes Agent User Stories</a> page, Reddit, Discord, X/Twitter, GitHub, and YouTube.</p>
 `]]
 ];
 
