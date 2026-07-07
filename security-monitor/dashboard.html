@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>🔒 Security Monitor</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;color:#ccc;font-family:'Courier New',monospace;padding:10px;}
+h1{color:#0f0;font-size:16px;margin-bottom:4px;}
+h2{color:#fa0;font-size:13px;margin:12px 0 6px;border-bottom:1px solid #222;padding-bottom:3px;cursor:pointer;user-select:none;}
+h2:hover{color:#ff0;}
+.section{overflow:hidden;transition:max-height 0.3s ease;}.section.collapsed{max-height:0!important;}
+.about-box{background:#111;padding:8px;margin:6px 0;border-left:3px solid #0f0;font-size:10px;line-height:1.6;color:#aaa;}
+.about-box h3{color:#0f0;font-size:11px;margin:10px 0 4px;}
+.about-box h4{color:#fa0;font-size:10px;margin:8px 0 3px;}
+.about-box code{background:#222;color:#0f0;padding:1px 4px;font-size:9px;}
+.about-box ul{margin:4px 0 4px 16px;}
+.about-box li{margin:2px 0;}
+.status-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.badge{padding:4px 8px;border-radius:2px;font-size:10px;font-weight:bold;}
+.badge.learning{background:#330;color:#ff0;border:1px solid #660;}
+.badge.monitoring{background:#030;color:#0f0;border:1px solid #060;}
+.badge.investigating{background:#300;color:#f44;border:1px solid #600;}
+.badge.normal{background:#111;color:#888;border:1px solid #333;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;}
+.stat-box{background:#111;padding:6px 8px;border-left:3px solid #555;}
+.stat-box.process{border-color:#0ff;}
+.stat-box.network{border-color:#fa0;}
+.stat-box.file{border-color:#f0f;}
+.stat-box.event{border-color:#f44;}
+.stat-num{font-size:18px;color:#fff;font-weight:bold;}
+.stat-label{font-size:9px;color:#666;}
+.alert{padding:6px 8px;margin:3px 0;background:#111;border-left:4px solid #555;font-size:10px;}
+.alert.high{border-color:#f44;background:#1a0000;}
+.alert.medium{border-color:#fa0;background:#1a0a00;}
+.alert.low{border-color:#0f0;background:#001a00;}
+.alert-type{color:#888;font-size:8px;}
+.alert-title{color:#eee;font-size:11px;font-weight:bold;}
+.alert-detail{color:#888;font-size:9px;margin-top:2px;}
+.alert-time{color:#444;font-size:8px;margin-top:1px;}
+.log-item{padding:3px 6px;margin:2px 0;background:#0a0a0a;font-size:9px;color:#888;border-left:2px solid #333;}
+.btn{background:#c0c0c0;color:#000;border:2px solid;border-color:#fff #808080 #808080 #fff;padding:6px 16px;font:bold 11px 'Courier New',monospace;cursor:pointer;display:inline-block;margin:4px 0;}
+.btn:active{border-color:#808080 #fff #fff #808080;}
+.btn.green{background:#0a0;color:#fff;border-color:#0f0 #060 #060 #0f0;}
+.btn.red{background:#a00;color:#fff;border-color:#f44 #600 #600 #f44;}
+.footer{text-align:center;color:#222;font-size:8px;margin-top:16px;}
+.progress{height:6px;background:#111;border:1px solid #333;margin:4px 0;}
+.progress-fill{height:100%;background:#0f0;transition:width 0.5s;}
+</style>
+</head>
+<body>
+<h1>🔒 Security Monitor</h1>
+<div class="status-bar" id="statusBar"></div>
+<div id="phaseInfo"></div>
+<button class="btn green" id="startBtn" onclick="startMonitoring()" style="display:none;">▶ START MONITORING</button>
+
+<h2 onclick="toggleSec('aboutSec')">📖 About This Monitor</h2>
+<div id="aboutSec" class="section collapsed"><div class="about-box">
+
+<h3>🔍 What Is This?</h3>
+<p>This is a <b>personal PC security monitoring agent</b> built specifically for Den's Windows machine. It watches your computer for signs of malware, unauthorized access, and data loss — just like an enterprise security system, but running locally on your own PC.</p>
+
+<h3>🎯 What It Does</h3>
+<p>The agent continuously monitors <b>four areas</b> of your system:</p>
+<ul>
+  <li><b>🔄 Running Processes</b> — It keeps a list of every program that runs on your PC. When a <b>new, unknown process</b> appears that wasn't seen during the learning phase, it flags it. This catches malware, coin miners, backdoors, and suspicious tools.</li>
+  <li><b>🌐 Network Connections</b> — It tracks outbound connections to external IPs. When your PC connects to an <b>IP address it has never connected to before</b>, it raises an alert. This catches command-and-control (C2) callbacks, data exfiltration, and unauthorized phone-homes.</li>
+  <li><b>📁 Suspicious Files</b> — It watches sensitive folders (Downloads, Desktop, Temp) for new executable files (.exe, .dll, .ps1, .bat, .vbs, .js, .scr, .jar). These are common malware delivery formats. When one appears, it alerts you.</li>
+  <li><b>📋 Security Events</b> — It reads the Windows Security Event Log for <b>failed login attempts (Event ID 4625)</b> and other critical security events. Multiple failed logins can indicate a brute-force attack or someone trying to break into your PC.</li>
+</ul>
+
+<h3>🧠 How It Works (Two Phases)</h3>
+<p><b>Phase 1: Learning</b> 🟡</p>
+<ul>
+  <li>When first launched, the agent enters <b>learning mode</b>.</li>
+  <li>It runs every 15 minutes via a cron job and <b>records everything it sees</b> — every running process, every network connection, every file, every security event.</li>
+  <li>This builds a <b>"baseline" database</b> of what's <i>normal</i> for your PC.</li>
+  <li>During learning, <b>no real alerts are sent</b> — it only shows you a sample alert so you know what to expect.</li>
+  <li>You can monitor progress on the dashboard. The more data collected, the better the baseline.</li>
+</ul>
+<p><b>Phase 2: Active Monitoring</b> 🟢</p>
+<ul>
+  <li>When you click <b>"START MONITORING"</b> on the dashboard (or tell me to start), the agent switches to <b>active monitoring mode</b>.</li>
+  <li>Now, anything <b>not in the baseline</b> triggers a real alert sent directly to you on Telegram.</li>
+  <li>The alert includes: what was detected, severity level, timestamp, and details.</li>
+  <li>New processes and files are <b>high-severity</b>. New network connections are <b>medium-severity</b>.</li>
+</ul>
+
+<h3>🛠️ How It Was Built</h3>
+<p>This agent was built using <b>Python</b> running on Den's Windows PC, orchestrated by <b>Hermes Agent</b> (the AI assistant you're talking to). Here's the technical breakdown:</p>
+<ul>
+  <li><b>Scanner Script</b> (<code>security_agent.py</code>): A Python script that runs every 15 minutes via Hermes cron. It uses:
+    <ul>
+      <li><code>tasklist</code> (Windows CLI) to enumerate running processes</li>
+      <li><code>netstat -ano</code> to list active network connections</li>
+      <li><code>os.listdir()</code> + extension filtering to detect suspicious files</li>
+      <li><code>wevtutil</code> (Windows Event Log CLI) to query security events</li>
+    </ul>
+  </li>
+  <li><b>Database</b>: <b>SQLite</b> stores the baseline of known-good processes, connections, files, and events. It also stores all alerts and activity logs.</li>
+  <li><b>Dashboard</b> (<code>dashboard_server.py</code> + <code>dashboard.html</code>): A lightweight Python HTTP server that serves a real-time web dashboard. It exposes JSON API endpoints that the HTML page fetches every 5 seconds for live updates.</li>
+  <li><b>Cron</b>: Hermes' built-in cron scheduler runs the scanner every 15 minutes. During learning, it silently accumulates data. During monitoring, it delivers alerts to Telegram.</li>
+  <li><b>Delivery</b>: Alerts are printed to stdout by the scanner script. The cron job captures stdout and delivers it directly to Den's Telegram chat.</li>
+</ul>
+
+<h3>📊 Data Stored</h3>
+<p>Everything is stored locally in <code>C:\Users\decni\AppData\Local\hermes\security-agent\baseline.db</code> — never sent anywhere else.</p>
+
+<h3>⚠️ Limitations</h3>
+<ul>
+  <li>This is a <b>behavioral baseline</b> system, not a traditional antivirus. It detects things that are <i>new</i>, not things that are <i>known-bad</i>.</li>
+  <li>It cannot scan inside archives, decrypt traffic, or perform deep packet inspection.</li>
+  <li>False positives are possible — for example, a legit software update might appear as a new process.</li>
+  <li>It only runs when your PC is on and Hermes is active.</li>
+</ul>
+
+</div></div>
+<h2 onclick="toggleSec('statusSec')">📊 Baseline</h2>
+<div id="statusSec" class="section">
+<div class="stat-grid" id="statsGrid"></div>
+</div>
+
+<h2 onclick="toggleSec('alertSec')">🚨 Alerts</h2>
+<div id="alertSec" class="section">
+<div id="alerts"></div>
+</div>
+
+<h2 onclick="toggleSec('logSec')">📋 Activity Log</h2>
+<div id="logSec" class="section">
+<div id="log"></div>
+</div>
+
+<p class="footer" id="time"></p>
+
+<script>
+async function load(){
+    try{
+        const r=await fetch('/api/status?t='+Date.now());
+        const s=await r.json();
+        
+        // Status bar
+        const bar=document.getElementById('statusBar');
+        const phase=s.phase||'learning';
+        bar.innerHTML=`<span class="badge ${phase}">${phase.toUpperCase()}</span>
+            <span class="badge normal">Started: ${new Date(s.started).toLocaleString('ja-JP')}</span>
+            <span class="badge normal">Baseline: ${s.events||0} events</span>
+            <span class="badge normal">Alerts: ${s.alerts||0}</span>`;
+        
+        // Phase info + start button
+        const info=document.getElementById('phaseInfo');
+        const btn=document.getElementById('startBtn');
+        if(phase==='learning'){
+            info.innerHTML='<p style="color:#ff0;font-size:11px;">📚 Learning phase — agent is building a baseline. Review sample alerts below.</p>';
+            btn.style.display='inline-block';
+        }else{
+            info.innerHTML='<p style="color:#0f0;font-size:11px;">✅ Monitoring active — high-confidence threats will trigger alerts.</p>';
+            btn.style.display='none';
+        }
+        
+        // Stats
+        const grid=document.getElementById('statsGrid');
+        const st=s.stats||{};
+        grid.innerHTML=
+            `<div class="stat-box process"><div class="stat-num">${st.processes||0}</div><div class="stat-label">Processes tracked</div></div>
+            <div class="stat-box network"><div class="stat-num">${st.connections||0}</div><div class="stat-label">Network connections</div></div>
+            <div class="stat-box file"><div class="stat-num">${st.files||0}</div><div class="stat-label">Risky files</div></div>
+            <div class="stat-box event"><div class="stat-num">${st.events||0}</div><div class="stat-label">Security events</div></div>`;
+    }catch(e){}
+    
+    try{
+        const r=await fetch('/api/alerts?t='+Date.now());
+        const alerts=await r.json();
+        const div=document.getElementById('alerts');
+        div.innerHTML='';
+        if(alerts.length===0){div.innerHTML='<p style="color:#333;font-size:10px;">No alerts yet.</p>';}
+        else alerts.forEach(a=>{
+            const el=document.createElement('div');
+            el.className='alert '+(a.severity||'low');
+            el.innerHTML=`<div class="alert-type">${a.type||'?'} | ${a.severity||'?'}</div>
+                <div class="alert-title">${a.title||'?'}</div>
+                <div class="alert-detail">${a.detail||''}</div>
+                <div class="alert-time">${a.timestamp||''}</div>`;
+            div.appendChild(el);
+        });
+    }catch(e){}
+    
+    try{
+        const r=await fetch('/api/log?t='+Date.now());
+        const log=await r.json();
+        const div=document.getElementById('log');
+        div.innerHTML='';
+        if(log.length===0){div.innerHTML='<p style="color:#333;font-size:10px;">No activity yet.</p>';}
+        else log.forEach(l=>{
+            const el=document.createElement('div');
+            el.className='log-item';
+            el.textContent=`[${l.timestamp||'?'}] ${l.type||'?'}: ${l.detail||''}`;
+            div.appendChild(el);
+        });
+    }catch(e){}
+    
+    document.getElementById('time').textContent=new Date().toLocaleString('ja-JP');
+}
+
+async function startMonitoring(){
+    await fetch('/api/start-monitoring');
+    load();
+}
+
+load();
+setInterval(load,5000);
+
+function toggleSec(id){
+    const el=document.getElementById(id);
+    if(el)el.classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>

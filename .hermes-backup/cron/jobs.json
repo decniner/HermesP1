@@ -22,15 +22,15 @@
       "schedule_display": "0 7 * * *",
       "repeat": {
         "times": null,
-        "completed": 3
+        "completed": 4
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-04T02:23:42.023900+09:00",
-      "next_run_at": "2026-07-07T07:00:00+09:00",
-      "last_run_at": "2026-07-06T07:02:30.600205+09:00",
+      "next_run_at": "2026-07-08T07:00:00+09:00",
+      "last_run_at": "2026-07-07T07:09:18.523049+09:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -75,7 +75,7 @@
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-05T22:08:40.382058+09:00",
-      "next_run_at": "2026-07-07T21:00:00+09:00",
+      "next_run_at": "2026-07-08T21:00:00+09:00",
       "last_run_at": "2026-07-06T21:00:23.281649+09:00",
       "last_status": "ok",
       "last_error": null,
@@ -114,15 +114,15 @@
       "schedule_display": "0 9 * * *",
       "repeat": {
         "times": null,
-        "completed": 1
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-05T22:37:53.591189+09:00",
-      "next_run_at": "2026-07-07T09:00:00+09:00",
-      "last_run_at": "2026-07-06T09:00:47.616837+09:00",
+      "next_run_at": "2026-07-08T09:00:00+09:00",
+      "last_run_at": "2026-07-07T09:00:33.607492+09:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -160,15 +160,15 @@
       "schedule_display": "0 7 * * *",
       "repeat": {
         "times": null,
-        "completed": 2
+        "completed": 3
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
       "created_at": "2026-07-06T01:10:19.812620+09:00",
-      "next_run_at": "2026-07-07T07:00:00+09:00",
-      "last_run_at": "2026-07-06T07:12:28.205106+09:00",
+      "next_run_at": "2026-07-08T07:00:00+09:00",
+      "last_run_at": "2026-07-07T07:14:50.093271+09:00",
       "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
@@ -186,7 +186,53 @@
       ],
       "workdir": null,
       "fire_claim": null
+    },
+    {
+      "id": "452345410160",
+      "name": "Security Agent Scan",
+      "prompt": "",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": "security_agent.py",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/15 * * * *",
+        "display": "*/15 * * * *"
+      },
+      "schedule_display": "*/15 * * * *",
+      "repeat": {
+        "times": null,
+        "completed": 29
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-07-07T13:41:28.994076+09:00",
+      "next_run_at": "2026-07-07T21:15:00+09:00",
+      "last_run_at": "2026-07-07T20:45:46.607528+09:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "telegram:6912295778",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6912295778",
+        "chat_name": "Den",
+        "thread_id": null,
+        "user_id": "6912295778"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null
     }
   ],
-  "updated_at": "2026-07-06T21:00:23.282649+09:00"
+  "updated_at": "2026-07-07T21:00:45.060538+09:00"
 }

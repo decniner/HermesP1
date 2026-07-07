@@ -1,3 +1,5 @@
 Den Sanchez — Filipino permanent resident in Kawagoe, Saitama, Japan. IT web developer & systems engineer. Prometheus/Grafana/Ansible/Windows services/banking monitoring. WFH. Married, 3 kids. Chloe (baseball) & Eya. 2 Shiba Inu: Bella (black), Pogi (red). Xiaomi 13T Pro, Toyota Vellfire, Pixel Watch 3 45mm LTE. Plays Thrill of the Fight 2 VR. Values: brutal honesty, value-for-money, reliability, long-term thinking. Prefers tables, practical advice, real-world evidence over hype. Nature trips, peaceful places. PayPay user. TG:6912295778 GH:decniner decniner@gmail.com
 §
 Dev workflow: ask clarifying Qs first, subagent QA, fix → retest → deliver. Copy EA files to DEN_EA + GitHub. Show progress % for tasks over 1 min. Create kanban task before every request, complete when done, never archive done. Prefers single-file HTML games with PC speaker sounds, touch mobile controls, 80s/90s aesthetic. Price-bot: text-only, no audio.
+§
+When converting cron job output to voice (TTS): strip all URLs, keep only the main facts/numbers/summaries, and mention the job name and run time. No URLs in audio.

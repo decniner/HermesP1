@@ -96,6 +96,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#008080;touch-action
     <div class="sm-sep"></div>
     <div class="sm-item" onclick="openWin('minesweeper');toggleStart()"><img src="">Minesweeper</div>
     <div class="sm-sep"></div>
+    <div class="sm-item" onclick="openWin('solitaire');toggleStart()"><img src="">Solitaire</div>
+    <div class="sm-sep"></div>
+    <div class="sm-item" onclick="openWin('spaceInvaders');toggleStart()"><img src="">Space Invaders '86</div>
+    <div class="sm-sep"></div>
     <div class="sm-item" onclick="triggerBSOD();toggleStart()">Shut Down...</div>
   </div>
 </div>
@@ -135,6 +139,8 @@ function openWin(type){
     <div style="padding:16px;text-align:center;color:#666;font-size:12px;">This folder is empty.</div>
   `);
   else if(type==='minesweeper') createWindow('Minesweeper',250,280,`<div id="ms-game"></div>`,()=>initMS());
+  else if(type==='spaceInvaders') createWindow('Space Invaders \'86',480,520,`<div style="background:#000;width:100%;height:100%;padding:4px;"><div style="display:flex;justify-content:space-between;padding:2px 4px;color:#0f0;font:bold 12px monospace;"><span id="siScore">SCORE: 0000</span><span id="siLives">LIVES: 3</span><span id="siWave">WAVE: 1</span></div><canvas id="siCanvas" style="width:100%;height:calc(100% - 24px);background:#000;image-rendering:pixelated;"></canvas></div>`,()=>initSpaceInvaders());
+  else if(type==='solitaire') createWindow('Solitaire',550,440,`<div id="solGame" style="width:100%;height:100%;overflow:auto;background:#008000;"></div>`,()=>{setTimeout(()=>{const g=document.getElementById('solGame');if(g)g.style.minWidth=(8*55+16)+'px';},50);initSolitaire();});
 }
 
 function createWindow(title,w,h,body,cb){
@@ -395,8 +401,401 @@ function renderMS(){
   }
 }
 
-// Open My Computer on load
+
 setTimeout(()=>openWin('myPc'),300);
+
+// ── Space Invaders (embedded) ──
+function initSpaceInvaders(){
+  const c=document.getElementById('siCanvas');if(!c)return;
+  const W=480,H=640;
+  c.width=W;c.height=H;
+  const ctx=c.getContext('2d');
+  let state='menu',score=0,lives=3,wave=1,frame=0,keys={},bullets=[],enemies=[],eBullets=[];
+  let eDir=1,eCnt=0,eDelay=30,alive=0,audioCtx=null;
+  const p={x:W/2,y:H-50,w:24,h:18,spd:5,cd:0,mCd:6,inv:0};
+
+  function si(t){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();const{fr,dur,ty,vol}={...{fr:440,dur:0.1,ty:'square',vol:0.06},...t};o.type=ty;o.frequency.setValueAtTime(fr,audioCtx.currentTime);g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);}
+  function initA(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+  
+  function spawnWave(n){
+    enemies=[];eBullets=[];eDir=1;eCnt=0;eDelay=Math.max(12,30-(n-1)*2);alive=0;
+    for(let r=0;r<5;r++)for(let c=0;c<8;c++){enemies.push({x:60+c*48,y:50+r*40,w:28,h:20,row:r,al:true});alive++;}
+  }
+  function uHUD(){
+    const el=id=>document.getElementById(id);
+    if(el('siScore'))el('siScore').textContent='SCORE: '+String(score).padStart(4,'0');
+    if(el('siLives'))el('siLives').textContent='LIVES: '+lives;
+    if(el('siWave'))el('siWave').textContent='WAVE: '+wave;
+  }
+  function fire(){
+    if(p.cd>0)return;
+    bullets.push({x:p.x-1,y:p.y-14,w:5,h:14});
+    p.cd=p.mCd;si({fr:880,dur:0.06});setTimeout(()=>si({fr:660,dur:0.04}),40);
+  }
+  function hit(){
+    if(state!=='playing'||p.inv>0)return;
+    lives--;p.inv=90;eBullets=[];p.x=W/2;uHUD();si({fr:220,dur:0.15,ty:'sawtooth',vol:0.08});
+    if(lives<=0){state='gameover';[440,370,330,220].forEach((n,i)=>setTimeout(()=>si({fr:n,dur:0.2}),i*150));}
+  }
+
+  function update(){
+    if(state!=='playing')return;frame++;
+    if(keys['ArrowLeft']&&p.x-12>0)p.x-=p.spd;
+    if(keys['ArrowRight']&&p.x+12<W)p.x+=p.spd;
+    if(p.cd>0)p.cd--;if(p.inv>0)p.inv--;
+    // Auto-fire
+    if(p.cd===0)fire();
+    for(let i=bullets.length-1;i>=0;i--){bullets[i].y-=5;if(bullets[i].y<0)bullets.splice(i,1);}
+    for(let i=eBullets.length-1;i>=0;i--){eBullets[i].y+=3;if(eBullets[i].y>H)eBullets.splice(i,1);}
+    // Enemy movement
+    eCnt++;if(eCnt>=eDelay){eCnt=0;let edge=false;enemies.forEach(e=>{if(!e.al)return;if(e.x+eDir*2<4||e.x+e.w+eDir*2>W-4)edge=true;});if(edge){eDir*=-1;enemies.forEach(e=>{if(e.al)e.y+=8;});}else enemies.forEach(e=>{if(e.al)e.x+=eDir*2;});}
+    // Enemy shooting
+    enemies.forEach(e=>{if(!e.al||eBullets.length>=5||Math.random()>0.003)return;eBullets.push({x:e.x+e.w/2-2,y:e.y+e.h,w:4,h:10});});
+    // Collisions
+    for(let i=bullets.length-1;i>=0;i--){
+      for(let j=enemies.length-1;j>=0;j--){
+        if(!enemies[j].al)continue;
+        if(bullets[i].x<enemies[j].x+enemies[j].w&&bullets[i].x+bullets[i].w>enemies[j].x&&bullets[i].y<enemies[j].y+enemies[j].h&&bullets[i].y+bullets[i].h>enemies[j].y){
+          enemies[j].al=false;alive--;score+=(5-enemies[j].row)*10;bullets.splice(i,1);
+          si({fr:100+Math.random()*200,dur:0.08});uHUD();break;
+        }
+      }
+    }
+    for(let i=eBullets.length-1;i>=0;i--){
+      if(p.inv>0)break;
+      if(eBullets[i].x<p.x+12&&eBullets[i].x+eBullets[i].w>p.x-12&&eBullets[i].y<p.y+10&&eBullets[i].y+eBullets[i].h>p.y-10){eBullets.splice(i,1);hit();break;}
+    }
+    enemies.forEach(e=>{if(!e.al||p.inv>0)return;if(e.x<p.x+12&&e.x+e.w>p.x-12&&e.y<p.y+10&&e.y+e.h>p.y-10)hit();});
+    if(alive<=0){wave++;enemies=[];eBullets=[];bullets=[];spawnWave(wave);uHUD();}
+  }
+
+  function draw(){
+    ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+    // Stars
+    for(let i=0;i<60;i++){const s=Math.random()*H;ctx.fillStyle=`rgba(0,255,0,${0.1+Math.random()*0.2})`;ctx.fillRect(Math.random()*W,s,1.5,1.5);}
+    if(state==='playing'){
+      // Player
+      if(!(p.inv>0&&Math.floor(p.inv/6)%2===0)){
+        ctx.fillStyle='#0f0';ctx.beginPath();ctx.moveTo(p.x,p.y-10);ctx.lineTo(p.x-12,p.y+8);ctx.lineTo(p.x-8,p.y+6);ctx.lineTo(p.x-8,p.y+8);ctx.lineTo(p.x-4,p.y+8);ctx.lineTo(p.x,p.y+6);ctx.lineTo(p.x+4,p.y+8);ctx.lineTo(p.x+8,p.y+8);ctx.lineTo(p.x+8,p.y+6);ctx.lineTo(p.x+12,p.y+8);ctx.closePath();ctx.fill();
+        ctx.fillStyle='#ff0';ctx.fillRect(p.x-3,p.y+6,2,4+Math.random()*3);ctx.fillRect(p.x+1,p.y+6,2,4+Math.random()*3);
+      }
+      // Bullets
+      bullets.forEach(b=>{ctx.fillStyle='#fff';ctx.fillRect(b.x+1,b.y,3,b.h);ctx.fillStyle='#0f0';ctx.fillRect(b.x,b.y+2,b.w,b.h-4);});
+      // Enemies
+      enemies.forEach(e=>{
+        if(!e.al)return;
+        ctx.fillStyle=e.row===0?'#f44':e.row<=2?'#fa0':'#0f0';
+        const x=e.x,y=e.y;
+        ctx.fillRect(x+4,y+2,20,4);ctx.fillRect(x+2,y+6,24,4);ctx.fillRect(x,y+10,28,4);ctx.fillRect(x+4,y+14,8,4);ctx.fillRect(x+16,y+14,8,4);
+        ctx.fillStyle='#000';ctx.fillRect(x+8,y+6,4,4);ctx.fillRect(x+16,y+6,4,4);
+      });
+      // Enemy bullets
+      eBullets.forEach(b=>{ctx.fillStyle='#f44';ctx.fillRect(b.x,b.y,b.w,b.h);});
+    }
+    if(state==='menu'){
+      ctx.fillStyle='#0f0';ctx.font='36px monospace';ctx.textAlign='center';
+      ctx.fillText('SPACE INVADERS',W/2,200);
+      ctx.font='14px monospace';
+      ctx.fillStyle='rgba(0,255,0,0.5+Math.sin(Date.now()/500)*0.5)';
+      ctx.fillText('TAP TO START',W/2,300);
+      ctx.fillStyle='rgba(0,255,0,0.3)';ctx.font='11px monospace';
+      ctx.fillText('← → MOVE  |  TAP SHOOT',W/2,340);
+    }
+    if(state==='gameover'){
+      ctx.fillStyle='#f44';ctx.font='32px monospace';ctx.textAlign='center';
+      ctx.fillText('GAME OVER',W/2,250);
+      ctx.fillStyle='#0f0';ctx.font='14px monospace';
+      ctx.fillText('SCORE: '+String(score).padStart(4,'0'),W/2,290);
+      ctx.fillStyle='rgba(0,255,0,0.5+Math.sin(Date.now()/500)*0.5)';
+      ctx.fillText('TAP TO RESTART',W/2,330);
+    }
+  }
+
+  function loop(){update();draw();requestAnimationFrame(loop);}
+
+  // Input
+  document.addEventListener('keydown',function siKd(e){
+    keys[e.key]=true;
+    if(e.key===' '){
+      e.preventDefault();initA();
+      if(state==='menu'||state==='gameover'){
+        state='playing';score=0;lives=3;wave=1;p.x=W/2;bullets=[];eBullets=[];enemies=[];spawnWave(wave);uHUD();
+        [220,330,440,660].forEach((n,i)=>setTimeout(()=>si({fr:n,dur:0.1}),i*80));
+      }
+    }
+  });
+  document.addEventListener('keyup',function siKu(e){keys[e.key]=false;});
+  // Touch - smooth follow
+  c.addEventListener('touchstart',function(e){e.preventDefault();const t=e.touches[0];const rect=c.getBoundingClientRect();p.x=Math.max(12,Math.min(W-12,(t.clientX-rect.left)/rect.width*W));initA();
+    if(state==='menu'||state==='gameover'){state='playing';score=0;lives=3;wave=1;p.x=W/2;bullets=[];eBullets=[];spawnWave(wave);uHUD();[220,330,440,660].forEach((n,i)=>setTimeout(()=>si({fr:n,dur:0.1}),i*80));}
+  });
+  c.addEventListener('touchmove',function(e){e.preventDefault();const t=e.touches[0];const rect=c.getBoundingClientRect();p.x=Math.max(12,Math.min(W-12,(t.clientX-rect.left)/rect.width*W));});
+  
+  uHUD();loop();
+}
+
+// ── Solitaire (Win95 Clone) ──
+function initSolitaire(){
+  const G=document.getElementById('solGame');if(!G)return;
+  G.innerHTML='';
+  const suits=['♠','♥','♦','♣'],isRed=s=>s===1||s===2;
+  let deck=[],tableau=[[],[],[],[],[],[],[]],foundation=[[],[],[],[]],stock=[],waste=[];
+  let drag=null,dragOffX=0,dragOffY=0,dragCards=[],dragSrc=null,dragPile=-1,dragIdx=0;
+  const CARD_W=Math.min(50,Math.floor((G.clientWidth||550)/8)),CARD_H=Math.floor(CARD_W*1.4),STACK=Math.floor(CARD_W*0.3),OFF=Math.floor(CARD_W*0.4);
+  
+  function createCardEl(card,faceUp){
+    const el=document.createElement('div');
+    el.style.cssText='position:absolute;width:'+CARD_W+'px;height:'+CARD_H+'px;border:1px solid #888;border-radius:3px;cursor:pointer;font-size:10px;';
+    if(!faceUp){
+      el.style.background='linear-gradient(135deg,#00a 25%,#00d 25%,#00d 50%,#00a 50%,#00a 75%,#00d 75%)';
+      el.style.backgroundSize='8px 8px';
+      el.style.border='2px solid #fff';
+      el.style.borderTopColor='#ccc';el.style.borderLeftColor='#ccc';
+      return el;
+    }
+    el.style.background='#fff';
+    el.style.border='2px solid';
+    el.style.borderColor='#fff #808080 #808080 #fff';
+    const color=card.s===1||card.s===2?'#c00':'#000';
+    const rank=['A','2','3','4','5','6','7','8','9','10','J','Q','K'][card.n];
+    el.innerHTML='<span style="position:absolute;top:2px;left:4px;color:'+color+';font-weight:bold;font-size:11px;">'+rank+'</span>'+
+      '<span style="position:absolute;top:12px;left:4px;color:'+color+';font-size:10px;">'+suits[card.s]+'</span>'+
+      '<span style="position:absolute;bottom:2px;right:4px;color:'+color+';font-weight:bold;font-size:11px;transform:rotate(180deg);">'+rank+'</span>'+
+      '<span style="position:absolute;bottom:12px;right:4px;color:'+color+';font-size:10px;transform:rotate(180deg);">'+suits[card.s]+'</span>'+
+      '<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:'+color+';">'+suits[card.s]+'</span>';
+    el.dataset.s=card.s;el.dataset.n=card.n;
+    return el;
+  }
+  
+  function layout(){
+    G.innerHTML='';
+    G.style.minWidth=(7*(CARD_W+8)+16)+'px';
+    const w=G.clientWidth||550,h=G.clientHeight||440;
+    const topY=8,pileW=CARD_W+8,startX=8;
+    // Stock pile area
+    const stockEl=document.createElement('div');
+    stockEl.id='solStock';stockEl.style.cssText='position:absolute;top:'+topY+'px;left:'+startX+'px;width:'+CARD_W+'px;height:'+CARD_H+'px;';
+    if(stock.length>0){
+      const back=createCardEl(null,false);
+      back.style.position='relative';stockEl.appendChild(back);
+    }else{
+      stockEl.style.border='1px dashed rgba(255,255,255,0.3)';stockEl.style.borderRadius='3px';
+    }
+    stockEl.onclick=function(){
+      if(stock.length>0){waste.push(stock.pop());waste[waste.length-1].up=true;layout();}
+      else{stock=waste.reverse();waste=[];stock.forEach(c=>c.up=false);layout();}
+    };
+    G.appendChild(stockEl);
+    
+    // Waste pile
+    const wasteEl=document.createElement('div');
+    wasteEl.id='solWaste';wasteEl.style.cssText='position:absolute;top:'+topY+'px;left:'+(startX+pileW)+'px;width:'+CARD_W+'px;height:'+CARD_H+'px;';
+    if(waste.length>0){
+      const top=waste[waste.length-1];const el=createCardEl(top,true);
+      el.style.position='relative';wasteEl.appendChild(el);
+    }else wasteEl.style.border='1px dashed rgba(255,255,255,0.3)';wasteEl.style.borderRadius='3px';
+    G.appendChild(wasteEl);
+    
+    // Foundation piles (right side)
+    for(let f=0;f<4;f++){
+      const fx=w-(4-f)*pileW-8;
+      const fel=document.createElement('div');
+      fel.id='solF'+f;fel.style.cssText='position:absolute;top:'+topY+'px;left:'+fx+'px;width:'+CARD_W+'px;height:'+CARD_H+'px;border:1px dashed rgba(255,255,255,0.3);border-radius:3px;';
+      if(foundation[f].length>0){
+        const top=foundation[f][foundation[f].length-1];const el=createCardEl(top,true);
+        el.style.position='relative';fel.appendChild(el);
+      }
+      G.appendChild(fel);
+    }
+    
+    // Tableau piles
+    const tabY=topY+CARD_H+14;
+    for(let t=0;t<7;t++){
+      const col=document.createElement('div');
+      col.id='solT'+t;col.style.cssText='position:absolute;top:'+tabY+'px;left:'+(startX+t*pileW)+'px;';
+      for(let i=0;i<tableau[t].length;i++){
+        const card=tableau[t][i];const el=createCardEl(card,card.up);
+        el.style.position='relative';el.style.top='0';el.style.marginBottom=(card.up?STACK:6)+'px';
+        el.dataset.pile='t'+t;el.dataset.idx=i;
+        if(card.up)enableDrag(el,t,i);
+        col.appendChild(el);
+      }
+      if(tableau[t].length===0){
+        col.style.width=CARD_W+'px';col.style.height=CARD_H+'px';
+        col.style.border='1px dashed rgba(255,255,255,0.3)';col.style.borderRadius='3px';
+        col.style.position='absolute';col.style.top=tabY+'px';col.style.left=(startX+t*pileW)+'px';
+      }
+      G.appendChild(col);
+    }
+    
+    // Waste drag
+    if(waste.length>0){
+      const wel=document.getElementById('solWaste');
+      if(wel&&wel.firstChild)enableDrag(wel.firstChild,'waste',waste.length-1);
+    }
+    // Foundation drag (last card only)
+    for(let f=0;f<4;f++){
+      if(foundation[f].length>0){
+        const el=document.getElementById('solF'+f);
+        if(el&&el.firstChild)enableDrag(el.firstChild,'f'+f,foundation[f].length-1);
+      }
+    }
+  }
+  
+  function enableDrag(el,pile,idx){
+    if(!el)return;
+    const down=function(e){
+      e.preventDefault();
+      const pos=e.type==='touchstart'?e.touches[0]:e;
+      const rect=G.getBoundingClientRect();
+      dragOffX=pos.clientX-rect.left-parseInt(el.style.left||0);
+      dragOffY=pos.clientY-rect.top-parseInt(el.style.top||0);
+      
+      // Determine cards to drag
+      if(pile==='waste'){dragCards=[waste.pop()];dragSrc='waste';}
+      else if(typeof pile==='string'&&pile[0]==='f'){const fi=parseInt(pile[1]);dragCards=[foundation[fi].pop()];dragSrc='f'+fi;}
+      else if(typeof pile==='number'){
+        const t=pile;dragIdx=idx;dragSrc='t'+t;
+        dragCards=tableau[t].splice(idx);
+        // Flip new top
+        if(tableau[t].length>0&&!tableau[t][tableau[t].length-1].up)tableau[t][tableau[t].length-1].up=true;
+      }
+      
+      // Create floating drag element
+      const dragEl=document.createElement('div');
+      dragEl.id='solDrag';dragEl.style.cssText='position:fixed;pointer-events:none;z-index:99999;';
+      const wrapper=document.createElement('div');wrapper.style.cssText='width:'+CARD_W+'px;';
+      dragCards.forEach((c,i)=>{
+        const ce=createCardEl(c,true);
+        ce.style.position='relative';ce.style.marginBottom=i<dragCards.length-1?(STACK-8)+'px':'0';
+        wrapper.appendChild(ce);
+      });
+      dragEl.appendChild(wrapper);
+      document.body.appendChild(dragEl);
+      dragEl.style.left=(pos.clientX-dragOffX)+'px';dragEl.style.top=(pos.clientY-dragOffY)+'px';
+      drag={el:dragEl};
+      G.style.opacity='0.6';
+    };
+    el.addEventListener('mousedown',down);el.addEventListener('touchstart',down);
+  }
+  
+  function move(e){
+    if(!drag)return;
+    e.preventDefault();
+    const pos=e.type==='touchmove'?e.touches[0]:e;
+    drag.el.style.left=(pos.clientX-dragOffX)+'px';
+    drag.el.style.top=(pos.clientY-dragOffY)+'px';
+  }
+  
+  function up(e){
+    if(!drag)return;
+    G.style.opacity='1';
+    const pos=e.type==='touchend'?{clientX:e.changedTouches[0].clientX,clientY:e.changedTouches[0].clientY}:e;
+    const rect=G.getBoundingClientRect();
+    const mx=pos.clientX-rect.left,my=pos.clientY-rect.top;
+    document.body.removeChild(drag.el);drag=null;
+    
+    // Find drop target
+    let target=null;
+    // Check foundations
+    for(let f=0;f<4;f++){
+      const el=document.getElementById('solF'+f);if(!el)continue;
+      const r=el.getBoundingClientRect();
+      if(mx>=r.left-rect.left&&mx<=r.left-rect.left+CARD_W&&my>=r.top-rect.top&&my<=r.top-rect.top+CARD_H){
+        target={type:'foundation',f};break;
+      }
+    }
+    // Check tableau
+    if(!target){
+      for(let t=0;t<7;t++){
+        const el=document.getElementById('solT'+t);if(!el)continue;
+        const r=el.getBoundingClientRect();
+        const ex=r.left-rect.left,ey=r.top-rect.top;
+        if(mx>=ex&&mx<=ex+CARD_W&&my>=ey){
+          target={type:'tableau',t};
+          // Find exact insertion point by checking card positions
+          const pile=tableau[t];
+          for(let i=pile.length-1;i>=0;i--){
+            const cy=ey+Math.min(i,OFF)*STACK;
+            if(my>=cy){target.insertAt=i;break;}
+          }
+          if(target.insertAt===undefined)target.insertAt=-1;
+          break;
+        }
+      }
+    }
+    // Check waste area (return)
+    if(!target&&dragSrc==='waste'){
+      const wel=document.getElementById('solWaste');if(wel){const r=wel.getBoundingClientRect();if(mx>=r.left-rect.left&&mx<=r.left-rect.left+CARD_W&&my>=r.top-rect.top&&my<=r.top-rect.top+CARD_H)target={type:'waste'};}
+    }
+    
+    // Execute move or revert
+    if(!target){
+      // Revert
+      if(dragSrc==='waste')waste.push(dragCards[0]);
+      else if(typeof dragSrc==='string'&&dragSrc[0]==='f')foundation[parseInt(dragSrc[1])].push(dragCards[0]);
+      else if(typeof dragSrc==='string'&&dragSrc[0]==='t'){
+        const t=parseInt(dragSrc[1]);
+        tableau[t]=tableau[t].concat(dragCards);
+        if(tableau[t].length>0&&!tableau[t][tableau[t].length-1].up)tableau[t][tableau[t].length-1].up=false;
+      }
+    }else if(target.type==='foundation'){
+      // Only single card to foundation, and must match suit
+      const card=dragCards[0];
+      const fPile=foundation[target.f];
+      if(dragCards.length===1 && card && (!fPile.length || fPile[0].s===card.s) && card.n===fPile.length){
+        foundation[target.f].push(card);
+      }else{
+        // Revert - fail the whole drop
+        if(dragSrc==='waste')waste.push(card);
+        else if(typeof dragSrc==='string'&&dragSrc[0]==='f')foundation[parseInt(dragSrc[1])].push(card);
+        else if(typeof dragSrc==='string'&&dragSrc[0]==='t'){
+          const tt=parseInt(dragSrc[1]);tableau[tt]=tableau[tt].concat(dragCards);
+          if(tableau[tt].length>0&&!tableau[tt][tableau[tt].length-1].up)tableau[tt][tableau[tt].length-1].up=false;
+        }
+      }
+    }else if(target.type==='tableau'){
+      const pile=tableau[target.t];
+      const topCard=pile.length>0?pile[pile.length-1]:null;
+      // King on empty tableau OR alternating colors descending
+      if((!topCard && dragCards[0].n===12) || (topCard && topCard.up && isRed(dragCards[0].s)!==isRed(topCard.s) && dragCards[0].n===topCard.n-1)){
+        pile.push(...dragCards);
+      }else{
+        // Revert
+        if(dragSrc==='waste')waste.push(dragCards[0]);
+        else if(typeof dragSrc==='string'&&dragSrc[0]==='f')foundation[parseInt(dragSrc[1])].push(dragCards[0]);
+        else if(typeof dragSrc==='string'&&dragSrc[0]==='t'){
+          const tt=parseInt(dragSrc[1]);tableau[tt]=tableau[tt].concat(dragCards);
+          if(tableau[tt].length>0&&!tableau[tt][tableau[tt].length-1].up)tableau[tt][tableau[tt].length-1].up=false;
+        }
+      }
+    }
+    
+    // Clean up and check win
+    drag=null;layout();
+    if(foundation.every(f=>f.length===13)){alert('🎉 You Win!');newGame();}
+  }
+  
+  document.removeEventListener('mousemove',solMove);
+  document.removeEventListener('mouseup',solUp);
+  document.removeEventListener('touchmove',solMove);
+  document.removeEventListener('touchend',solUp);
+  function solMove(e){move(e);}
+  function solUp(e){up(e);}
+  document.addEventListener('mousemove',solMove);document.addEventListener('mouseup',solUp);
+  document.addEventListener('touchmove',solMove,{passive:false});document.addEventListener('touchend',solUp);
+  
+  function newGame(){
+    deck=[];for(let s=0;s<4;s++)for(let n=0;n<13;n++)deck.push({s,n,up:false});
+    for(let i=52;i>0;i--){const j=Math.floor(Math.random()*i);[deck[i-1],deck[j]]=[deck[j],deck[i-1]];}
+    let di=0;
+    for(let t=0;t<7;t++){tableau[t]=[];for(let c=0;c<=t;c++){const card=deck[di++];card.up=c===t;tableau[t].push(card);}}
+    stock=deck.slice(di);stock.forEach(c=>c.up=false);
+    waste=[];foundation=[[],[],[],[]];
+    layout();
+  }
+  newGame();
+}
 </script>
 </body>
 </html>
