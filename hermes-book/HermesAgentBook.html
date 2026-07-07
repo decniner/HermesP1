@@ -312,6 +312,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   .nav-zone{width:20%;}
   #bot .track{width:92%;}
 }
+
+/* ── Copy Code Button ── */
+#pg pre{position:relative;}
+.copy-btn{
+  position:absolute;top:4px;right:4px;z-index:5;
+  background:var(--glass);border:1px solid var(--glass-border);
+  color:var(--text-dim);cursor:pointer;font-size:10px;font-family:var(--font-ui);
+  padding:2px 8px;border-radius:var(--radius-sm);
+  opacity:0;transition:opacity 0.2s,background 0.2s,color 0.2s;
+  backdrop-filter:blur(4px);line-height:1.6;
+}
+#pg pre:hover .copy-btn{opacity:1;}
+#pg pre .copy-btn:hover{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);}
+#pg pre .copy-btn.copied{background:rgba(70,180,70,0.2);color:#6c6;border-color:#6c6;}
 </style>
 </head>
 <body class="dark">
@@ -1824,6 +1838,37 @@ function buildToc(){
   document.getElementById('toc').innerHTML=h;
 }
 
+// ── Copy Code Buttons ──
+function addCopyButtons(){
+  document.querySelectorAll('#pg pre').forEach(pre=>{
+    if(pre.querySelector('.copy-btn'))return;
+    const btn=document.createElement('button');
+    btn.className='copy-btn';
+    btn.textContent='Copy';
+    btn.onclick=function(e){
+      e.stopPropagation();
+      const code=pre.querySelector('code')||pre;
+      const text=code.textContent||code.innerText||'';
+      navigator.clipboard.writeText(text.trim()).then(()=>{
+        btn.textContent='Copied!';
+        btn.classList.add('copied');
+        setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+      }).catch(()=>{
+        // Fallback for restricted contexts
+        const ta=document.createElement('textarea');
+        ta.value=text.trim();ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();
+        document.execCommand('copy');document.body.removeChild(ta);
+        btn.textContent='Copied!';
+        btn.classList.add('copied');
+        setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2000);
+      });
+    };
+    pre.style.position='relative';
+    pre.appendChild(btn);
+  });
+}
+
 // ── Show current page ──
 function show(dir){
   const c=C[ch]; if(!c) return;
@@ -1842,11 +1887,13 @@ function show(dir){
       el.innerHTML=`<h1>${ch}. ${c[0]}</h1>`+p;
       el.classList.remove(transClass);
       el.scrollTop=0;
+      addCopyButtons();
     },50);
   } else {
     el.innerHTML=`<h1>${ch}. ${c[0]}</h1>`+p;
     el.scrollTop=0;
   }
+  addCopyButtons();
   update();
   resetHideTimer();
 }
