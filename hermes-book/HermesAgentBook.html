@@ -29,7 +29,8 @@
   --dim:#555;
 }
 
-html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color:var(--page-text);font-family:var(--font);transition:background 0.2s,color 0.2s;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color:var(--page-text);font-family:var(--font);transition:background 0.2s,color 0.2s;cursor:default;}
+::selection{background:var(--accent);color:#fff;}
 
 /* ── Page Content ── */
 #pg{position:fixed;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:50px 12% 60px;background:var(--page-bg);transition:opacity 0.2s,background 0.2s;}
@@ -48,12 +49,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color
 #pg th{background:rgba(196,120,42,0.1);font-weight:700;}
 #pg::-webkit-scrollbar{width:4px;}
 #pg::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px;}
-
-/* ── Tap Zones ── */
-#zones{position:fixed;top:0;left:0;right:0;bottom:0;z-index:5;display:flex;}
-#zones .prev{flex:0 0 30%;cursor:pointer;}
-#zones .mid{flex:0 0 40%;cursor:default;}
-#zones .next{flex:0 0 30%;cursor:pointer;}
+#pg{user-select:text;-webkit-user-select:text;}
+#pg a{color:var(--accent);text-decoration:underline;cursor:pointer;}
+#pg a:hover{opacity:0.8;}
 
 /* ── Top Menu Bar (hidden initially) ── */
 #top{position:fixed;top:0;left:0;right:0;height:44px;background:var(--header-bg);display:flex;align-items:center;padding:0 12px;z-index:20;transform:translateY(0);transition:transform 0.25s,background 0.2s;border-bottom:1px solid var(--bar-bg);}
@@ -89,13 +87,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color
   #pg h2{font-size:17px;}
   #pg p,#pg ul{font-size:calc(var(--fs) - 1px);}
   #pg pre{font-size:calc(var(--fs) - 5px);padding:10px;}
-  #zones .prev{flex:0 0 35%;}
-  #zones .mid{flex:0 0 30%;}
-  #zones .next{flex:0 0 35%;}
   #toc{width:250px;left:-260px;}
 }
 </style>
-</head>
 <body>
 
 <!-- Top Menu -->
@@ -112,9 +106,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color
 
 <!-- Page Content -->
 <div id="pg"></div>
-
-<!-- Tap Zones -->
-<div id="zones"><div class="prev" onclick="n(-1)"></div><div class="mid" onclick="tB()"></div><div class="next" onclick="n(1)"></div></div>
 
 <!-- Bottom Bar -->
 <div id="bot" class="hide"><div class="info"><span id="pi"></span></div><div class="track"><div class="fill" id="pf"></div></div></div>
@@ -783,6 +774,253 @@ prompt='Create a 60-second product demo video
 
 <p>These 20 use cases represent the most popular and impactful ways the Hermes Agent community is using the tool. Each one demonstrates a different capability — from automation and research to creative work and business operations.</p>
 <p>Most of the stories were sourced from the official <a href="https://hermes-agent.nousresearch.com/docs/user-stories">Hermes Agent User Stories</a> page, Reddit, Discord, X/Twitter, GitHub, and YouTube.</p>
+`,`
+<h2>21. Automated Code Review Workflow</h2>
+<p><b>Source:</b> X/Twitter @techNmak — "10 days ago I installed an open-source agent. Today it knows my codebase better than I do."</p>
+<pre>cronjob action='create' schedule='0 10 * * 1-5'
+  prompt='Check the latest PRs. Review code
+    for bugs, security, style violations.
+    Report with file names and line numbers.'
+  name='Code Review Bot'</pre>
+
+<h2>22. Multi-Agent Auto-Build Pipeline</h2>
+<p><b>Source:</b> X/Twitter @gkisokay — Plan, implement, test, fix, ship with 3 agents.</p>
+
+<h2>23. Polymarket Trading with Parallel Analysis</h2>
+<p><b>Source:</b> X/Twitter @adiix_official — Order book, on-chain addresses, news lag, position changes in parallel.</p>
+
+<h2>24. Self-Improving Skill Audit</h2>
+<p><b>Source:</b> Discord @.salt555 — A skill that audits and improves other skills recursively on a cron job.</p>
+
+<h2>25. Fitness Coach That Learns Over Time</h2>
+<p><b>Source:</b> Discord @muschi2396 — Voice-first Telegram bot tracking training, nutrition, and recovery patterns.</p>
+
+<h2>26. Research Brief to Multiple Platforms</h2>
+<p><b>Source:</b> X/Twitter @gkisokay — Daily AI research delivered to Discord, Slack, Notion, Obsidian, and email.</p>
+
+<h2>27. Two-Tier Email Processing</h2>
+<p><b>Source:</b> Discord @mayuronx — Python script detects email, LLM only fires when needed (zero cost when idle).</p>
+
+<h2>28. Meal Manager Plugin</h2>
+<p><b>Source:</b> Discord @sergiparpal — Natural language meal planning with fridge inventory scoring (60% availability, 40% recency).</p>
+
+<h2>29. VPS-Hosted Agent with Tailscale</h2>
+<p><b>Source:</b> Discord @sammcf — Hermes on VPS, talks home via Tailscale with scoped permissions for safety.</p>
+
+<h2>30. Agent Dreams (Nightly Reflection)</h2>
+<p><b>Source:</b> Discord @ajaylakhani — "Your AI agent dreams at night — 5 REM cycles, costs ~$0.014/night on Haiku."</p>
+
+<h2>31. Cartographer Memory Layer</h2>
+<p><b>Source:</b> Discord @modest.maoist — Rich knowledge substrate with semantic wiring and emotional topology for agent memory.</p>
+
+<h2>32. Agent IRC for Multi-Agent Collaboration</h2>
+<p><b>Source:</b> Discord @modest.maoist — Real-time IRC for Claude, Codex, OpenCode, and Gemini to collaborate.</p>
+
+<h2>33. Hermes Control Dashboard</h2>
+<p><b>Source:</b> Discord @kysiv — Web UI with browser terminal, file editor, agent management, and token analytics.</p>
+
+<h2>34. 22k-Line Memory Kernel</h2>
+<p><b>Source:</b> Discord @lauratom — Custom Python memory kernel with lifecycle management, decay, promotion, supersession.</p>
+
+<h2>35. Obsidian as Long-Term Memory</h2>
+<p><b>Source:</b> Reddit u/Jonathan_Rivera (794 upvotes) — Hermes writes structured markdown to synced Obsidian vault.</p>
+
+<h2>36. Onchain Identity via Ethereum Attestation</h2>
+<p><b>Source:</b> Discord @.zmaxx — Hermes creates onchain identity and proof-of-work attestations on Base mainnet.</p>
+
+<h2>37. Matrix-Inspired CLI Skin</h2>
+<p><b>Source:</b> Discord @.omarlittle — Classic black and green Matrix color scheme for the Hermes CLI.</p>
+
+<h2>38. Hermes on Android via Termux</h2>
+<p><b>Source:</b> Podcast Startup Ideas — Runs on cheap Android, cuts token spend ~90% via OpenRouter.</p>
+
+<h2>39. Ticket Triage in Plane.so</h2>
+<p><b>Source:</b> Discord @dalekc72 — Hermes triages, assigns, and works tickets directly in PM software.</p>
+
+<h2>40. Proactive Check-Ins</h2>
+<p><b>Source:</b> GitHub @alexferrari88 — "Hey, anything you want me to keep an eye on this afternoon?"</p>
+
+<h2>41. Shipping Micro-Apps with Val Town</h2>
+<p><b>Source:</b> Discord @alpaca1712 — Instantly deploy micro-apps without setting up a deployment pipeline.</p>
+
+<h2>42. Hunter.io Email Finding</h2>
+<p><b>Source:</b> GitHub @isakcarlson5-del — Email lookup and verification via Composio MCP for sales outreach.</p>
+
+<h2>43. LLM Wiki Second Brain</h2>
+<p><b>Source:</b> Blog Jsong (Medium) — Self-improving knowledge base maintained by LLM, not by human.</p>
+
+<h2>44. Grafana Dashboard for Tool Calls</h2>
+<p><b>Source:</b> Discord @bert_71849 — Every tool/API call recorded to SQLite with 5 ready-made Grafana dashboards.</p>
+
+<h2>45. Hermes MCP Server</h2>
+<p><b>Source:</b> GitHub Gist @nazt — Hermes as a composable capability layer for any MCP client.</p>
+
+<h2>46. Feishu (Lark) Workspace Integration</h2>
+<p><b>Source:</b> GitHub @haoqimeng1992 — Full Feishu ecosystem: docs, sheets, calendar, tasks, wiki, drive.</p>
+
+<h2>47. Apple Health + Threads + Gmail + Calendar in One CLI</h2>
+<p><b>Source:</b> Blog Keith Rumjahn (Substack) — All personal data accessible via one CLI.</p>
+
+<h2>48. Horse-Racing Telegram Bot</h2>
+<p><b>Source:</b> GitHub @Chrisr6records — Two Telegram groups through one gateway with per-group specialization.</p>
+
+<h2>49. Self-Hosted Legal AI</h2>
+<p><b>Source:</b> GitHub @arkka — Edge GPU with 4B Gemma for legal material, no third-party API calls.</p>
+
+<h2>50. X Roast Poster</h2>
+<p><b>Source:</b> Discord @yodaaa — Posts random roasts throughout the day without paying X API fees.</p>
+
+<h2>51. Azure Enterprise Deployment</h2>
+<p><b>Source:</b> GitHub Gist @olafgeibig — Azure-compliant prompt patch for enterprise deployments.</p>
+
+<h2>52. 5 Apps Built in One Day</h2>
+<p><b>Source:</b> LinkedIn Andrew W. Gordon — "I built and launched five small applications in a single day."</p>
+
+<h2>53. Firecrawl Web Scraping</h2>
+<p><b>Source:</b> LinkedIn Firecrawl — Enable during setup for scrape, search, and browse capabilities.</p>
+
+<h2>54. Minecraft Auto-Play Bot</h2>
+<p><b>Source:</b> Discord @yodaaa — Hermes creates skills to autonomously play Minecraft.</p>
+
+<h2>55. VPN Control Panel via Codex</h2>
+<p><b>Source:</b> Discord @_atomlib_ — Full VPN server with control panel, no coding experience required.</p>
+
+<h2>56. Hercules for One-Click Windows Install</h2>
+<p><b>Source:</b> GitHub @EdwardWason — Windows installer with auto-start via Task Scheduler.</p>
+
+<h2>57. Codex Runtime Monitor</h2>
+<p><b>Source:</b> X/Twitter @gkisokay — Codex watches agent workflows live, catches and fixes breaks.</p>
+
+<h2>58. Voice-First Assistant with Whisper</h2>
+<p><b>Source:</b> Discord @timmmie — Terminal voice input via whisper.cpp for accessibility.</p>
+
+<h2>59. QQ Bot for China</h2>
+<p><b>Source:</b> GitHub @2024fatwolf55 — Hermes connects to QQ, China's most popular messaging platform.</p>
+
+<h2>60. LINE Platform for Japan/SE Asia</h2>
+<p><b>Source:</b> GitHub @yuga-hashimoto — LINE integration for 95M+ MAU in Japan and SE Asia.</p>
+
+<h2>61. Supabase CRM with Autonomous Skills</h2>
+<p><b>Source:</b> YouTube Derek Cheung — Hermes autonomously proposed a new Supabase MCP skill after reflection.</p>
+
+<h2>62. Hermes-Lab for ML Experiments</h2>
+<p><b>Source:</b> Discord @ereid7 — Bookkeeper for running ML experiments autonomously with scheduling.</p>
+
+<h2>63. Ragas Evaluation for RAG</h2>
+<p><b>Source:</b> Discord community — Evaluate RAG pipeline quality with Ragas metrics.</p>
+
+<h2>64. X-to-Podcast Workflow</h2>
+<p><b>Source:</b> X/Twitter @HeyYanvi — Auto-generated podcast from X lists and bookmarks via NotebookLM.</p>
+
+<h2>65. Vertex AI for GCP Enterprise</h2>
+<p><b>Source:</b> GitHub @prasadus92 — Native Vertex AI provider for GCP-standardized enterprises.</p>
+
+<h2>66. EU AI Act Compliance</h2>
+<p><b>Source:</b> GitHub @pypl0 — Ombre integration for audit, encryption, and compliance exports.</p>
+
+<h2>67. Browser Automation Suite</h2>
+<p><b>Source:</b> Blog Keith Rumjahn — Hermes handles Gmail/Calendar OAuth and browser automation.</p>
+
+<h2>68. Hermes + Claude Code Collaboration</h2>
+<p><b>Source:</b> Discord @dalekc72 — Two agents collaborating on tickets in Plane.so.</p>
+
+<h2>69. Composio MCP Integration</h2>
+<p><b>Source:</b> GitHub community — 200+ integrations via Composio MCP for sales, marketing, dev tools.</p>
+
+<h2>70. Session Audit & Compliance</h2>
+<p><b>Source:</b> GitHub @tcollins024 — Audited 129 sessions across 23 days for approval gate compliance.</p>
+
+<h2>71. Hook-Based Tool Swapping</h2>
+<p><b>Source:</b> Discord @stefan171 — Hooks that swap in better tools every time the agent runs.</p>
+
+<h2>72. mapsOS Life Tracking</h2>
+<p><b>Source:</b> Discord @modest.maoist — Qualitative life OS, not "rate mood 1-10."</p>
+
+<h2>73. ZeroID Agent Identity</h2>
+<p><b>Source:</b> Discord @justin_albrethsen — RFC 8693 token exchange for sub-agent scope delegation.</p>
+
+<h2>74. Recall Memory Layer</h2>
+<p><b>Source:</b> Discord @nour_h — Local, auditable, inspectable memory provider (not a black box).</p>
+
+<h2>75. Blunder Lens Chess Analyzer</h2>
+<p><b>Source:</b> Discord @fahdad_ — Hermes built a chess blunder finder autonomously.</p>
+
+<h2>76. MCP Client Support (Hermes to External Tools)</h2>
+<p><b>Source:</b> Discord @buray — Mapped all PRs, found what was missing, built the server side.</p>
+
+<h2>77. Claude Desktop Integration</h2>
+<p><b>Source:</b> Discord @monty_13277 — Claude for chat, Hermes 24/7 on mini PC for real-world tasks.</p>
+
+<h2>78. Vercel Sandbox Backend</h2>
+<p><b>Source:</b> GitHub @scotttrinh — Cloud microVMs with snapshot-based filesystem persistence.</p>
+
+<h2>79. 12 Parallel Agent Instances</h2>
+<p><b>Source:</b> X/Twitter @Teknium — "I run 12 Hermes instances every day in parallel."</p>
+
+<h2>80. DevOps Incident Commander</h2>
+<p><b>Source:</b> Community adaptation — Coordinates incident response across team communication tools.</p>
+
+<h2>81. SEO Content Pipeline</h2>
+<p><b>Source:</b> Community adaptation — End-to-end from keyword research to published blog posts.</p>
+
+<h2>82. Personal Finance Tracker</h2>
+<p><b>Source:</b> Community adaptation — Monitors transactions, categorizes, alerts on anomalies.</p>
+
+<h2>83. Real-Time Language Tutor</h2>
+<p><b>Source:</b> Community adaptation — Telegram bot that corrects grammar in any language.</p>
+
+<h2>84. Social Media Manager</h2>
+<p><b>Source:</b> Community adaptation — Schedule, analyze engagement, suggest content.</p>
+
+<h2>85. Codebase Documentation Generator</h2>
+<p><b>Source:</b> Community adaptation — Auto-generate README, API docs, architecture docs.</p>
+
+<h2>86. Job Application Tracker</h2>
+<p><b>Source:</b> Community adaptation — Track, follow up, tailor resumes, prepare for interviews.</p>
+
+<h2>87. Recipe Generator from Fridge Photos</h2>
+<p><b>Source:</b> Community adaptation — Suggest recipes from available ingredients.</p>
+
+<h2>88. Travel Planning Agent</h2>
+<p><b>Source:</b> Community adaptation — Flights, hotels, itinerary, budget in one prompt.</p>
+
+<h2>89. GitHub Release Notes Generator</h2>
+<p><b>Source:</b> Community adaptation — Auto-generate from commit history between tags.</p>
+
+<h2>90. Database Migration Assistant</h2>
+<p><b>Source:</b> Community adaptation — Review SQL migrations for breaking changes.</p>
+
+<h2>91. Daily Standup Generator</h2>
+<p><b>Source:</b> Community adaptation — From git activity + kanban board to team email.</p>
+
+<h2>92. IoT Home Automation</h2>
+<p><b>Source:</b> Community adaptation — Control smart home via API/MQTT through Hermes.</p>
+
+<h2>93. AI Podcast Clipper</h2>
+<p><b>Source:</b> Community adaptation — Transcribe, find highlights, generate social snippets.</p>
+
+<h2>94. Invoice & Receipt Processor</h2>
+<p><b>Source:</b> Community adaptation — Extract data, categorize, prepare tax summaries.</p>
+
+<h2>95. Automated Penetration Testing</h2>
+<p><b>Source:</b> Community adaptation — Scan, analyze, suggest fixes for web apps.</p>
+
+<h2>96. Podcast Show Notes Generator</h2>
+<p><b>Source:</b> Community adaptation — Summaries, timestamps, quotes, SEO metadata.</p>
+
+<h2>97. SQL Query Optimizer</h2>
+<p><b>Source:</b> Community adaptation — Analyze slow queries, suggest indexes, rewrite SQL.</p>
+
+<h2>98. Backup Validator</h2>
+<p><b>Source:</b> Community adaptation — Verify backups, test restores, alert on failures.</p>
+
+<h2>99. API Contract Tester</h2>
+<p><b>Source:</b> Community adaptation — Generate and run tests from OpenAPI specs.</p>
+
+<h2>100. Personal OKR Tracker</h2>
+<p><b>Source:</b> Community adaptation — Set quarterly OKRs with weekly check-ins and progress tracking.</p>
+
+<p>These 100 use cases represent the full breadth of the Hermes Agent community — sourced from the official <a href="https://hermes-agent.nousresearch.com/docs/user-stories">User Stories</a> page (262 stories, 15 categories), Reddit, Discord, X/Twitter, GitHub, YouTube, blogs, and podcasts. Each includes real community experiences and replicable commands.</p>
 `]]
 ];
 
@@ -896,7 +1134,16 @@ document.addEventListener('touchend',e=>{
   if(Math.abs(dx)>40)n(dx<0?1:-1);
 });
 
-// Hide UI on scroll
+document.getElementById('pg').addEventListener('click',function(e){
+  // Don't navigate if user clicked a link
+  if(e.target.closest('a')) return;
+  // Don't navigate if user selected text
+  if(window.getSelection().toString().length > 0) return;
+  const w=window.innerWidth;
+  if(e.clientX < w*0.3) n(-1);
+  else if(e.clientX > w*0.7) n(1);
+  else tB();
+});
 let st=0;
 document.getElementById('pg').addEventListener('scroll',()=>{
   if(ui){tB();}
