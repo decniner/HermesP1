@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Hermes Agent — The Complete Guide</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+/* ── Kindle-style theme ── */
+:root{
+  --page-bg:#f9f6ef;
+  --page-text:#1a1a1a;
+  --header-bg:#f0ede6;
+  --header-text:#555;
+  --accent:#c4782a;
+  --bar-bg:#e8e4da;
+  --dim:#999;
+  --font:'Georgia','Palatino Linotype','Book Antiqua',Palatino,serif;
+  --mono:'Courier New',monospace;
+  --fs:17px;
+}
+.dark{
+  --page-bg:#1a1a1a;
+  --page-text:#ccc;
+  --header-bg:#222;
+  --header-text:#999;
+  --bar-bg:#2a2a2a;
+  --dim:#555;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--page-bg);color:var(--page-text);font-family:var(--font);transition:background 0.2s,color 0.2s;}
+
+/* ── Page Content ── */
+#pg{position:fixed;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:50px 12% 60px;background:var(--page-bg);transition:opacity 0.2s,background 0.2s;}
+#pg.fade{opacity:0;}
+#pg h1{font-size:28px;color:var(--accent);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--accent);font-weight:700;letter-spacing:-0.3px;}
+#pg h2{font-size:20px;color:var(--accent);margin:22px 0 10px;font-weight:700;}
+#pg h3{font-size:17px;color:var(--accent);margin:16px 0 8px;}
+#pg p{margin:0 0 12px;font-size:var(--fs);line-height:1.75;text-align:justify;}
+#pg code{background:rgba(196,120,42,0.1);padding:1px 5px;font-family:var(--mono);font-size:calc(var(--fs) - 3px);border-radius:2px;color:var(--accent);}
+#pg pre{background:rgba(0,0,0,0.03);padding:14px 16px;font-size:calc(var(--fs) - 4px);font-family:var(--mono);overflow-x:auto;border-left:3px solid var(--accent);margin:12px 0;line-height:1.6;white-space:pre-wrap;border-radius:2px;}
+.dark #pg pre{background:rgba(255,255,255,0.04);}
+#pg ul{margin:0 0 12px 22px;font-size:var(--fs);line-height:1.7;}
+#pg li{margin:3px 0;}
+#pg table{width:100%;font-size:calc(var(--fs) - 3px);border-collapse:collapse;margin:12px 0;}
+#pg th,#pg td{padding:6px 10px;border:1px solid var(--bar-bg);text-align:left;}
+#pg th{background:rgba(196,120,42,0.1);font-weight:700;}
+#pg::-webkit-scrollbar{width:4px;}
+#pg::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px;}
+
+/* ── Tap Zones ── */
+#zones{position:fixed;top:0;left:0;right:0;bottom:0;z-index:5;display:flex;}
+#zones .prev{flex:0 0 30%;cursor:pointer;}
+#zones .mid{flex:0 0 40%;cursor:default;}
+#zones .next{flex:0 0 30%;cursor:pointer;}
+
+/* ── Top Menu Bar (hidden initially) ── */
+#top{position:fixed;top:0;left:0;right:0;height:44px;background:var(--header-bg);display:flex;align-items:center;padding:0 12px;z-index:20;transform:translateY(0);transition:transform 0.25s,background 0.2s;border-bottom:1px solid var(--bar-bg);}
+#top.hide{transform:translateY(-100%);}
+#top .ttl{color:var(--accent);font-weight:bold;font-size:13px;font-family:sans-serif;}
+#top .sp{flex:1;}
+#top button{background:none;border:1px solid var(--bar-bg);color:var(--header-text);padding:4px 10px;cursor:pointer;font-size:11px;font-family:sans-serif;margin-left:5px;border-radius:2px;}
+#top button:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* ── Bottom Progress Bar (hidden initially) ── */
+#bot{position:fixed;bottom:0;left:0;right:0;height:40px;background:var(--header-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;transition:transform 0.25s,background 0.2s;border-top:1px solid var(--bar-bg);}
+#bot.hide{transform:translateY(100%);}
+#bot .info{font-size:11px;color:var(--dim);margin-bottom:3px;font-family:sans-serif;}
+#bot .track{width:90%;height:2px;background:var(--bar-bg);border-radius:1px;position:relative;}
+#bot .fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.3s;}
+
+/* ── TOC Sidebar ── */
+#toc{position:fixed;top:44px;left:-300px;width:280px;bottom:0;background:var(--header-bg);border-right:1px solid var(--bar-bg);z-index:19;overflow-y:auto;transition:left 0.3s;padding:14px;}
+#toc.open{left:0;}
+#toc h3{color:var(--accent);font-size:13px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bar-bg);font-family:sans-serif;}
+#toc a{display:block;color:var(--header-text);cursor:pointer;padding:5px 8px;border-radius:2px;font-size:12px;line-height:1.6;font-family:sans-serif;}
+#toc a:hover{color:var(--accent);background:rgba(196,120,42,0.08);}
+#toc a.cur{color:var(--accent)!important;background:rgba(196,120,42,0.1);font-weight:bold;}
+
+/* ── Font Size Menu ── */
+#font{position:fixed;bottom:48px;right:12px;background:var(--header-bg);border:1px solid var(--bar-bg);border-radius:4px;padding:6px;display:none;z-index:21;gap:3px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+#font.show{display:flex;}
+#font button{width:34px;height:34px;background:var(--page-bg);border:1px solid var(--bar-bg);border-radius:2px;cursor:pointer;font-size:12px;color:var(--page-text);display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+
+@media(max-width:700px){
+  #pg{padding:44px 12px 50px;}
+  #pg h1{font-size:22px;}
+  #pg h2{font-size:17px;}
+  #pg p,#pg ul{font-size:calc(var(--fs) - 1px);}
+  #pg pre{font-size:calc(var(--fs) - 5px);padding:10px;}
+  #zones .prev{flex:0 0 35%;}
+  #zones .mid{flex:0 0 30%;}
+  #zones .next{flex:0 0 35%;}
+  #toc{width:250px;left:-260px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Menu -->
+<div id="top">
+  <span class="ttl">⟐ Hermes Agent</span>
+  <span class="sp"></span>
+  <button onclick="tT()">📖</button>
+  <button onclick="tF()">Aa</button>
+  <button onclick="tD()" id="dmBtn">☀</button>
+</div>
+
+<!-- TOC Sidebar -->
+<div id="toc"></div>
+
+<!-- Page Content -->
+<div id="pg"></div>
+
+<!-- Tap Zones -->
+<div id="zones"><div class="prev" onclick="n(-1)"></div><div class="mid" onclick="tB()"></div><div class="next" onclick="n(1)"></div></div>
+
+<!-- Bottom Bar -->
+<div id="bot" class="hide"><div class="info"><span id="pi"></span></div><div class="track"><div class="fill" id="pf"></div></div></div>
+
+<!-- Font Size -->
+<div id="font"><button onclick="sF(-2)">A−</button><button onclick="sF(2)">A+</button></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CHAPTER DATA
+// ══════════════════════════════════════════════════════════════
+const C = [
+null,
+['What is Hermes Agent?',[`
+<p><b>Hermes Agent</b> is an open-source AI assistant framework developed by <b>Nous Research</b>. Named after the Greek messenger god (and symbolized by the caduceus ⚕), Hermes is designed to be a long-running, tool-using AI agent that lives on your machine — not in a browser tab.</p>
+<p>Unlike a standard chatbot that simply answers questions, Hermes is an <b>agentic system</b>: it has access to tools, persistent memory, a task board, a scheduler, and the ability to spawn sub-agents. It can read and write files, execute terminal commands, search the web, send messages across platforms, generate images, convert text to speech, and much more — all driven by an LLM backend of your choice.</p>
+<p>Nous Research built Hermes around a few core principles:</p>
+<ul><li><b>Agent-first, not chat-first.</b> Hermes is an agent that happens to chat, not a chat that happens to have tools.</li><li><b>Local and sovereign.</b> Your configuration, memory, skills, and data live on your machine.</li><li><b>Extensible by design.</b> Skills, plugins, custom providers — everything is designed to be extended.</li></ul>
+`,`
+<p>At its core, Hermes connects an LLM to a rich set of tools through a <b>tool-use loop</b>:</p>
+<ul><li>User sends a message → LLM processes it → LLM decides to respond or use a tool → Tool executes → Result fed back → LLM continues or responds</li><li>This loop runs until the task is complete or the turn limit is reached.</li></ul>
+<p>Key architectural components:</p>
+<ul><li><b>The LLM Backend</b> — Any OpenAI-compatible API (OpenAI, Anthropic, DeepSeek, OpenRouter, local models via Ollama/LM Studio)</li><li><b>Tool System</b> — 20+ built-in tools (terminal, web, files, cron, kanban, delegate, TTS, vision, memory, etc.)</li><li><b>Skills</b> — Reusable procedural knowledge that teaches the agent how to handle specific tasks</li><li><b>Kanban</b> — A durable SQLite-backed task board shared across profiles</li><li><b>Cron</b> — A built-in scheduler for recurring tasks and automation</li><li><b>Gateway</b> — Multi-platform chat interface (Telegram, Discord, WhatsApp, Slack)</li><li><b>Profiles</b> — Isolated agent configurations with separate skills, memory, and connections</li><li><b>Memory</b> — Persistent across sessions via MEMORY.md and USER.md</li></ul>
+`,`
+<p>Hermes is for developers, system administrators, SREs, power users, and anyone who wants an AI assistant that can actually <i>do</i> things on their machine — not just talk about them.</p>
+<ul><li>Automating repetitive tasks</li><li>Monitoring and incident response</li><li>Code generation and review</li><li>Research and data analysis</li><li>Building and deploying software</li><li>Personal productivity automation</li></ul>
+`]],
+['Installation & Setup',[`
+<p>Hermes Agent runs on Windows, macOS, and Linux. Installation is straightforward.</p>
+<h2>Requirements</h2>
+<ul><li>Python 3.9+ or Node.js 18+</li><li>An OpenAI-compatible API key</li><li>For local models: ~8GB VRAM for 7B models</li></ul>
+<h2>Install</h2>
+<p><b>pip (recommended):</b></p><pre>pip install hermes-agent</pre>
+<p><b>npx:</b></p><pre>npx hermes-agent</pre>
+<p><b>From source:</b></p><pre>git clone https://github.com/nousresearch/hermes-agent.git
+cd hermes-agent
+pip install -e .</pre>
+`,`
+<h2>First Run</h2>
+<pre>hermes</pre>
+<p>On first run, Hermes creates <code>~/.hermes/</code> and prompts for an API provider. Run <code>hermes setup</code> to configure later.</p>
+<h2>Configuration</h2>
+<p>Main config: <code>~/.hermes/config.yaml</code></p>
+<ul><li><b>model</b> — Default model, provider, base URL, fallbacks</li><li><b>agent</b> — Max turns, temperature</li><li><b>terminal</b> — Backend, timeout, cwd</li><li><b>display</b> — Streaming, skin</li><li><b>gateway</b> — Platform connections</li></ul>
+`,`
+<h2>Profiles</h2>
+<pre>hermes profile create my-profile</pre>
+<p>Each profile has its own <code>config.yaml</code>, <code>SOUL.md</code>, <code>skills/</code>, <code>memories/</code>, and <code>plugins/</code>. Switch with:</p>
+<pre>hermes --profile my-profile</pre>
+<h2>API Providers</h2>
+<pre>model:
+  default: deepseek-v4-flash
+  provider: deepseek
+  base_url: https://api.deepseek.com/v1</pre>
+<pre>model:
+  default: llama3.3
+  provider: custom:ollama
+  base_url: http://localhost:11434/v1</pre>
+`]],
+['The CLI Interface',[`
+<p>Hermes presents a rich terminal UI with color, streaming text, spinners, and tool output.</p>
+<h2>Basic Usage</h2>
+<pre>hermes                    # Interactive session
+hermes -z "Weather?"     # Single prompt
+hermes --continue        # Resume session</pre>
+<h2>Slash Commands</h2>
+<ul><li><code>/help</code> — List commands</li><li><code>/model</code> — Switch model</li><li><code>/provider</code> — Switch provider</li><li><code>/skin</code> — Change theme</li><li><code>/session</code> — Session info</li><li><code>/reset</code> — Fresh session</li></ul>
+`,`
+<h2>Skins & Themes</h2>
+<p>Built-in skins: <b>default</b> (gold), <b>ares</b> (crimson), <b>slate</b> (blue), <b>daylight</b> (light), <b>charizard</b> (orange). Custom skins in <code>~/.hermes/skins/</code> as YAML files. Use <b>Hermes Mod</b> for a visual editor.</p>
+<h2>The Tool-Use Loop</h2>
+<p>When Hermes uses a tool, a spinner appears with a verb (<i>searching</i>, <i>reading</i>, <i>computing</i>) followed by the tool's output, so you see what the agent is doing at every step.</p>
+`]],
+['Tools & Capabilities',[`
+<p>Hermes ships with over 20 built-in tools across several categories.</p>
+<h2>File & Web</h2>
+<ul><li><b>read_file</b> — Read with line numbers, auto-extracts .docx/.ipynb/.xlsx</li><li><b>write_file</b> — Write files, creates directories, auto syntax checks</li><li><b>patch</b> — Fuzzy find-and-replace edits with unified diff</li><li><b>search_files</b> — ripgrep-powered content search</li><li><b>web_search</b> — Search via configured backend</li><li><b>web_extract</b> — Extract clean page content</li></ul>
+`,`
+<h2>Execution & Workflow</h2>
+<ul><li><b>terminal</b> — Shell commands, PTY, background, watch patterns</li><li><b>execute_code</b> — Python with Hermes tool access</li><li><b>delegate_task</b> — Spawn sub-agents</li><li><b>cronjob</b> — Schedule tasks</li></ul>
+<h2>Memory & Media</h2>
+<ul><li><b>memory</b> — Persistent facts</li><li><b>session_search</b> — FTS5 full-text search</li><li><b>skill_view / skill_manage</b> — Skills system</li><li><b>image_generate</b> — Text-to-image</li><li><b>text_to_speech</b> — TTS</li><li><b>vision_analyze</b> — Image analysis</li></ul>
+`,`
+<h2>Browser & Interaction</h2>
+<ul><li><b>browser_navigate / click / type / scroll / snapshot</b> — Drive a browser</li><li><b>clarify</b> — Ask the user multiple-choice questions</li><li><b>todo</b> — In-session task list</li></ul>
+<h2>Tool Restrictions</h2>
+<p>For cron jobs, restrict toolsets to save tokens:</p>
+<pre>enabled_toolsets: ["web", "terminal", "file"]</pre>
+`]],
+['The Skills System',[`
+<p>Skills are Hermes' procedural memory — reusable knowledge that teaches the agent how to handle specific tasks.</p>
+<h2>What Skills Can Do</h2>
+<ul><li>Teach task execution (code review, data analysis, game development)</li><li>Provide domain knowledge (MQL5 trading, Kubernetes, language learning)</li><li>Define workflows with exact commands, pitfalls, and verification steps</li><li>Store reference files (templates, scripts, configs)</li></ul>
+`,`
+<h2>Skill Format</h2>
+<pre>---
+name: my-skill
+description: What it teaches
+category: dev
+---
+# Title
+## Step 1
+Instructions and commands.
+## Pitfalls
+Common mistakes.
+## Verification
+How to confirm success.</pre>
+`,`
+<h2>Managing Skills</h2>
+<ul><li><b>List:</b> <code>hermes skills list</code></li><li><b>Load:</b> <code>skill_view(name='skill')</code></li><li><b>Create/Edit/Delete:</b> <code>hermes skill create/edit/delete</code></li></ul>
+<h2>Auto-Loading</h2>
+<pre>skills:
+  - github-code-review
+  - my-skill</pre>
+<h2>The Curator</h2>
+<p>Automatically prunes skills unused for 30 days. Pin important ones:</p>
+<pre>hermes curator unpin my-skill</pre>
+`]],
+['Memory & User Profiles',[`
+<p>Hermes has persistent memory across sessions, stored as plain Markdown files injected into every turn.</p>
+<h2>Memory Files</h2>
+<ul><li><b>MEMORY.md</b> — Agent's notes about the user, environment, and conventions</li><li><b>USER.md</b> — User profile: name, role, preferences</li></ul>
+<p>These are read at the start of every turn. Hermes always has context.</p>
+<h2>Session Search</h2>
+<ul><li><b>Discovery</b> — FTS5 keyword search across all sessions</li><li><b>Scroll</b> — Browse around a specific message</li><li><b>Read</b> — Full session by ID</li><li><b>Browse</b> — Recent sessions</li></ul>
+`,`
+<h2>Memory vs Skills</h2>
+<table><tr><th>Feature</th><th>Memory</th><th>Skills</th></tr>
+<tr><td>Purpose</td><td>Preferences</td><td>Workflows</td></tr>
+<tr><td>Injected</td><td>Every turn</td><td>On demand</td></tr>
+<tr><td>Format</td><td>Plain text</td><td>Markdown+YAML</td></tr></table>
+<h2>Best Practices</h2>
+<ul><li>Save preferences immediately after they're stated</li><li>Keep entries compact (~2,200 char limit)</li><li>Don't save task progress — use session_search</li></ul>
+`]],
+['Kanban & Task Management',[`
+<p>Hermes includes a full SQLite-backed Kanban board for task management, shared across all profiles.</p>
+<h2>Task Lifecycle</h2>
+<p>todo → ready → running → done (or blocked/review/archived)</p>
+<h2>Creating Tasks</h2>
+<pre>hermes kanban create "Task title" --body "Description"</pre>
+<h2>CLI Commands</h2>
+<pre>hermes kanban list              # View active
+hermes kanban list --archived   # Include archived
+hermes kanban complete t_abc123 # Mark done
+hermes kanban block t_abc123    # Mark blocked
+hermes kanban archive t_abc123  # Archive</pre>
+`,`
+<h2>Boards</h2>
+<pre>hermes kanban boards list
+hermes kanban boards switch my-board</pre>
+<h2>Web Dashboard</h2>
+<p>Run a real-time dashboard at <code>localhost:8321</code> that auto-refreshes every 5 seconds. Shows color-coded tasks (🟡 running, ✅ done, 🔴 blocked) and cron job status with next run times. Collapsible sections. Viewable on any device on your network.</p>
+<h2>Integration</h2>
+<p>Kanban tasks can be dispatched to cron workers or sub-agents. The swarm command creates parallel worker graphs with a verifier step.</p>
+`]],
+['Cron Jobs & Automation',[`
+<p>Hermes has a built-in cron scheduler — no external cron daemon required. Jobs survive restarts.</p>
+<h2>Creating Jobs</h2>
+<pre>cronjob action='create' schedule='0 9 * * *'
+   prompt='Send summary' name='Daily'</pre>
+<h2>Schedule Formats</h2>
+<ul><li><b>Cron:</b> <code>0 9 * * *</code> (daily at 9am)</li>
+<li><b>Human:</b> <code>every 30m</code>, <code>every 2h</code></li>
+<li><b>One-shot:</b> <code>2026-12-01T09:00:00</code></li></ul>
+`,`
+<h2>Script Mode</h2>
+<p>For lightweight tasks without LLM cost:</p>
+<pre>cronjob action='create' schedule='*/15 * * * *'
+   script='scan.py' no_agent=true</pre>
+<p>Empty stdout = silent. Non-empty stdout = delivered.</p>
+<h2>Delivery Targets</h2>
+<ul><li><b>origin</b> — Current chat</li>
+<li><b>telegram:chat_id</b> — Specific Telegram</li>
+<li><b>discord:#channel</b> — Discord</li>
+<li><b>local</b> — Save to files</li>
+<li><b>all</b> — All platforms</li></ul>
+<h2>Job Chaining</h2>
+<pre>context_from: ['job_id_abc']</pre>
+<h2>Management</h2>
+<pre>hermes cron list | pause | resume | remove | run</pre>
+`]],
+['Gateway & Multi-Platform',[`
+<p>The Gateway runs Hermes as a bot on Telegram, Discord, WhatsApp, or Slack.</p>
+<h2>How It Works</h2>
+<p>Each platform runs a <b>gateway process</b> that listens for messages and routes them to the agent. Multiple gateways can run simultaneously.</p>
+<h2>Telegram Bot Setup</h2>
+<pre>hermes profile create my-bot
+# config.yaml: enable telegram gateway
+export TELEGRAM_BOT_TOKEN=xxx
+export TELEGRAM_ALLOWED_USERS=id
+hermes --profile my-bot gateway start</pre>
+`,`
+<h2>Profile Configuration</h2>
+<p>Each bot has its own:</p>
+<ul><li><b>SOUL.md</b> — Personality and instructions</li>
+<li><b>Config</b> — Model, tools, gateway</li>
+<li><b>Skills</b> — Purpose-specific knowledge</li>
+<li><b>Memory</b> — Isolated conversations</li></ul>
+<h2>Multi-Bot Architecture</h2>
+<ul><li><b>default</b> — Main assistant</li>
+<li><b>news-bot</b> — Daily news digest at 7am JST</li>
+<li><b>price-bot</b> — Product price comparison</li>
+<li><b>japanese-teacher</b> — Language learning</li></ul>
+`]],
+['SRE Monitoring with Hermes',[`
+<p>SREs face constant alerts and manual checks. Hermes automates triage, investigation, runbooks, and post-mortems.</p>
+<h2>Prometheus Alert Triage</h2>
+<pre>cronjob action='create' schedule='*/5 * * * *'
+  prompt='Check Prometheus at localhost:9090
+    for firing alerts. Determine severity,
+    check patterns, recommend steps.'
+  name='Alert Triage'
+deliver='telegram:6912295778'</pre>
+`,`
+<h2>Grafana Dashboard Report</h2>
+<pre>cronjob action='create' schedule='0 8 * * *'
+  prompt='Fetch Grafana system overview.
+    Report CPU, memory, disk warnings,
+    error rates, anomalies vs yesterday.'
+  name='Grafana Report'
+deliver='telegram:6912295778'</pre>
+<h2>Ansible Automation</h2>
+<pre>prompt='Run Ansible playbook for Windows
+service updates. Check for failures.'</pre>
+`,`
+<h2>Log Analysis</h2>
+<pre>prompt='Check Windows Event Log for failed
+logins (Event 4625) in the last hour.
+If >10 from same IP, report as attack.'</pre>
+<h2>Post-Mortem Generation</h2>
+<pre>prompt='Draft a post-mortem: what happened,
+impact, root cause, detection time,
+resolution, and action items.'</pre>
+`]],
+['Automated Trading with Hermes',[`
+<p>Hermes manages MQL5 trading bots — backtesting, deployment, monitoring, and optimization.</p>
+<h2>The Trading Stack</h2>
+<ul><li><b>MetaTrader 5</b> — Running EAs</li>
+<li><b>MQL5 Bots</b> — .mq5 trading logic</li>
+<li><b>Hermes Cron</b> — Scheduled checks</li>
+<li><b>GitHub</b> — Version control</li>
+<li><b>Telegram</b> — Alerts</li></ul>
+`,`
+<h2>Backtesting</h2>
+<pre>prompt='Run backtest of BTCJPY strategy on
+BTCJPY for 6 months. Report: total return,
+max drawdown, win rate, profit factor.'</pre>
+<h2>Parameter Optimization</h2>
+<pre>prompt='Optimize SL, TP, trailing stop.
+Run genetic optimization over 3 months.
+Show top 5 parameter sets by profit factor.'</pre>
+`,`
+<h2>Daily Report</h2>
+<pre>cronjob action='create' schedule='0 18 * * 1-5'
+  prompt='Check MT5 for today activity.
+    Report P&L, trades, win rate, drawdown.'
+  name='Trading Report'
+deliver='telegram:6912295778'</pre>
+<h2>Risk Monitoring</h2>
+<pre>prompt='Review open positions. Any exceeding
+5% daily loss? Total exposure within limits?'</pre>
+`]],
+['Personal Automation',[`
+<p>Beyond enterprise, Hermes handles email, backups, monitoring, and daily tasks.</p>
+<h2>Gmail Inbox Cleanup</h2>
+<pre>cronjob action='create' schedule='0 8 * * *'
+  script='gmail_scan.py' no_agent=true</pre>
+<p>Protected senders (never flagged): payroll, HR, banking, government, family.</p>
+<h2>GitHub Backups</h2>
+<pre>cronjob action='create' schedule='0 21 * * *'
+  script='backup_projects.py' no_agent=true</pre>
+<p>Covers: code, MQL5 bots, Hermes memory, skills, config.</p>
+`,`
+<h2>Price Monitoring</h2>
+<p>Dedicated Telegram bot compares prices across Kakaku.com, Amazon Japan, Rakuten, Yahoo Shopping. Reports lowest price, store, and shipping.</p>
+<h2>Security Monitoring</h2>
+<pre>cronjob action='create' schedule='*/15 * * * *'
+  script='security_agent.py' no_agent=true</pre>
+<p>Scans processes, network connections, suspicious files, Windows events. Learning phase builds baseline, then alerts on anomalies.</p>
+`,`
+<h2>News Digest Bot</h2>
+<pre>cronjob action='create' schedule='0 7 * * *'
+  prompt='Gather top headlines from Japan,
+    Philippines, and global news'
+  name='Daily News'
+deliver='telegram:6912295778'</pre>
+<h2>Daily Kanban Report</h2>
+<pre>cronjob action='create' schedule='0 9 * * *'
+  script='kanban_report.py' no_agent=true</pre>
+`]],
+['Multi-Agent Workflows',[`
+<p>Spawn sub-agents — independent AI workers with isolated terminals and toolsets.</p>
+<h2>Delegation</h2>
+<pre>delegate_task goal='Analyze error log'
+  context='Log file: /var/log/app.log'</pre>
+<p>The sub-agent works independently. You keep working. Result arrives when finished.</p>
+`,`
+<h2>Parallel Execution</h2>
+<pre>delegate_task tasks=[
+  {goal:'Search bug reports'},
+  {goal:'Check git history'},
+  {goal:'Review test results'}
+]</pre>
+<p>Each sub-agent runs independently. Results consolidate in the parent conversation.</p>
+`,`
+<h2>QA Workflow Pattern</h2>
+<ol><li>Write code → delegate QA to sub-agent</li>
+<li>Sub-agent finds bugs → reports them</li>
+<li>Fix → re-delegate QA for verification</li>
+<li>Repeat until clean → deliver to user</li></ol>
+<h2>Kanban Swarm</h2>
+<pre>hermes kanban swarm --goal 'Implement feature'
+  --workers 3</pre>
+<p>Parallel workers + verifier + synthesizer in a directed graph.</p>
+<h2>Best Practices</h2>
+<ul><li>Pass all context in the context field</li>
+<li>Sub-agents have no memory of parent conversation</li>
+<li>Verify critical operations yourself</li></ul>
+`]],
+['Advanced Configuration',[`
+<h2>Model Fallbacks</h2>
+<pre>model:
+  default: deepseek-v4-flash
+  fallback:
+    - provider: openrouter
+      model: anthropic/claude-sonnet-4</pre>
+<h2>Custom Providers</h2>
+<pre>custom_providers:
+  my-local:
+    base_url: http://localhost:1234/v1
+    api_key_env: MY_LOCAL_KEY</pre>
+`,`
+<h2>Plugins & Hooks</h2>
+<pre>hermes plugins install my-plugin</pre>
+<p>Hooks run at lifecycle points: pre_turn, post_turn, pre_tool, post_tool.</p>
+<h2>The Curator</h2>
+<pre>hermes curator status | run | unpin my-skill</pre>
+<p>Configurable: interval, stale days, archive days.</p>
+`,`
+<h2>Performance Tuning</h2>
+<ul><li>Use <code>no_agent=true</code> for lightweight cron</li>
+<li>Restrict toolsets to reduce token overhead</li>
+<li>Use <code>--continue</code> to resume sessions</li>
+<li>Use GGUF quantized models for local inference</li></ul>
+<h2>Security</h2>
+<ul><li>API keys in <code>.env</code> — never in config or code</li>
+<li>Restrict bot access with allowed users lists</li>
+<li>Rotate keys regularly</li></ul>
+<h2>Backup & Recovery</h2>
+<ol><li>Install Hermes</li>
+<li>Clone backup repo</li>
+<li>Copy <code>.hermes-backup/</code> → <code>~/.hermes/</code></li>
+<li>Recreate <code>.env</code> from key list</li>
+<li>All skills, memories, configs, profiles restored</li></ol>
+`]]
+];
+
+// ══════════════════════════════════════════════════════════════
+// READER ENGINE — Kindle-style
+// ══════════════════════════════════════════════════════════════
+let ch=1, pg=0, ui=false, dark=false, fs=17;
+
+function buildToc(){
+  let h='<h3>⟐ Contents</h3>';
+  C.forEach((c,i)=>{
+    if(!c) return;
+    h+=`<a onclick="go(${i})" id="t${i}">${i}. ${c[0]}</a>`;
+  });
+  document.getElementById('toc').innerHTML=h;
+}
+
+function show(){
+  const c=C[ch]; if(!c) return;
+  const p=c[1][pg]; if(!p) return;
+  const el=document.getElementById('pg');
+  el.innerHTML=`<h1>${ch}. ${c[0]}</h1>`+p;
+  el.classList.remove('fade');
+  update();
+}
+
+function n(dir){
+  const c=C[ch]; if(!c) return;
+  const nxt=pg+dir;
+  if(nxt>=0 && nxt<c[1].length){
+    const el=document.getElementById('pg');
+    el.classList.add('fade');
+    setTimeout(()=>{pg=nxt;show();},200);
+    return;
+  }
+  if(dir>0 && ch<C.length-1 && C[ch+1]){
+    ch++;pg=0;
+    document.getElementById('pg').classList.add('fade');
+    setTimeout(()=>show(),200);
+    tocU();
+    return;
+  }
+  if(dir<0 && ch>1 && pg===0){
+    ch--;pg=C[ch][1].length-1;
+    document.getElementById('pg').classList.add('fade');
+    setTimeout(()=>show(),200);
+    tocU();
+  }
+}
+
+function go(n){
+  if(n<1||n>=C.length||!C[n])return;
+  ch=n;pg=0;
+  document.getElementById('pg').classList.add('fade');
+  setTimeout(()=>show(),200);
+  document.getElementById('toc').classList.remove('open');
+  tocU();
+}
+
+function update(){
+  const c=C[ch]; if(!c) return;
+  let d=0,t=0;
+  for(let i=1;i<C.length;i++){
+    if(!C[i])continue;
+    if(i<ch) d+=C[i][1].length;
+    else if(i===ch) d+=pg+1;
+    t+=C[i][1].length;
+  }
+  document.getElementById('pi').textContent=`${c[0]} — Page ${pg+1} of ${c[1].length}`;
+  document.getElementById('pf').style.width=`${(d/t)*100}%`;
+}
+
+function tocU(){
+  document.querySelectorAll('#toc a').forEach(a=>a.classList.remove('cur'));
+  const el=document.getElementById('t'+ch);
+  if(el)el.classList.add('cur');
+}
+
+function tB(){
+  ui=!ui;
+  document.getElementById('top').classList.toggle('hide',!ui);
+  document.getElementById('bot').classList.toggle('hide',!ui);
+}
+
+function tT(){document.getElementById('toc').classList.toggle('open');}
+function tF(){document.getElementById('font').classList.toggle('show');}
+function tD(){
+  dark=!dark;
+  document.body.classList.toggle('dark',dark);
+  document.getElementById('dmBtn').textContent=dark?'🌙':'☀';
+}
+function sF(d){
+  fs=Math.max(11,Math.min(28,fs+d));
+  document.documentElement.style.setProperty('--fs',fs+'px');
+  document.getElementById('font').classList.remove('show');
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')n(1);
+  if(e.key==='ArrowLeft')n(-1);
+  if(e.key==='t')tT();
+  if(e.key===' ')n(1);
+});
+
+// Touch swipe
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>40)n(dx<0?1:-1);
+});
+
+// Hide UI on scroll
+let st=0;
+document.getElementById('pg').addEventListener('scroll',()=>{
+  if(ui){tB();}
+});
+
+buildToc();
+show();
+</script>
+</body>
+</html>
