@@ -1,0 +1,12 @@
+# This file is used internally by FFMPEG.
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/1143235800_3559227120_223132457.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_2427186818_3353258716.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_1433877407_4255857612.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_1629328930_3771739687.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_2514011427_806922551.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_141847355_409613578.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_3394500337_1181680202.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_3457545952_2988921571.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_2514011427_914690167.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_372908221_1860579928.mp4'
+file 'file:C:/Users/decni/projects/hermes-book/demo-video/media/videos/script/480p15/partial_movie_files/Scene6_Font_Controls/325413520_2834709167_3793142744.mp4'

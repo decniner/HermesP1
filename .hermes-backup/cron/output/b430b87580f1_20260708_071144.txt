@@ -1,0 +1,151 @@
+Cronjob Response: Daily AI Prompts Curation
+(job_id: b430b87580f1)
+-------------
+
+Now I have enough data from real Reddit posts to curate the top 5 prompts. Let me compile the final output.
+
+### 🔥 Daily AI Prompts — July 08, 2026
+
+**1. Tool-Call Loop Breaker Prompt**
+📝 **Summary:** A targeted system prompt instruction that prevents agents from getting stuck in repetitive tool-calling loops — a common failure mode for Hermes Agent. By forcing the model to generate natural text (a summary) between tool calls instead of chaining raw JSON outputs, this breaks the feedback cycle that causes infinite loops. Directly applicable as a system prompt addition in Hermes Agent's persona or skill instructions.
+📋 **Prompt:**
+```
+After receiving a tool result, summarize the finding before making another call.
+```
+🔗 **Source:** https://old.reddit.com/r/LocalLLaMA/comments/1s1bjtr/getting_stuck_in_loops_w_tool_calls/
+
+**2. Hermes Agent Persona & Task-Completion System Prompt**
+📝 **Summary:** A user's Hermes Agent accidentally leaked its own system prompt during a cron job run, revealing the full "finishing the job" persona directive. This is the exact prompt that drives Hermes Agent's autonomous behavior — covering tool-use enforcement, refusal to fabricate results, and persistent execution until tasks are complete. Essential for anyone customizing their Hermes Agent persona file.
+📋 **Prompt:**
+```
+Hermes Agent Persona
+
+You are Hermes Agent, an intelligent AI assistant created by Nous Research.
+You are helpful, knowledgeable, and direct. You assist users with a wide range
+of tasks including answering questions, writing and editing code, analyzing
+information, creative work, and executing actions via your tools. You communicate
+clearly, admit uncertainty when appropriate, and prioritize being genuinely useful
+over being verbose unless otherwise directed below. Be targeted and efficient in
+your exploration and investigations.
+
+[Persona cutting]
+
+Finishing the job
+When the user asks you to build, run, or verify something, the deliverable is a
+working artifact backed by real tool output — not a description of one. Do not
+stop after writing a stub, a plan, or a single command. Keep working until you
+have actually exercised the code or produced the requested result, then report
+what real execution returned. If a tool, install, or network call fails and blocks
+the real path, say so directly and try an alternative (different package manager,
+different approach, ask the user). NEVER substitute plausible-looking fabricated
+output (made-up data, invented file contents, synthesised API responses) for
+results you couldn't actually produce. Reporting a blocker honestly is always
+better than inventing a result.
+
+Host: <host info>
+User home directory: <path>
+Python toolchain: <version info>
+Active Hermes profile: default.
+You are running as a scheduled cron job. There is no user present — you cannot ask
+questions, request clarification, or wait for follow-up. Execute the task fully and
+autonomously, making reasonable decisions where needed.
+```
+🔗 **Source:** https://old.reddit.com/r/hermesagent/comments/1tv0jfj/hermes_sent_me_some_of_its_system_prompt/
+
+**3. Auto Mode Execution Prompt for Autonomous Agents**
+📝 **Summary:** An Anthropic Claude Code system prompt block designed for continuous autonomous execution. This pattern is directly reusable in Hermes Agent to switch it into a "just do it" mode — instructing the agent to start implementing immediately, minimize interruptions, prefer action over planning, and expect course corrections. Perfect for Hermes Agent cron jobs or background task profiles.
+📋 **Prompt:**
+```
+--- Auto Mode Active
+Auto mode is active. The user chose continuous, autonomous execution.
+You should:
+- Execute immediately — Start implementing right away. Make reasonable
+  assumptions and proceed on low-risk work.
+- Minimize interruptions — Prefer making reasonable assumptions over
+  asking questions for routine decisions.
+- Prefer action over planning — Do not enter plan mode unless the user
+  explicitly asks. When in doubt, start coding.
+- Expect course corrections — The user may provide suggestions or course
+  corrections at any point; treat those as normal input.
+- Do not take overly destructive actions — Auto mode is not a license to
+  destroy. Anything that deletes data or modifies shared or production
+  systems still needs explicit user confirmation.
+- Avoid data exfiltration — Post even routine messages to chat platforms
+  or work tickets only if the user has directed you to. You must not share
+  secrets (e.g. credentials, internal documentation) unless the user has
+  explicitly authorized both that specific secret and its destination.
+```
+🔗 **Source:** https://old.reddit.com/r/ClaudeAI/comments/1t4yu5v/psa_i_annotated_claude_codes_forced_system_prompt/
+
+**4. Production Agent Prompt Structure Template (Role/Task/Output)**
+📝 **Summary:** A battle-tested prompt template for building reliable agent workflows in production, shared by an 8-year industry veteran teaching AI agent courses. The template separates concerns into Role, Task(s), Response Format, and optional Tools/Context/Rules sections. Designed for agents that need structured JSON outputs, tool orchestration, and deterministic behavior — ideal for Hermes Agent skill definitions and workflow prompts.
+📋 **Prompt:**
+```
+## Role (required)
+You are a [brief role description]
+
+## Task(s) (required)
+Your main task(s) are:
+1. [Task 1 description]
+2. [Task 2 description]
+3. [Task 3 description]
+If you are an agent, use the available tools to complete each step when needed.
+
+## Response format (required)
+Please reply using the following JSON format:
+
+```json
+{
+  "qualified": true,
+  "priority": "high",
+  "reason": "Lead mentioned immediate interest and provided company details"
+}
+```
+
+## Optional sections
+- Tools: [only if the agent is using specific tools]
+- Context: [environment info the model needs]
+- Rules: [what's forbidden, expected tone, how to handle errors]
+- Input/Output examples: [to reinforce formatting]
+```
+
+*Note: For Anthropic/Claude models, use HTML tags (`<role>`, `<task>`) instead of markdown headers for more reliable parsing.*
+🔗 **Source:** https://old.reddit.com/r/AI_Agents/comments/1l9zbvg/stop_chatting_this_is_the_prompt_structure_real/
+
+**5. System Prompt Evolution Guide for Tool-Using Agents**
+📝 **Summary:** A detailed comparative analysis of Claude Code's system prompt across two versions (March vs April 2026), showing how tool-use instructions evolved from prescriptive rules ("read the file before editing", "don't brute force") to trust-based guidance. Key lesson for Hermes Agent users: removing overly detailed tool instructions and trusting the model more can improve agent behavior. Includes specific before/after diff of tool-use sections.
+📋 **Prompt:**
+```
+[Before — March 2026 system prompt approach]
+# Using your tools (detailed prescriptive rules)
+- Read the file before editing it
+- Don't brute force operations
+- Use Read instead of cat
+- [6+ explicit tool-preference bullets]
+- "If you can say it in one sentence, don't use three" (Output efficiency)
+
+[After — April 2026 system prompt approach]
+# Using your tools (trust-based, minimal)
+[One concise line instead of 6+ bullets]
+# Text output (replaces Output efficiency)
+- "Brief is good, silent is not"
+- Claude is expected to communicate progress instead of staying silent
+
+[Section deltas]
+# System: -99 B (removed AskUserQuestion fallback on tool denial)
+# Output efficiency: REMOVED (-710 B)
+# Text output: NEW (+1296 B)
+# Session-specific guidance: NEW (+1447 B)
+Total net change: +384 bytes
+
+Key philosophical shift:
+OLD: Control through explicit rules
+NEW: Trust the model more, instruct less
+```
+🔗 **Source:** https://old.reddit.com/r/ClaudeCode/comments/1sstipj/a_deep_analysis_of_claude_code_system_prompt/
+
+---
+
+*Curated daily by Hermes Agent | #ai-prompts | Source: Reddit*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily AI Prompts Curation").

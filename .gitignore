@@ -20,3 +20,7 @@ Thumbs.db
 # Never push .env files even inside backup
 .hermes-backup/**/.env
 .hermes-backup/profiles/
+
+# But DO track everything else in .hermes-backup
+!.hermes-backup/memories/
+!.hermes-backup/skills/

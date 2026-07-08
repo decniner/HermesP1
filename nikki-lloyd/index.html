@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nikki Lloyd Corpuz — Portfolio</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f0f1a;color:#e0dcc8;line-height:1.6;}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#1a1a3e 0%,#2a1a0a 100%);padding:60px 20px 40px;text-align:center;border-bottom:3px solid #c4782a;}
+.hero .av{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#c4782a,#e8a540);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:40px;color:#fff;font-weight:bold;}
+.hero h1{font-size:32px;color:#ffd700;margin-bottom:4px;}
+.hero .sub{font-size:16px;color:#e8a540;margin-bottom:6px;}
+.hero .loc{font-size:13px;color:#8a8575;}
+.hero .tag{display:inline-block;margin-top:12px;padding:4px 16px;background:#c4782a;color:#fff;border-radius:20px;font-size:12px;}
+
+/* Sections */
+.section{max-width:860px;margin:30px auto;padding:0 20px;}
+h2{color:#ffd700;font-size:20px;margin-bottom:16px;padding-bottom:6px;border-bottom:2px solid #c4782a;}
+
+/* Timeline */
+.tl{position:relative;padding-left:24px;}
+.tl::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:#c4782a;}
+.tl-item{position:relative;margin-bottom:24px;padding-left:12px;}
+.tl-item::before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:#c4782a;border:2px solid #1a1a3e;}
+.tl-item .date{font-size:11px;color:#8a8575;margin-bottom:2px;}
+.tl-item .role{font-size:16px;color:#fff;font-weight:600;}
+.tl-item .comp{font-size:13px;color:#e8a540;margin-bottom:3px;}
+.tl-item .desc{font-size:13px;color:#b0aaa0;}
+
+/* Skills */
+.skills{display:flex;flex-wrap:wrap;gap:8px;}
+.skills span{background:rgba(196,120,42,0.12);border:1px solid rgba(196,120,42,0.3);color:#e8a540;padding:6px 14px;border-radius:20px;font-size:12px;}
+
+/* Cards */
+.card{background:#1a1a2e;border:1px solid #2a2a3e;border-radius:8px;padding:20px;margin-bottom:16px;}
+.card h3{color:#ffd700;font-size:15px;margin-bottom:6px;}
+.card p{font-size:13px;color:#b0aaa0;}
+.card ul{list-style:none;padding:0;}
+.card ul li{padding:3px 0 3px 16px;font-size:13px;color:#b0aaa0;position:relative;}
+.card ul li::before{content:'▸';position:absolute;left:0;color:#c4782a;}
+
+/* Footer */
+.footer{text-align:center;padding:30px;color:#6a6555;font-size:12px;border-top:1px solid #2a2a3e;margin-top:40px;}
+
+@media(max-width:600px){
+  .hero h1{font-size:24px;}
+  .section{padding:0 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="av">NC</div>
+  <h1>Nikki Lloyd Corpuz</h1>
+  <div class="sub">Engineer · IT Infrastructure · Platform Engineering</div>
+  <div class="loc">📍 Tokyo, Japan</div>
+  <div class="tag">💻 Currently at Cboe Global Markets</div>
+</div>
+
+<div class="section">
+  <h2>💼 Professional Experience</h2>
+  <div class="tl">
+    <div class="tl-item">
+      <div class="date">Apr 2023 — Present</div>
+      <div class="role">Engineer</div>
+      <div class="comp">Cboe Global Markets</div>
+      <div class="desc">Working on platform engineering and infrastructure solutions in a global financial markets environment.</div>
+    </div>
+    <div class="tl-item">
+      <div class="date">Dec 2016 — Apr 2023</div>
+      <div class="role">Client Platform Engineer</div>
+      <div class="comp">Nomura</div>
+      <div class="desc">Designed, planned, rolled out, and maintained the Windows 10 platform on a global scale. Responsible for enterprise client platform strategy, deployment, and operational support across Nomura's worldwide offices.</div>
+    </div>
+    <div class="tl-item">
+      <div class="date">2015 — 2016</div>
+      <div class="role">Onsite Engineer</div>
+      <div class="comp">Bank of America Merrill Lynch</div>
+      <div class="desc">Addressed issues impacting trading and back-office systems. Provided user support across multiple tiers, ensuring high availability and performance for critical financial systems.</div>
+    </div>
+    <div class="tl-item">
+      <div class="date">2012 — 2015</div>
+      <div class="role">System Administrator</div>
+      <div class="comp">日本旅行アメリカンエキスプレス (Japan Travel American Express)</div>
+      <div class="desc">Provided IT service support in both English and Japanese. Managed system administration, user support, and infrastructure maintenance.</div>
+    </div>
+    <div class="tl-item">
+      <div class="date">2010 — 2012</div>
+      <div class="role">IT Instructor</div>
+      <div class="comp">Asian Computer College</div>
+      <div class="desc">Taught IT courses and trained students in computer science fundamentals, hardware, and software systems.</div>
+    </div>
+    <div class="tl-item">
+      <div class="date">2008 — 2010</div>
+      <div class="role">IT Technician</div>
+      <div class="comp">Colegio San Juan de Letran</div>
+      <div class="desc">Provided computer troubleshooting, repair, and technical support for the institution's IT infrastructure.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🛠 Skills & Expertise</h2>
+  <div class="skills">
+    <span>Windows 10/11 Platform Engineering</span>
+    <span>Client Platform Management</span>
+    <span>IT Infrastructure</span>
+    <span>Enterprise Deployment</span>
+    <span>Trading Systems Support</span>
+    <span>IT Support & Operations</span>
+    <span>Bilingual (English / Japanese)</span>
+    <span>System Administration</span>
+    <span>Financial Services IT</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🏢 Industry Experience</h2>
+  <div class="card">
+    <h3>Financial Services</h3>
+    <p>Deep experience across investment banking (Nomura), global markets (Cboe), and financial trading (Bank of America Merrill Lynch) — providing critical IT infrastructure support for trading and back-office operations.</p>
+  </div>
+  <div class="card">
+    <h3>Travel & Education</h3>
+    <p>IT system administration at Japan Travel American Express (bilingual support) and IT instruction at Asian Computer College, demonstrating versatility across industries.</p>
+  </div>
+</div>
+
+<div class="section">
+  <h2>🎓 Education</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Bachelor's Degree in Information Technology</strong> — Philippines</li>
+      <li><strong>Advanced Japanese Language Studies</strong> — Tokyo Johoku Nihongo Gakuin</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Nikki Lloyd Corpuz · Tokyo, Japan · Information compiled from public sources (LinkedIn, The Org)</p>
+</div>
+
+</body>
+</html>

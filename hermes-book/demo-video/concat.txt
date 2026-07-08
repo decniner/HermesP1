@@ -1,0 +1,7 @@
+file 'media/videos/script/480p15/Scene1_Title_Book.mp4'
+file 'media/videos/script/480p15/Scene2_Open_Book.mp4'
+file 'media/videos/script/480p15/Scene3_TOC_Sidebar.mp4'
+file 'media/videos/script/480p15/Scene4_Page_Nav.mp4'
+file 'media/videos/script/480p15/Scene5_Dark_Mode.mp4'
+file 'media/videos/script/480p15/Scene6_Font_Controls.mp4'
+file 'media/videos/script/480p15/Scene7_URL_Outro.mp4'

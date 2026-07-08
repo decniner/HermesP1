@@ -1,5 +1,9 @@
-Den Sanchez — Filipino permanent resident in Kawagoe, Saitama, Japan. IT web developer & systems engineer. Prometheus/Grafana/Ansible/Windows services/banking monitoring. WFH. Married, 3 kids. Chloe (baseball) & Eya. 2 Shiba Inu: Bella (black), Pogi (red). Xiaomi 13T Pro, Toyota Vellfire, Pixel Watch 3 45mm LTE. Plays Thrill of the Fight 2 VR. Values: brutal honesty, value-for-money, reliability, long-term thinking. Prefers tables, practical advice, real-world evidence over hype. Nature trips, peaceful places. PayPay user. TG:6912295778 GH:decniner decniner@gmail.com
+Den Sanchez — Filipino, Kawagoe Japan. IT web dev & sys eng (Prometheus/Grafana/Ansible). Married, 3 kids (Chloe, Eya). 2 Shiba Inu: Bella (black), Pogi (red). Xiaomi 13T Pro, Toyota Vellfire, Pixel Watch 3. Thrill of the Fight 2 VR. Values: brutal honesty, value-for-money, long-term thinking. TG:6912295778 GH:decniner decniner@gmail.com
 §
-Dev workflow: ask clarifying Qs first, subagent QA, fix → retest → deliver. Copy EA files to DEN_EA + GitHub. Show progress % for tasks over 1 min. Create kanban task before every request, complete when done, never archive done. Prefers single-file HTML games with PC speaker sounds, touch mobile controls, 80s/90s aesthetic. Price-bot: text-only, no audio.
+Workflow: ask Qs first, subagent QA, fix→retest→deliver. Copy EA to DEN_EA + GitHub. Show progress% for tasks >1min. Kanban task before each request, complete when done, never archive done. Prefers single-file HTML games (80s/90s aesthetic). Price-bot: text-only.
 §
-When converting cron job output to voice (TTS): strip all URLs, keep only the main facts/numbers/summaries, and mention the job name and run time. No URLs in audio.
+Cron→TTS: strip URLs, keep main facts/numbers, mention job name & run time. No URLs in audio.
+§
+When user gives exact step-by-step instructions with file contents (repos, env vars, shell functions), follow them precisely without deviation or substitution. Don't improvise when the spec is explicit.
+§
+Gmail: decniner@gmail.com, SMTP/IMAP app password available in gmail_scan.py script.

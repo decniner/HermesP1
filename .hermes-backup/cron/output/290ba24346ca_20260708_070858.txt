@@ -1,0 +1,93 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Wednesday, July 8, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Shizuoka Governor Approves Maglev Train Construction After Years-Long Deadlock
+   Summary: Governor Yasutomo Suzuki gave the green light for Central Japan Railway Co. to begin construction on the Shizuoka section of the Linear Chuo Shinkansen maglev line, breaking years of opposition from former Gov. Kawakatsu over environmental concerns. Construction may begin within the year, targeting a Tokyo–Nagoya opening by 2036 at the earliest.
+   Source: https://japantoday.com/category/national/shizuoka-gov.-oks-start-of-construction-for-stalled-maglev-train-project
+
+2. Japanese Embassy Warns Businesses Over China's Tightened Export Controls
+   Summary: The Japanese Embassy in Beijing issued an advisory urging caution after two Japanese nationals were arrested in Dalian over rare earth exports. China has ramped up enforcement on dual-use items with civilian and military applications, including a new reporting system that encourages tip-offs about illegal exports.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260708_02/
+
+3. BOJ Dissenter Asada Signals Could Support Future Rate Hikes
+   Summary: Bank of Japan board member Toichiro Asada, the sole dissenter to the June rate hike to a 31-year high of 1%, said in an exclusive Reuters interview he must see demand-driven inflation before backing further rises — but flagged "relatively rapid" pass-through of higher costs as a sign he may eventually vote in favor.
+   Source: https://www.reuters.com/world/asia-pacific/boj-dissenter-asada-needs-demand-driven-inflation-before-backing-rate-hike-2026-07-07/
+
+4. China and Japan Trade Conflicting Accounts of Senkaku Islands Confrontation
+   Summary: Both nations gave opposing versions of a confrontation around the disputed Senkaku/Diaoyu islands, heightening tensions in the East China Sea. North Korean state media also weighed in, accusing Japan of "overseas aggression."
+   Source: https://www.reuters.com/world/asia-pacific/china-japan-trade-conflicting-accounts-confrontation-around-senkaku-islands-2026-07-07/
+
+5. Heat Alert for Kyushu; Strong Typhoon Approaches Okinawa
+   Summary: A heat alert was issued for Japan's Kyushu region while Okinawa braces for a powerful typhoon approaching from the Pacific. Real wages in Japan rose for the fifth straight month in May, though at a slower pace due to inflation.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260707_08/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Super Typhoon Bavi (Inday) Heads Toward PAR, Signal No. 1 Raised
+   Summary: PAGASA gave Super Typhoon Bavi the local name Inday and raised Signal No. 1 for northeastern Cagayan. The storm is not expected to make landfall but will enhance the southwest monsoon (habagat), bringing moderate to heavy rain across much of the country through the weekend.
+   Source: https://www.rappler.com/philippines/weather/super-typhoon-inday-update-pagasa-forecast-july-7-2026-11pm/
+
+2. Sara Duterte Impeachment Trial: Prosecution Presents Videos of Alleged Death Threats
+   Summary: On Day 2 of the impeachment trial, the House prosecution successfully played videos of Vice President Sara Duterte making alleged death threats against President Marcos, the First Lady, and former Speaker Romualdez. The prosecution said they "scored points." Duterte declared: "I will be bloodied but unbowed."
+   Source: https://www.rappler.com/philippines/prosecution-says-scored-points-sara-duterte-impeachment-trial-july-7-2026/
+
+3. Philippines Recalls Defense Attaché to Beijing Amid Strained Ties
+   Summary: The Philippines recalled its Defense and Armed Forces Attaché from Beijing for "consultations," Defense Secretary Teodoro confirmed. The move comes weeks after China imposed sanctions on Teodoro and his family. Teodoro cited a "new engagement framework" and review of the attaché posting.
+   Source: https://www.rappler.com/philippines/recalls-defense-attache-china/
+
+4. Teodoro, AFP, and US Slam China's Rare Ballistic Missile Test
+   Summary: Philippine Defense Secretary Teodoro, the Armed Forces, and the United States condemned China's rare ballistic missile test-fired from a nuclear submarine into the Pacific, calling Beijing's nuclear buildup of "great concern" to the world.
+   Source: https://www.philstar.com/headlines/2026/07/08/2540602/teodoro-afp-us-slam-china-missile-test
+
+5. Supreme Court Asked to Halt Impeachment Trial
+   Summary: A group of lawyers asked the Supreme Court for a temporary restraining order to stop the impeachment trial, challenging the legality of the trial rules and the designation of Senator Chiz Escudero as presiding officer.
+   Source: https://www.philstar.com/headlines/2026/07/08/2540594/sc-asked-stop-trial-over-rules-choice-chiz
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. NATO Summit Opens in Ankara; Trump Renews Greenland Demand
+   Summary: NATO leaders gathered in Ankara for a critical summit focused on rearming Europe. President Trump renewed his call for the US to take over Greenland, stunning fellow allies. NATO unveiled billions in new arms deals including Airbus transport aircraft and Swedish GlobeEye surveillance planes. Zelenskyy urged Europe to build credible anti-ballistic missile defenses.
+   Source: https://www.bbc.com/news/articles/ckg06d3dgnlo
+
+2. Marine Le Pen Announces 2027 Presidential Run, Appeals Embezzlement Conviction
+   Summary: French far-right leader Marine Le Pen announced she will run for president in 2027 and appeal her embezzlement conviction to France's highest court. A Paris appeal court found her guilty of misusing €2.8M in EU funds but ruled she could stand while wearing an electronic tag. "The campaign begins tonight," she said.
+   Source: https://www.bbc.com/news/articles/c7vygl3zymjo
+
+3. Bomb Explosions Injure 18 in Damascus During Macron's Visit
+   Summary: Two bombs exploded near the Four Seasons Hotel in Damascus where French President Macron was staying during the first visit by an EU leader since the fall of the Assad regime. Macron was unharmed. Four police officers were among the wounded. No group has claimed responsibility.
+   Source: https://www.bbc.com/news/articles/c2eylx1jj9ko
+
+4. Three Tankers Hit in Strait of Hormuz; US Revokes Iranian Oil License
+   Summary: Three ships were struck in the Strait of Hormuz as the US launched new strikes against Iran. Washington revoked a license authorizing the sale of Iranian oil. Japan-related ships began exiting the Strait as crude supply from the Middle East to Japan was set to rebound in July.
+   Source: https://apnews.com/article/iran-us-israel-war-oil-4732228810c9839a1258309ad43b8289
+
+5. China's Rare Submarine-Launched Ballistic Missile Test Raises Global Alarm
+   Summary: China test-fired a ballistic missile from a nuclear submarine into the Pacific Ocean, triggering condemnation from the US, Japan, and the Philippines. Analysts say the test underscores Beijing's rapid nuclear buildup and exacerbates already strained regional relations.
+   Source: https://apnews.com/article/china-missile-test-pacific-what-to-know-28df0be8121a5af6e7f281c738c06ba3
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 QUICK LOOK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 Maglev gets go-ahead | 🇨🇳 China export-control warning | 💱 BOJ rate-watch
+🇵🇭 Typhoon Inday approaches | ⚖️ Sara Duterte trial heats up | 🇨🇳 PH recalls Beijing attaché
+🌐 NATO summit in Ankara | 🇫🇷 Le Pen runs again | 💥 Damascus bombs | 🔥 Strait of Hormuz strikes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔗 Reply with a number (e.g., "1" for the first story in any section) if you'd like the full article text.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").

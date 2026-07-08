@@ -1,9 +1,9 @@
 Has a dedicated japanese-teacher Hermes profile with its own Telegram bot for learning Japanese.
 §
-Workflow: ask clarifying questions ONE at a time until 100% clear before coding. No assumptions. No jumping to solutions. Only after full understanding, write project vision in AI-readable format. Create kanban task before every request.
-§
-Always copy MQL5/EA files to both the DEN_EA MetaTrader folder AND push to GitHub. Never just one.
-§
 Den Sanchez profile: Filipino permanent resident in Kawagoe, Saitama, Japan. Works IT as web developer & systems engineer — Prometheus, Grafana, Ansible, Windows services, banking monitoring. Works from home. Married, 3 kids. Daughters Chloe (plays baseball) and Eya. Family drives financial decisions. Owns 2 Shiba Inu: Bella (black), Pogi (red). Had parakeets that escaped — misses them. Owned property Kawagoe, looked at land Hanno. Analyzed housing extensively: sold house, buy vs land, variable vs Flat35, long-term interest, thinks in decades. Xiaomi 13T Pro, Toyota Vellfire, Pixel Watch 3 45mm LTE. Values value-for-money, reliability, battery life, real-world use. Plays Thrill of the Fight 2 VR competitively — wants brutal boxing analysis, cares about movement/defense/ring IQ. Wants ruthless critique, no sugarcoating, red-team thinking. Gathers data, compares, stress-tests — can over-analyze. Projects: C# Windows services, Grafana, Prometheus, Ansible, dashboards. Prefers tables, practical advice, long-term value, real-world experience. Enjoys nature trips, peaceful places. Uses PayPay. Interested in hair-loss prevention. Tried keto/IF. Careful with loans/investments.
 §
-For writing/documentation projects (books, guides): follow strict phased workflow — Phase 1 (discovery: ask Qs one topic at a time, no assumptions/code until approved Project Vision), Phase 2 (content writing), Phase 3 (polished deliverable). Final deliverable for digital books: standalone HTML/CSS/JS with immersive page-flip interface, smooth auto-complete flip at 50% threshold, hidden/slide-out Table of Contents, responsive design, clean typography.
+Dev workflow: ask clarifying Qs one-at-a-time → approved vision → do. EAs: copy to DEN_EA + GitHub always. Book projects: Phase 1 discovery (Qs), Phase 2 writing, Phase 3 HTML page-flip deliverable. Gmail: decniner@gmail.com SMTP app password.
+§
+User has claude-code-proxy at ~/projects/claude-code-proxy/ with OpenRouter free tier — prefers trying Claude Code via proxy for code generation before alternatives, willing to debug iteratively to avoid paid API costs.
+§
+Den enjoys receiving information as audio/voice messages — kanban status, summaries, forum-style discussions with multiple characters. He also likes getting detailed reports delivered to his email as HTML attachments for offline reading.
