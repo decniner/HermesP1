@@ -7,3 +7,5 @@ Cron→TTS: strip URLs, keep main facts/numbers, mention job name & run time. No
 When user gives exact step-by-step instructions with file contents (repos, env vars, shell functions), follow them precisely without deviation or substitution. Don't improvise when the spec is explicit.
 §
 Gmail: decniner@gmail.com, SMTP/IMAP app password available in gmail_scan.py script.
+§
+Token-cost conscious — uses DeepSeek API (paid). Wants aggressive config-level token optimization: max_turns capped at 30, unused platform toolsets disabled, lightweight search backends (ddgs), compression tightened. Prevents token bloat to protect API balance.

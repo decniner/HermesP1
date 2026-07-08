@@ -30,6 +30,7 @@ Web search APIs (Firecrawl, Google, etc.) may occasionally be unavailable due to
 
 1. Try alternative search engines via browser (DuckDuckGo, Bing, Yahoo)
 2. Try direct source URLs (LinkedIn, The Org, ZoomInfo, RocketReach)
+3. **Use browser_vision for JS-heavy content** — Some sites render content dynamically and may show only navigation in the accessibility tree. Navigate directly to the page with browser_navigate, then use browser_vision(question='What content is visible on this page?') to extract all visible text from the screenshot. This is especially effective for news sites, landing pages, and pages that load content via JavaScript.
 3. If all searches fail, build the page with what the user provided, include a prominent notice explaining the limitation, and send it anyway
 
 **Fallback notice for the HTML page:**
