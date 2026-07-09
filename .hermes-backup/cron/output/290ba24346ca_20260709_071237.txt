@@ -1,0 +1,102 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I have enough data from Kyodo News (Japan), Rappler (Philippines), and BBC News (Global/World). Let me compile the digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 July 8–9, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. China's Missile Route Avoids Japan, Raising Questions Over Intent
+   Summary: China test-fired a ballistic missile from a nuclear submarine, notifying two possible flight routes — one passing over Japan. The missile likely flew near the Philippines along the southern route instead. Analysts and regional nations are assessing Beijing's intentions and stepping up vigilance.
+   Source: https://english.kyodonews.net/
+
+2. Japan Bankruptcies in Jan.–June Top 5,000 for First Time in 12 Years
+   Summary: Corporate bankruptcies in Japan exceeded 5,000 in the first half of 2026, the highest first-half total in 12 years, as rising costs and labor shortages continue to strain small and medium-sized businesses.
+   Source: https://english.kyodonews.net/
+
+3. Japan's Ruling LDP to Forgo Diet Seat-Cut Bill This Session
+   Summary: The Liberal Democratic Party has decided not to pursue a bill reducing the number of Diet seats in the current parliamentary session, delaying electoral reform for now.
+   Source: https://english.kyodonews.net/
+
+4. Woman Arrested Near Tokyo for Sewing Roommate's Lips Together
+   Summary: A woman was arrested in a city near Tokyo on suspicion of assault, allegedly sewing her roommate's lips together — a shocking crime drawing widespread media attention.
+   Source: https://english.kyodonews.net/
+
+5. Dodgers Star Ohtani Hits 300th MLB Career Homer — 5th-Fastest Pace
+   Summary: Shohei Ohtani smashed his 300th career home run in MLB, achieving the milestone at the 5th-fastest pace in league history, continuing his historic run with the Los Angeles Dodgers.
+   Source: https://english.kyodonews.net/
+
+6. Tokyo Stocks End Lower as Higher Oil Prices Reignite Inflation Jitters
+   Summary: Japanese stocks closed lower as rising oil prices revived concerns about inflation and its potential impact on the economic recovery.
+   Source: https://english.kyodonews.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Sara Duterte Impeachment Trial — LIVE UPDATES
+   Summary: The impeachment trial of Vice President Sara Duterte continues. The prosecution is doubling down on media interviews, proactively reaching out to media outfits for one-on-ones with reporters covering the proceedings.
+   Source: https://www.rappler.com/
+
+2. Sara Duterte Threats vs Marcos — Defense Says Threats Were Justified
+   Summary: The defense team for Sara Duterte argued that her alleged threats against President Ferdinand Marcos Jr. were justified. The article questions whether such justifications hold legal and constitutional weight.
+   Source: https://www.rappler.com/
+
+3. The Question of AI at Sara Duterte's Impeachment Trial
+   Summary: A novel legal question has emerged in the trial — the use of artificial intelligence in evidence and proceedings, raising new legal precedents for the Philippine judicial system.
+   Source: https://www.rappler.com/
+
+4. Super Typhoon Inday Brings Scattered Rain via Outer Bands and Monsoon
+   Summary: Super Typhoon Inday's outer bands, combined with the southwest monsoon (habagat), are bringing scattered rain over parts of the Philippines. PAGASA continues to monitor the storm's path.
+   Source: https://www.rappler.com/
+
+5. Philippines-Canada Strategic Partnership: Why It's a Big Deal
+   Summary: The newly established Philippines-Canada strategic partnership marks a significant milestone in bilateral relations, with implications for defense, trade, and regional cooperation.
+   Source: https://www.rappler.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 🔴 US Launches More Strikes on Iran; Explosions Reported Along South Coast
+   Summary: The US carried out additional strikes on Iran, with local media reporting explosions along Iran's southern coast. President Trump said the US would "hit them hard" again after the two countries exchanged fire the previous night. The US-Iran confrontation is escalating rapidly.
+   Source: https://www.bbc.com/news
+
+2. Bowen: For All His Bluster, Trump Has No Better Option Than Talks with Iran
+   Summary: BBC International Editor Jeremy Bowen analyzes the fragile negotiating process between the US and Iran, noting that despite aggressive rhetoric, diplomatic talks remain the only viable path — though recent strikes show how difficult agreement will be.
+   Source: https://www.bbc.com/news
+
+3. Ukraine to Get License to Produce Patriot Missiles, Trump Says
+   Summary: President Trump announced at NATO that Ukraine would receive a license to produce Patriot missile systems. While highly effective against Russian ballistic missiles, production timelines remain lengthy.
+   Source: https://www.bbc.com/news
+
+4. Justin Bieber Joins Madonna, Shakira, and BTS for FIFA World Cup Final Half-Time Show
+   Summary: A Super Bowl-style half-time show for the FIFA World Cup final will feature Justin Bieber, Madonna, Shakira, and BTS — marking the Canadian singer's latest major performance since his Coachella comeback.
+   Source: https://www.bbc.com/news
+
+5. Eight Killed After Landslide Hits Girls' School in Bangladesh
+   Summary: Rescuers pulled bodies from the mud after heavy monsoon rains triggered a landslide at a girls' school in a refugee camp in Cox's Bazar, Bangladesh, killing at least eight people.
+   Source: https://www.bbc.com/news
+
+6. Australia Dock Workers Call for 28-Hour Week in AI Talks
+   Summary: Australian dock workers' unions are pushing for a 28-hour work week amid negotiations over AI and automation, arguing workers are "in the crosshairs" as AI is tested across ports.
+   Source: https://www.bbc.com/news
+
+7. Are Argentina Being Treated Favorably at the World Cup? Egypt Alleges Bias
+   Summary: Egypt has alleged bias in favor of Argentina at the 2026 World Cup, claiming favoritism towards Lionel Messi. The controversy is stirring debate as tournament tensions rise.
+   Source: https://www.bbc.com/news
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 TOP STORY: US-Iran conflict dominates global headlines — strikes and counter-strikes escalating across the Middle East, with Iran also reportedly targeting sites in Bahrain and Kuwait.
+📌 TOP JAPAN STORY: China's submarine-launched ballistic missile test skirts Japan but raises regional vigilance.
+📌 TOP PH NEWS: Sara Duterte impeachment trial continues with defense arguing threats against Marcos were justified.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*Digest compiled from Kyodo News, Rappler, and BBC News | July 8–9, 2026*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").

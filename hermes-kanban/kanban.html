@@ -9,7 +9,7 @@
 body{background:#111;color:#eee;font-family:'Courier New',monospace;padding:10px;}
 h1{color:#ff0;font-size:18px;margin-bottom:4px;}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-#balance{padding:4px 10px;background:#1a1a1a;border:1px solid #333;border-radius:4px;font-size:12px;color:#0ff;cursor:pointer;user-select:none;white-space:nowrap;}
+#balance{padding:4px 10px;background:#1a1a1a;border:1px solid #333;border-radius:4px;font-size:11px;color:#0ff;cursor:pointer;user-select:none;white-space:nowrap;overflow-x:auto;max-width:100%;}
 #balance:hover{border-color:#0ff;}
 #balance .amt{font-weight:bold;color:#0ff;}
 #balance .label{color:#888;}
@@ -144,7 +144,9 @@ async function loadBalance(){
         const bi=data.balance_infos&&data.balance_infos[0];
         if(bi){
             el.className='';
-            el.innerHTML='<span class="label">DeepSeek</span> <span class="amt">$'+bi.total_balance+'</span>';
+            el.innerHTML='<span class="label">DeepSeek</span> ' +
+                '<span class="amt">$'+bi.total_balance+'</span> <span class="label">/</span> <span class="amt">¥'+Number(bi.total_balance_jpy||0).toLocaleString('ja-JP')+'</span>' +
+                ' <span class="label">| used</span> <span class="amt">$'+(bi.total_used||'0.00')+'</span> <span class="label">/</span> <span class="amt">¥'+Number(bi.total_used_jpy||0).toLocaleString('ja-JP')+'</span>';
         }else{
             el.className='error';
             el.textContent='⚠ No data';

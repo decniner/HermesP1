@@ -111,6 +111,95 @@ This renders the HTML in a browser sandbox, keeping all interactivity (links, JS
 
 - `web-app-demo-video` — After deploying an HTML app via htmlpreview, use this skill to create a professional demo/promo video from browser screenshots, with ffmpeg slideshow transitions and TTS narration.
 
+## Live App Tunneling (Flask / Streamlit / HTTP Servers)
+
+When you need to expose a locally-running Python web app (Flask, Streamlit, etc.) to a remote browser without Wi-Fi or port forwarding, use a tunnel service.
+
+### Tunnel Service Comparison
+
+| Service | Install | Long POST handling | Free tier reliability |
+|---------|---------|-------------------|----------------------|
+| **serveo.net** | `ssh -R 80:localhost:PORT serveo.net` | ❌ Drops requests >30s | ⚠️ Intermittent |
+| **localtunnel** | `npx localtunnel --port PORT` | ❌ 503 after first use | ❌ Unreliable |
+| **cloudflared** | `npm install -g cloudflared` | ✅ Handles long requests | ✅ Most reliable |
+
+**Winner:** `cloudflared` — handles long-running POST requests (Gemini/DeepSeek pipelines taking 60+ seconds), stays up reliably, and is free:
+
+```bash
+npm install -g cloudflared
+cloudflared tunnel --url http://localhost:5001
+# → https://xxxxx.trycloudflare.com
+```
+
+### Same-Origin Architecture (Eliminates CORS)
+
+When tunneling a multi-service app (frontend + backend), **serve both from Flask**:
+
+```
+❌ TWO TUNNELS: Frontend URL → fetch() → Backend URL (CORS + timeouts)
+✅ ONE TUNNEL: Flask serves HTML + API on one port (relative fetch, no CORS)
+```
+
+```python
+# Flask serves frontend static files
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(str(FRONTEND_DIR), "index.html")
+```
+
+Frontend JS uses relative path: `const BACKEND_URL = '';`
+
+### Lazy API Client Init
+
+Allow server to start even without API keys configured:
+
+```python
+_gemini_client = None
+def _get_gemini_client():
+    global _gemini_client
+    if _gemini_client is not None:
+        return _gemini_client
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY not set")
+    _gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    return _gemini_client
+```
+
+### Gemini API (google-genai SDK) — Current State
+
+Old `google.generativeai` SDK is **deprecated**. Use `google.genai`:
+
+```python
+from google import genai
+from google.genai import types as genai_types
+client = genai.Client(api_key=GEMINI_API_KEY)
+
+# YouTube video analysis
+response = client.models.generate_content(
+    model="models/gemini-2.5-flash",
+    contents=[
+        "Analyze this video...",
+        genai_types.Part.from_uri(file_uri=youtube_url, mime_type="video/mp4"),
+    ],
+    config=genai_types.GenerateContentConfig(
+        system_instruction="...",
+        temperature=0.1,
+        max_output_tokens=8192,
+    ),
+)
+```
+
+**Model notes:** `gemini-1.5-flash` removed from API (404). `gemini-2.0-flash` 429 exhausted. `gemini-2.5-flash` current best. List with `client.models.list()`.
+
+### Tunnel Pitfalls
+
+1. **Test with the real request** — Curling `GET /health` is not enough. Test `POST /analyze` with the actual payload through the tunnel URL before telling the user
+2. **Tunnel warning pages** — serveo/localtunnel show interstitial pages. Check with `curl -D -` for redirects
+3. **pyngrok on Windows** — auto-downloader may fail with zip errors. Use native binary or cloudflared instead
+4. **Same-origin fetch** — When `BACKEND_URL=''`, Flask must serve the HTML at root path
+
 ## Reference Files
 
 - `references/kindle-style-reader.md` — Full Kindle-style reading interface implementation: architecture, CSS variables, page transitions, navigation logic, progress calculation, touch swipe detection, mobile responsiveness, tap zones via JS click detection, links/text selection handling, GitHub sharing pattern, and 11 documented pitfalls.

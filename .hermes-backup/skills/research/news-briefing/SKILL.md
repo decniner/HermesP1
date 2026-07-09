@@ -1,32 +1,54 @@
 ---
 name: news-briefing
-description: "Fetch current news headlines from Japanese/global sources and produce a structured HTML report with ranked stories, category tags, and source attribution. Covers the full pipeline: source discovery, extraction via browser fallback, data compilation, HTML design, and local delivery."
-version: 1.0.0
+description: "Fetch current news headlines from Japan, Philippines, and global sources and produce a structured digest (plain-text or HTML). Covers the full pipeline: source discovery, extraction via browser fallback, multi-region compilation, output formatting, and delivery."
+version: 1.1.0
 author: agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [news, headlines, briefing, japan, html, report, research, browser-fallback]
+    tags: [news, headlines, briefing, japan, philippines, html, digest, report, research, browser-fallback, cron]
     related_skills: [web-research-profile, claude-design]
 ---
 
-# News Briefing — HTML Report
+# News Briefing — Multi-Region Digest / HTML Report
 
-Use this skill when the user asks you to fetch current news headlines (especially about Japan) and compile them into a formatted HTML report delivered locally.
+Use this skill when the user asks you to fetch current news headlines — from Japan, the Philippines, or globally — and compile them into a structured digest. Supports both plain-text (for CLI/delivery channels) and HTML (for rich local files) output formats.
 
 ## When To Use
 
 - User says "Collate top 5 news headlines in Japan"
 - User says "Give me a news briefing for today"
+- User says "Daily news digest from Japan, Philippines, and world"
 - User asks for an HTML report of current events
 - User wants headlines from a specific region or country
+- User asks for a cron job that delivers a news briefing automatically
 
-## Primary Source: NHK WORLD-JAPAN
+## Primary Sources
 
-For Japan news, NHK World is the best first source. It's authoritative, free, and doesn't block automated access.
+### 🇯🇵 Japan: Kyodo News (preferred for browser extraction)
 
-### Navigation Pattern
+Kyodo News loads its full content into the accessibility tree — no screenshot/vision needed. Use this as the first Japan source.
+
+**Navigation Pattern:**
+
+1. **Open the site**:
+   `browser_navigate(url='https://english.kyodonews.net/')`
+
+2. **Read headlines directly from the snapshot**:
+   The accessibility tree contains full article headings, summaries, and links. Use `browser_snapshot()` after navigation — no vision call needed.
+
+3. **Get article details**:
+   Each article heading is a clickable link (`ref=eNN`). Click to navigate, then read the article body from the snapshot.
+
+4. **Scroll for more**:
+   If you need more stories than the initial view, use `browser_scroll(direction='down')` then `browser_snapshot()`.
+
+### 🇯🇵 Japan: NHK WORLD-JAPAN
+
+NHK World is authoritative and free but JS-heavy — the accessibility tree is often sparse.
+
+**Navigation Pattern** (when Kyodo is unavailable):
 
 1. **Open the site**:
    `browser_navigate(url='https://www3.nhk.or.jp/nhkworld/en/news/')`
@@ -54,29 +76,120 @@ Firecrawl billing issues can cause web_search and web_extract to fail with "Paym
 
 ### Alternative Sources
 
-If NHK is down or you need broader coverage:
+If Kyodo and NHK are down or you need broader coverage:
 
 | Source | URL | Notes |
 |--------|-----|-------|
 | Japan Times | japantimes.co.jp | English-language, paywall on some articles |
-| BBC Asia | bbc.com/news/world/asia | Broader Asia coverage, may include Japan |
-| Reuters Japan | reuters.com/world/japan | Quality wire service |
 | Mainichi | mainichi.jp/english | Another major Japanese English paper |
 
-## Compiling the Top 5
+### 🇵🇭 Philippines: Rappler (preferred)
+
+Rappler loads headlines and summaries into the accessibility tree — no vision needed.
+
+**Navigation Pattern:**
+
+1. **Open the site**:
+   `browser_navigate(url='https://www.rappler.com/')`
+
+2. **Read headlines from snapshot**:
+   The accessibility tree shows article headings with category links, summaries, and timestamps. Scroll for more stories.
+
+3. **Get article details**:
+   Click article links (visible as `ref=eNN` in the snapshot) to navigate to full articles.
+
+**Alternative PH sources:**
+| Source | URL | Notes |
+|--------|-----|-------|
+| PhilStar | philstar.com | Major English-language broadsheet |
+| Inquirer | inquirer.net | Largest Philippine daily |
+
+### 🌍 Global: BBC News
+
+BBC News loads well via browser. It has a CAPTCHA wall on reuters.com, so prefer BBC.
+
+**Navigation Pattern:**
+
+1. **Open the site**:
+   `browser_navigate(url='https://www.bbc.com/news')`
+
+2. **Scroll and snapshot**:
+   The top section contains the lead story and 5-7 secondary headlines. Scroll down and call `browser_snapshot()` to reveal more articles.
+
+3. **Read full articles**:
+   Click any headline link in the snapshot to navigate to the article page.
+
+**Note on Reuters:** reuters.com/world hits a DataDome CAPTCHA via the browser tool. Avoid using Reuters; use BBC or AP instead.
+
+**Alternative global sources:**
+| Source | URL | Notes |
+|--------|-----|-------|
+| AP News | apnews.com | Associated Press, free |
+| Al Jazeera | aljazeera.com | Good for Middle East / global South coverage |
+
+## Multi-Region Workflow
+
+When the user asks for a digest covering multiple countries/regions (e.g., Japan, Philippines, and World):
+
+1. **Parallel browsing**: Navigate to each source in sequence, gathering headlines from each. Independent sources don't depend on each other, so batch the work.
+2. **Extract region-by-region**: Note which headlines belong to which region. BBC's World section may include Asia stories — attribute them appropriately.
+3. **Compile section-by-section**: Build the digest with clear section headers per region.
+4. **Rank within each section**: Apply the curation criteria independently per region. The top Japan story and top PH story are determined within their respective sections.
+
+## Compiling the Top 5 (per region)
 
 Curate from the full headline list. Criteria for ranking:
 
-1. **Domestic significance** — stories that directly affect Japan (weather, politics, economy)
+1. **Domestic significance** — stories that directly affect the country (weather, politics, economy)
 2. **Timeliness** — breaking or developing stories rank higher
 3. **Impact** — stories with widespread effects (typhoons, policy changes)
 4. **Human interest** — commemoration, cultural events
 
-Avoid including non-Japan world news (e.g., unrelated Syria, Pakistan stories) unless the user asked for broader coverage.
+Avoid including unrelated world news in a single-region briefing. For multi-region digests, keep stories within their correct regional section.
 
-## HTML Report Design
+---
 
-Build a single-file, dark-themed HTML page:
+## Output Formats
+
+### Option A: Plain-Text Digest (for CLI / cron delivery)
+
+Use this when the user wants the output in their chat/delivery channel (not a file). Template:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 [Date]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. [Headline]
+   Summary: [2-3 sentence summary]
+   Source: [URL]
+
+(3-6 headlines per section)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+(3-6 headlines, same format)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+(3-6 headlines, same format)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 TOP STORY: [highlight the most significant story of the day]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### Option B: HTML Report
+
+Build a single-file, dark-themed HTML page (use when user asks for a report or HTML specifically):
 
 ```
 Structure:
@@ -111,15 +224,26 @@ Card layout (CSS):
 
 ## Delivery
 
+### Plain-text digest (cron / CLI delivery):
+When running as a cron job, just output the plain-text digest as your final response — the system delivers it automatically. No file save needed.
+
+### HTML report (explicit request):
 On the CLI (no attachment channel), save the file and state the absolute path:
-`C:\Users\decni\japan-top5-news-YYYYMMDD.html`
+`C:\Users\decni\news-briefing-YYYYMMDD.html`
 
 If the user also wants email delivery, use smtp-email to send the HTML as an attachment.
 
+## References
+
+See `references/sources-by-region.md` for a comprehensive multi-region news source reference table with URL patterns, accessibility notes, and bot-handling behavior.
+
 ## Common Pitfalls
 
-1. **Empty accessibility tree on JS-heavy sites** — NHK's news list is rendered client-side. The snapshot may show only navigation elements. Use browser_vision (screenshot) to extract visible headlines instead.
+1. **Empty accessibility tree on JS-heavy sites** — NHK's news list is rendered client-side. The snapshot may show only navigation elements. Use browser_vision (screenshot) to extract visible headlines instead. **Prefer Kyodo News** for Japan — it loads its full content into the accessibility tree.
 2. **Article URL guessing** — NHK uses sequential numeric IDs per day. Try `YYYYMMDD_NN` where NN = 01, 02, 03... If you get a 404, try the next number or check the Top Stories sidebar for working links.
 3. **Terminal curl blocked** — The user may deny terminal curl commands for external fetches. Always use browser tools for web content by default on this setup.
-4. **World news contamination** — NHK's "Top" page mixes Japan stories with international news. Filter to Japan-specific stories by clicking the "Japan" tab or manually curating based on story context.
-5. **Date format** — NHK timestamps are relative ("8 hours ago"). Use the current date in the report header, not a parsed article date.
+4. **Reuters CAPTCHA** — reuters.com hits a DataDome CAPTCHA via the browser tool. Do not use Reuters. Use BBC News (bbc.com/news) for global coverage instead.
+5. **Date handling** — News site timestamps are often relative ("8 hours ago"). Use the current date in the report header. For cron jobs, use the actual run date.
+6. **Firecrawl billing exhaustion** — web_search and web_extract may fail with "Payment Required" / "Charge authorization failed". Do NOT retry — switch immediately to browser_navigate on known news URLs. See the "Fallback" section above.
+7. **Multi-region attribution** — BBC's World section includes Asia stories that overlap with Japan/PH coverage. Attribute stories to the correct regional section in your digest.
+8. **Cron job silence** — If a cron news briefing finds nothing new to report, respond with exactly `[SILENT]` and nothing else to suppress empty deliveries.

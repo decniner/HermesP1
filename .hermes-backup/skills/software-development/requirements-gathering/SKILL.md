@@ -139,6 +139,27 @@ For MQL5/EA files specifically: copy to `DEN_EA` MetaTrader folder AND push to G
 
 All code/game deliverables must go through a QA subagent (`delegated-qa-workflow`) before delivery. Shipping untested code results in immediate user reports of broken functionality. QA is not optional.
 
+## Critical Exception — When NOT to Ask
+
+There is EXACTLY ONE case where you do NOT ask questions: **the user hands you a complete, step-by-step, file-by-file specification.**
+
+Signal words: the message contains exact file paths, exact file contents, exact CLI commands in sequence, a structured blueprint (JSON/YAML spec), or explicit instructions like "do not deviate," "follow this blueprint exactly," "do not improvise."
+
+In this case:
+- **Execute verbatim.** Follow every instruction to the letter.
+- **Do NOT ask clarifying questions.** The spec IS the requirements.
+- **Do NOT substitute dependencies or approaches.** If they say `pandas-ta`, try it first; only substitute if it fails and report why.
+- **Do NOT "improve" the spec.** Build what they asked for, not what you think is better.
+- Report blockers honestly, but ask permission before changing anything.
+
+**Why this rule exists:** This user has explicitly stated both rules at different times: "always ask before building" AND "when I give exact instructions, follow them precisely without deviation." The difference is whether the spec is open-ended (ask) vs fully specified (execute).
+
+### Nuance — Partial Specs
+If the user gives some specifics but leaves gaps:
+- Execute the specified parts **exactly**
+- Ask about ONLY the gaps, one at a time
+- Do NOT re-open already-specified decisions
+
 ## Behavioral Enforcement
 
 - **Do NOT start coding until you have clear answers to questions 1-5**

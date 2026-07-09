@@ -200,6 +200,37 @@ delegate_task(
 
 The user explicitly demands QA before delivery. This is not optional. Shipping untested code results in the user immediately reporting it doesn't work, which wastes more time than running QA upfront.
 
+### Self-QA: Verify Before Forwarding
+
+When you build or deploy a service (web app, backend, tunnel), **QA it yourself end-to-end before telling the user it's ready.** The user has explicitly corrected this pattern — do not say "try it now" without first running the exact same test they would run.
+
+**Wrong — stops too early:**
+```
+"Here's the URL, try it now!"
+```
+
+**Right — proves it works before asking:**
+```
+1. Hit the actual endpoint with curl: ✅ 200 / 20 events
+2. Verify the full pipeline returns valid data: ✅ Score 72, 16 events, verdict 3,132 chars
+3. Check logs for errors: ✅ No exceptions
+4. Then tell the user: "Ready. [URL]"
+```
+
+**Rules for every deployment:**
+1. Before messaging the user, run the endpoint with curl or the browser tool using the EXACT same URL the user would use (tunnel URL, not localhost)
+2. Verify the response is valid JSON/HTML (not empty, not an error page, not a tunnel warning page)
+3. Check the backend logs for any warnings or exceptions
+4. Only then deliver to the user with a concrete status summary
+
+This applies to:
+- New services you spin up (Flask, Streamlit, HTTP servers)
+- Tunnel URLs you create (serveo, localtunnel, cloudflared)
+- API endpoints you expose
+- Any "ready to test" claim
+
+**Historical failure without this rule:** The POGIBOT tunnel was deployed via serveo, told to the user as "ready," but the tunnel was silently dropping long POST requests. The user tried it 3+ times and kept getting failures. Each round-trip wasted trust and time. Had I curled the tunnel URL first with the actual analyze payload, I'd have caught the serveo timeout issue immediately.
+
 ### HTML-Preview QA Trap: The Local vs. Deployment Gap
 
 HTML artifacts destined for htmlpreview.github.io (or similar third-party preview services) have a critical QA gap:

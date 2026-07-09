@@ -1,7 +1,7 @@
 """Real-time Kanban + Cron web server"""
 import http.server, json, subprocess, os, urllib.parse, re
 
-PORT = 8321
+PORT = 8322
 HTML_PATH = r'C:\Users\decni\projects\hermes-kanban\kanban.html'
 
 # Load DeepSeek API key from .env
@@ -12,8 +12,22 @@ if os.path.exists(env_path):
         for line in f:
             m = re.match(r'^DEEPSEEK_API_KEY=(.+)', line.strip())
             if m:
-                DEEPSEEK_API_KEY = m.group(1).strip("'\"")
+                DEEPSEEK_API_KEY = m.group(1).strip("'\\\"")
                 break
+
+# Balance tracking state file
+STATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'balance_state.json')
+
+def _load_state():
+    try:
+        with open(STATE_PATH) as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {'last_topped_up': 0.0, 'last_granted': 0.0, 'total_used': 0.0}
+
+def _save_state(state):
+    with open(STATE_PATH, 'w') as f:
+        json.dump(state, f)
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -95,12 +109,56 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if not DEEPSEEK_API_KEY:
                 return json.dumps({'error': 'No API key'})
             import urllib.request
+            # Fetch DeepSeek balance
             req = urllib.request.Request(
                 'https://api.deepseek.com/user/balance',
                 headers={'Authorization': 'Bearer ' + DEEPSEEK_API_KEY}
             )
             with urllib.request.urlopen(req, timeout=10) as resp:
-                return resp.read().decode()
+                ds_data = json.loads(resp.read().decode())
+            # Fetch USD/JPY exchange rate
+            try:
+                fx_req = urllib.request.Request(
+                    'https://open.er-api.com/v6/latest/USD',
+                    headers={'User-Agent': 'Mozilla/5.0'}
+                )
+                with urllib.request.urlopen(fx_req, timeout=10) as fx_resp:
+                    fx_data = json.loads(fx_resp.read().decode())
+                    jpy_rate = fx_data['rates'].get('JPY', 0)
+            except Exception:
+                jpy_rate = 0  # fallback if FX API fails
+
+            # Track cumulative usage from balance deltas
+            state = _load_state()
+            for bi in ds_data.get('balance_infos', []):
+                try:
+                    usd = float(bi['total_balance'])
+                    topped = float(bi['topped_up_balance'])
+                    granted = float(bi['granted_balance'])
+                    bi['total_balance_jpy'] = round(usd * jpy_rate, 0)
+                    bi['jpy_rate'] = jpy_rate
+
+                    # Track used amount: sum of all decreases
+                    if state['last_topped_up'] > 0 or state['last_granted'] > 0:
+                        topped_drop = state['last_topped_up'] - topped
+                        if topped_drop > 0:
+                            state['total_used'] += topped_drop
+                        granted_drop = state['last_granted'] - granted
+                        if granted_drop > 0:
+                            state['total_used'] += granted_drop
+
+                    state['last_topped_up'] = topped
+                    state['last_granted'] = granted
+                    bi['total_used'] = round(state['total_used'], 2)
+                    bi['total_used_jpy'] = round(state['total_used'] * jpy_rate, 0)
+                except (ValueError, TypeError):
+                    bi['total_balance_jpy'] = 0
+                    bi['jpy_rate'] = 0
+                    bi['total_used'] = 0
+                    bi['total_used_jpy'] = 0
+
+            _save_state(state)
+            return json.dumps(ds_data)
         except Exception as e:
             return json.dumps({'error': str(e)})
     
