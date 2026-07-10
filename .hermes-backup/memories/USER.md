@@ -2,16 +2,12 @@ Den Sanchez — Filipino, Kawagoe Japan. IT web dev & sys eng (Prometheus/Grafan
 §
 Workflow: ask Qs first, subagent QA, fix→retest→deliver. QA end-to-end through actual delivery channel before reporting success. Copy EA to DEN_EA + GitHub. Show progress%.
 §
-Cron→TTS: strip URLs, keep main facts, mention job name & run time.
-§
 When user gives exact step-by-step specs/instructions, follow them precisely without improvisation.
 §
 Gmail: decniner@gmail.com, SMTP/IMAP app password available in gmail_scan.py script.
 §
 Token-cost conscious — uses DeepSeek API (paid). Wants aggressive config-level token optimization: max_turns capped at 30, unused platform toolsets disabled, lightweight search backends (ddgs), compression tightened. Prevents token bloat to protect API balance.
 §
-Prefers LAN-accessible self-hosted services. Methodical & persistent through multi-step debugging.
+QA expectation: must end-to-end test through delivery channel before reporting success. Prefers local persistence (SQLite) over cloud. Wants inline quota/status UI + both URL & file upload options. Wants remote tunnel access.
 §
-Builds Python self-hosted web apps (Streamlit, yfinance, ta, DeepSeek API). Expects structured specs followed exactly.
-§
-Kanban: create + mark done on default board for every new project build.
+Wants short, direct answers when the answer is essentially 'no' — no preamble, no explanation. 'Short answer only' means give the bottom line immediately.

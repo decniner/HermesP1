@@ -301,14 +301,25 @@
   </header>
 
   <!-- ═══ Input ═══ -->
-  <div class="input-area">
-  <input
-    type="text"
-    id="videoUrl"
-    placeholder="Paste YouTube URL (e.g., https://youtu.be/xxxxxx)"
-    autocomplete="off"
-  />
-  <button id="analyzeBtn" onclick="analyzeVideo()">🔥 ANALYZE</button>
+  <!-- Source type tabs -->
+  <div style="display:flex;gap:0;margin-bottom:12px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">
+    <button id="tabUrl" onclick="switchSource('url')" style="flex:1;padding:10px;border:none;cursor:pointer;font-weight:700;font-size:0.85rem;background:var(--accent);color:#fff;transition:background .2s;">🔗 YouTube URL</button>
+    <button id="tabUpload" onclick="switchSource('upload')" style="flex:1;padding:10px;border:none;cursor:pointer;font-weight:600;font-size:0.85rem;background:var(--surface);color:var(--text-dim);transition:background .2s;">📤 Upload Video</button>
+  </div>
+
+  <!-- URL input (default) -->
+  <div id="urlInputArea" class="input-area">
+    <input type="text" id="videoUrl" placeholder="Paste YouTube URL (e.g., https://youtu.be/xxxxxx)" autocomplete="off" />
+    <button id="analyzeBtn" onclick="analyzeVideo()">🔥 ANALYZE</button>
+  </div>
+
+  <!-- Upload input (hidden by default) -->
+  <div id="uploadInputArea" class="input-area" style="display:none;flex-direction:column;gap:10px;">
+    <input type="file" id="videoFile" accept="video/*" style="flex:1;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;" />
+    <div style="display:flex;gap:10px;">
+      <button id="uploadBtn" onclick="uploadAndAnalyze()" style="flex:1;padding:14px 32px;background:var(--accent2);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;">📤 UPLOAD & ANALYZE</button>
+    </div>
+    <div id="uploadProgress" style="font-size:0.8rem;color:var(--text-dim);display:none;"></div>
   </div>
 
   <!-- Model selector -->
@@ -463,6 +474,113 @@ async function refreshModels() {
 
 // Load models on startup
 refreshModels();
+
+/* ── Source mode switching ── */
+let currentSource = 'url';
+
+function switchSource(mode) {
+  currentSource = mode;
+  const tabUrl = document.getElementById('tabUrl');
+  const tabUpload = document.getElementById('tabUpload');
+  const urlArea = document.getElementById('urlInputArea');
+  const uploadArea = document.getElementById('uploadInputArea');
+
+  if (mode === 'url') {
+    tabUrl.style.background = 'var(--accent)';
+    tabUrl.style.color = '#fff';
+    tabUrl.style.fontWeight = '700';
+    tabUpload.style.background = 'var(--surface)';
+    tabUpload.style.color = 'var(--text-dim)';
+    tabUpload.style.fontWeight = '600';
+    urlArea.style.display = 'flex';
+    uploadArea.style.display = 'none';
+  } else {
+    tabUpload.style.background = 'var(--accent2)';
+    tabUpload.style.color = '#fff';
+    tabUpload.style.fontWeight = '700';
+    tabUrl.style.background = 'var(--surface)';
+    tabUrl.style.color = 'var(--text-dim)';
+    tabUrl.style.fontWeight = '600';
+    urlArea.style.display = 'none';
+    uploadArea.style.display = 'flex';
+  }
+}
+
+/* ── File upload + analyze ── */
+async function uploadAndAnalyze() {
+  const fileInput = document.getElementById('videoFile');
+  const file = fileInput.files[0];
+  if (!file) {
+    setStatus('error', '⚠️ Select a video file first.');
+    return;
+  }
+
+  clearStatus();
+  resultsEl.style.display = 'none';
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('uploadBtn').innerHTML = '<span class="spinner"></span> Uploading...';
+  const prog = document.getElementById('uploadProgress');
+  prog.style.display = 'block';
+  prog.textContent = '⏳ Uploading to server...';
+
+  try {
+    // Step 1: Upload to backend
+    const formData = new FormData();
+    formData.append('video', file);
+    const uploadResp = await fetch(`${BACKEND_URL}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    const uploadData = await uploadResp.json();
+
+    if (!uploadResp.ok) {
+      setStatus('error', `❌ Upload failed: ${uploadData.error || uploadResp.statusText}`);
+      return;
+    }
+
+    prog.textContent = `✅ Uploaded ${uploadData.size_mb}MB — now analyzing...`;
+
+    // Step 2: Analyze using the file URI
+    const model = modelSelect ? modelSelect.value : '';
+    const body = { file_uri: uploadData.file_uri, source_type: 'file_uri' };
+    if (model) body.model = model;
+
+    const analyzeResp = await fetch(`${BACKEND_URL}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await analyzeResp.json();
+
+    if (!analyzeResp.ok) {
+      setStatus('error', `❌ Analysis error: ${data.error || analyzeResp.statusText}`);
+      return;
+    }
+    if (!data.success) {
+      setStatus('error', `❌ Analysis failed: ${data.error || 'Unknown'}`);
+      return;
+    }
+
+    // Render
+    renderOverallScore(data.overall_score);
+    renderTechniqueRatings(data.technique_ratings);
+    renderEvents(data.events);
+    renderHighlights(data.highlights);
+    renderFlaws(data.flaws);
+    renderVerdict(data.coaching_output);
+    renderHistory(data);
+
+    resultsEl.style.display = 'grid';
+    setStatus('success', `✅ Done — ${data.events.length} events from uploaded video.`);
+
+  } catch (err) {
+    setStatus('error', `❌ ${err.message}`);
+  } finally {
+    document.getElementById('uploadBtn').disabled = false;
+    document.getElementById('uploadBtn').innerHTML = '📤 UPLOAD & ANALYZE';
+    prog.style.display = 'none';
+  }
+}
 
 /* ── Loading / Error helpers ── */
 function setStatus(type, msg) {

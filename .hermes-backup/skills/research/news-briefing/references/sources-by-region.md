@@ -46,14 +46,16 @@
 ```
 web_search / web_extract
     ↓ FAIL (Payment Required / billing error)
+Terminal curl (faster — see curl-extraction-patterns.md)
+    ↓ FAIL (JS-rendered, CAPTCHA, or empty)
 browser_navigate to known source URL
     ↓ Read browser_snapshot
     ↓ Fall back to browser_vision if tree is empty
 ```
 
-- **Japan fallback chain**: Kyodo → NHK (vision) → Mainichi
-- **PH fallback chain**: Rappler → PhilStar → Inquirer
-- **Global fallback chain**: BBC → AP → Al Jazeera
+- **Japan fallback chain**: Kyodo (curl ✅) → NHK (browser/vision) → Mainichi
+- **PH fallback chain**: Rappler (curl partial) → Inquirer (curl ✅) → PhilStar (curl ✅)
+- **Global fallback chain**: BBC (curl ✅) → AP (browser) → Al Jazeera
 
 ## Article Detail URLs
 

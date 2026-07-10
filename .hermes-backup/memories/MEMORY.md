@@ -8,12 +8,14 @@ Delivery: prefers audio/voice for summaries kanban status, cron reports, briefin
 §
 Sensei & Pogi textbook repo: github.com/decniner/sensei-pogi-textbook. Skill interactive-study-html for bilingual JP/EN study tools.
 §
-Verification requirement: after every deploy, MUST HTTP-check (curl) before reporting ready. User corrected 'qa it and make sure its up' — never trust start command alone.
-§
-POGIBOT at ~/projects/POGIBOT/ — Flask + Gemini2.5Flash + DeepSeek VR boxing coach. Frontend:5500, backend:5001. Kanban t_ee1afc52.
+POGIBOT at ~/projects/POGIBOT/ — Flask + Gemini3.5Flash + DeepSeek VR boxing coach. Cloudflare tunnel: https://garmin-microwave-exports-mesa.trycloudflare.com. SQLite history, model selector, file upload support. Backend:5001.
 §
 Port 5000 is blocked by Universal.Server on this Windows machine — use 5001+ for Flask. serveo.net works for public tunnels (ssh -R 80:localhost:<port> serveo.net) where ngrok fails on Windows.
 §
 Gemini free tier: gemini-1.5-flash removed from API. gemini-2.5-flash works with free tier and supports video. Quotas are per-model — switching models can bypass rate limits.
 §
-Strong QA preference: must test everything end-to-end through the actual delivery mechanism (tunnel URL, LAN IP, etc.) before reporting to user. Never ask user to test something that wasn't verified independently. If it fails at any point, fix and re-test before reporting.
+QA: must test full pipeline end-to-end through delivery mechanism before reporting. Never ask user to test unverified work.
+§
+Kanban: user expects projects/tasks to be tracked on the kanban board. Create and complete kanban tasks for deliverables.
+§
+BrutalMarketEngine at ~/projects/BrutalMarketEngine/ — Streamlit market analyzer (yfinance+ta) port 8501. POGIBOT project: Flask/Gemini3.5Flash/DeepSeek boxing coach with Cloudflare tunnel. Both served via cloudflared for remote access.

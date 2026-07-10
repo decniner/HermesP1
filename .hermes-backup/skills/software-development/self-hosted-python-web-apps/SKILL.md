@@ -163,9 +163,40 @@ data.columns = [str(c).lower() for c in data.columns]
 
 ## Reference Files
 
-- `references/yfinance-crypto-stock-patterns.md` — Symbol normalization, 4H candle fetching, MultiIndex flattening, and recommended Japanese-market + crypto defaults for market analysis apps.
-- `references/flask-ai-proxy-pattern.md` — 3-tier architecture: static frontend → local Flask proxy → external AI APIs (Gemini, DeepSeek, etc.) with Google Sheets for session logging. Covers CORS, service account setup, dual-AI pipeline orchestration, and common pitfalls.
-- `references/google-genai-sdk-migration.md` — Migrating from deprecated `google.generativeai` to current `google.genai` SDK: import changes, client init, YouTube video input, JSON mode, system instructions, and common pitfalls.
+- `references/sqlite-session-history.md` — Replacing Google Sheets with local SQLite for session history.
+- `references/yfinance-crypto-stock-patterns.md` — Symbol normalization, 4H candles, MultiIndex flattening.
+- `references/flask-ai-proxy-pattern.md` — 3-tier Flask proxy + AI API integration patterns.
+- `references/google-genai-sdk-migration.md` — Migrating `google.generativeai` → `google.genai` SDK.
+- `references/gemini-video-analysis.md` — YouTube URL input, file upload, JSON truncation, model probing.
+- `references/dual-ai-pipeline.md` — Two-phase AI pipeline: Gemini extraction → DeepSeek reasoning.
+
+## Kanban Task Per Project
+
+Always create a kanban task (`hermes kanban create "..." --body "..."`) for every project build. Mark it complete before the final summary.
+
+## Flask AI Proxy Backend (Dual-AI Pipeline)
+
+### Architecture
+
+```
+[Static Frontend (GitHub Pages / local)]
+    ↕ fetch() to same origin
+[Flask Backend — serves API + static files on one port]
+    ↕ Gemini (Video → structured JSON)
+    ↕ DeepSeek (Contextual coaching → verdict)
+    ↕ SQLite (Session history, progression tracking)
+```
+
+### Key Patterns
+
+1. **Single-origin serving** — Flask serves both frontend static files AND API routes on one port. Frontend uses `BACKEND_URL = ''` (relative paths). No CORS issues, one tunnel for everything.
+2. **Lazy API client init** — Never init API clients at module import time. Use lazy getters so the server boots without .env configured.
+3. **Dual-AI pipeline** — Gemini Phase 1 (structured JSON extraction) → DeepSeek Phase 2 (persona-driven analysis). Each phase independently error-handled.
+4. **SQLite session history** — Replace Google Sheets with local SQLite. Zero-config, same data shape, no cloud setup. `_init_db()` on import.
+5. **Model selector with quota probing** — `GET /models` endpoint probes available Gemini models. Frontend shows green/red indicators. Auto-selects first available model.
+6. **File upload** — `POST /upload` accepts video files, uploads to Gemini File API, returns URI. `POST /analyze` accepts both `video_url` and `file_uri`+`source_type`.
+7. **Gemini JSON truncation fix** — Walk bytes tracking bracket depth and string state to find valid JSON cut point. Close unclosed brackets.
+8. **Dual-mode input** — Frontend tab toggle: 🔗 YouTube URL / 📤 Upload Video. Both hit `/analyze` with different `source_type`.
 
 ## Common Pitfalls
 
@@ -175,8 +206,7 @@ data.columns = [str(c).lower() for c in data.columns]
 4. **Auto-refresh kills scroll state** — `st.rerun()` resets the Streamlit component state. Users scrolling through charts will be reset to top. Accept this trade-off for live data.
 5. **Phone accessibility** — Phone must be on the same Wi-Fi subnet. Use `http://<LAN-IP>:8501`, NOT localhost.
 6. **No hot-reload in production** — Use `streamlit run`, not `streamlit hello` or dev mode.
-7. **Kanban task per project** — The user expects a kanban task (`hermes kanban create "..." --body "..."`) for every project build. Create and mark it complete before giving the final summary — otherwise the user will tell you "you forgot to update kanban."
-8. **Lazy API client init** — Never initialize API clients (`OpenAI`, `genai.Client`, `gspread.Client`) at module import time. The user's `.env` may not be configured yet, so eager init crashes the server before it can respond to `/health`. Use a lazy-init function:
+7. **Lazy API client init** — Never initialize API clients (`OpenAI`, `genai.Client`, `gspread.Client`) at module import time. The user's `.env` may not be configured yet, so eager init crashes the server before it can respond to `/health`. Use a lazy-init function:
 
    ```python
    # GOOD — server starts even without .env configured
@@ -197,97 +227,3 @@ data.columns = [str(c).lower() for c in data.columns]
    This lets the server boot, serve `/health` (showing missing keys), and only fail with a clear error when a key-dependent endpoint is actually called.
 
 ## Remote Access (Tunneling)
-
-When the user is NOT on the same Wi-Fi (e.g. on mobile data), they cannot reach the LAN IP. Use a tunnel to expose the service via a public URL.
-
-### serveo.net (free, no-auth, works on Windows)
-
-```
-Forwarding HTTP traffic from https://<hash>-<ip>.serveousercontent.com
-```
-
-One tunnel per SSH connection — create separate background processes for multiple ports.
-
-**Why serveo.net over ngrok:** No account, no install, works on Windows via bundled OpenSSH. `pyngrok` fails on Windows (zip corruption).
-
-```bash
-ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 \
-    -R 80:localhost:8501 serveo.net
-```
-
-**⚠️ LIMITATION:** serveo.net free tier drops long-running POST requests (>~30s). Not suitable for AI pipelines with Gemini video analysis (which takes 30-60s). Use Cloudflare Tunnel for those cases.
-
-### Cloudflare Tunnel (recommended for long-running requests)
-
-Handles long-running POST requests reliably. Install via npm:
-
-```bash
-npm install -g cloudflared
-```
-
-Then start a tunnel:
-
-```bash
-cloudflared tunnel --url http://localhost:5001
-```
-
-Output:
-```
-Your quick Tunnel has been created! Visit it at:
-https://<random-words>.trycloudflare.com
-```
-
-**Why Cloudflare over serveo.net:**
-- Handles 60s+ requests without dropping
-- All connectivity checks (DNS, UDP, TCP, API) PASS automatically
-- No account required for quick tunnels
-- Stable connection for the lifetime of the process
-
-### localtunnel (NOT RECOMMENDED)
-
-`npx localtunnel --port 5001` produces a URL like `https://<random>.loca.lt` but the free tier is unreliable:
-- Returns `503 - Tunnel Unavailable` intermittently
-- Process exits without warning after ~4 minutes
-- No keepalive options
-
-Prefer Cloudflare Tunnel instead.
-
-### Consolidated Deployment (One Port to Rule Them All)
-
-When using tunnels, CORS and fetch issues multiply when frontend and backend are on different tunnel URLs. **Solution: serve the frontend static files FROM the Flask backend.**
-
-```python
-from pathlib import Path
-from flask import Flask, send_from_directory
-
-app = Flask(__name__)
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-
-@app.route("/")
-def serve_index():
-    return send_from_directory(str(FRONTEND_DIR), "index.html")
-
-@app.route("/<path:path>")
-def serve_static(path):
-    return send_from_directory(str(FRONTEND_DIR), path)
-```
-
-Now the frontend's `BACKEND_URL` can be `''` (relative path), meaning:
-- One tunnel serves everything
-- Same origin = no CORS issues
-- Fetch calls use `/analyze` instead of `https://tunnel-url/analyze`
-- Works seamlessly through any tunnel
-
-### What to Tunnel (per-app approach)
-
-| Scenario | Tunnel Target | Port |
-|----------|---------------|------|
-| Streamlit standalone | Streamlit process | `8501` |
-| Flask-serving-everything | Flask process | `5001` |
-
-### Caveats
-
-- URL changes on reconnect — no custom subdomain without account
-- Set `ServerAliveInterval=30` for SSH tunnels to prevent drop after inactivity
-- Anyone with the URL can access — personal tools only, never production
-- pyngrok fails on Windows with zip corruption error — use serveo or cloudflared instead

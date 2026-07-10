@@ -17,6 +17,7 @@ Endpoints:
 import json
 import os
 import re
+import sqlite3
 import time
 from datetime import datetime
 from pathlib import Path
@@ -28,22 +29,19 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from google import genai
 from google.genai import types as genai_types
-from oauth2client.service_account import ServiceAccountCredentials
 from openai import OpenAI
-
-# Google Sheets
-import gspread
 
 # ── Load environment ──────────────────────────────────────────────────────
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID", "")
 CORS_ORIGIN = os.getenv("CORS_ORIGIN", "*")
+MAX_UPLOAD_MB = 500
 
 # ── Flask app ─────────────────────────────────────────────────────────────
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
 CORS(app, origins=CORS_ORIGIN.split(",") if CORS_ORIGIN != "*" else "*")
 
 # ── API clients (lazy init) ──────────────────────────────────────────────
@@ -147,32 +145,96 @@ def _get_deepseek_client() -> OpenAI:
     )
     return _deepseek_client
 
-# Google Sheets (service account)
-GOOGLE_SCOPE = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/drive",
-]
-CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
-_gsheet_client: Optional[gspread.Client] = None
+# ── SQLite session database ──────────────────────────────────────────────
+
+DB_PATH = Path(__file__).resolve().parent / "pogibot_history.db"
+UPLOAD_DIR = Path(__file__).resolve().parent / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 
-def _get_gsheet_client() -> gspread.Client:
-    """Lazy-init Google Sheets client from the service-account JSON file."""
-    global _gsheet_client
-    if _gsheet_client is not None:
-        return _gsheet_client
-    if not os.path.isfile(CREDENTIALS_FILE):
-        raise RuntimeError(
-            f"credentials.json not found at {CREDENTIALS_FILE}. "
-            "Download your service-account key from Google Cloud Console "
-            "and place it in the backend/ directory."
+def _init_db():
+    """Create the sessions table if it doesn't exist."""
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS sessions (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            date        TEXT NOT NULL,
+            video_url   TEXT NOT NULL,
+            overall_score INTEGER NOT NULL,
+            technique_ratings TEXT NOT NULL,
+            timestamps_notes  TEXT NOT NULL,
+            verdict     TEXT NOT NULL
         )
-    creds = ServiceAccountCredentials.from_json_keyfile_name(
-        CREDENTIALS_FILE, GOOGLE_SCOPE
+        """
     )
-    _gsheet_client = gspread.authorize(creds)
-    return _gsheet_client
+    conn.commit()
+    conn.close()
 
+
+def fetch_recent_sessions(n: int = 5) -> list[list]:
+    """Fetch the last N sessions from SQLite."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        cur = conn.execute(
+            "SELECT date, video_url, overall_score, technique_ratings, "
+            "timestamps_notes, verdict FROM sessions ORDER BY id DESC LIMIT ?",
+            (n,),
+        )
+        rows = cur.fetchall()
+        conn.close()
+        return [list(r) for r in reversed(rows)]  # oldest first
+    except Exception as e:
+        print(f"[warn] SQLite fetch failed: {e}")
+        return []
+
+
+def append_session_log(
+    video_url: str,
+    overall_score: int,
+    technique_ratings: dict,
+    timestamps_notes: str,
+    verdict: str,
+) -> None:
+    """Append one row to the SQLite database."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.execute(
+            "INSERT INTO sessions (date, video_url, overall_score, "
+            "technique_ratings, timestamps_notes, verdict) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (
+                datetime.now().strftime("%Y-%m-%d %H:%M"),
+                video_url,
+                overall_score,
+                json.dumps(technique_ratings, ensure_ascii=False),
+                timestamps_notes,
+                verdict,
+            ),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[warn] SQLite append failed: {e}")
+
+
+def _format_historical_data(rows: list[list]) -> str:
+    """Pretty-print historical rows for the DeepSeek prompt."""
+    if not rows:
+        return "NO HISTORY — this is the fighter's first recorded session."
+    parts = []
+    for r in rows:
+        parts.append(
+            f"Session: {r[0] if len(r) > 0 else '?'} | "
+            f"Score: {r[2] if len(r) > 2 else '?'} | "
+            f"Ratings: {r[3] if len(r) > 3 else '?'} | "
+            f"Verdict: {r[5] if len(r) > 5 else '?'}"
+        )
+    return "\n".join(parts)
+
+
+# Initialize on import
+_init_db()
 
 # ══════════════════════════════════════════════════════════════════════════
 # PHASE 1 — Gemini: The Video Eye
@@ -202,19 +264,17 @@ Example:
 ]"""
 
 
-def run_gemini_analysis(video_url: str, model_id: str = "") -> list[dict]:
+def run_gemini_analysis(
+    video_source: str, model_id: str = "", source_type: str = "url"
+) -> list[dict]:
     """
-    Send the YouTube URL to Gemini and get back a structured JSON array.
+    Send video to Gemini and get back a structured JSON array.
 
-    Uses the google-genai SDK (current supported library).
-    Gemini 2.5+ models can process YouTube video URLs natively.
+    Two source types:
+      - "url"     : YouTube URL (existing behavior)
+      - "file_uri": Gemini File API URI (from uploaded video)
     """
     model_path = _resolve_model(model_id)
-    normalized_url = _normalize_youtube_url(video_url)
-    if not normalized_url:
-        raise ValueError(f"Invalid YouTube URL: {video_url}")
-
-    # Build the prompt parts
     user_text = (
         "Analyze this boxing training / sparring video frame by frame. "
         "Extract every technique, punch, guard position, and movement event "
@@ -222,17 +282,33 @@ def run_gemini_analysis(video_url: str, model_id: str = "") -> list[dict]:
         "Flaw (mechanical error). Return ONLY the JSON array."
     )
 
+    if source_type == "file_uri":
+        # Video already uploaded to Gemini File API — use the URI directly
+        contents = [
+            user_text,
+            genai_types.Part.from_uri(
+                file_uri=video_source,
+                mime_type="video/mp4",
+            ),
+        ]
+    else:
+        # YouTube URL — normalize and use
+        normalized_url = _normalize_youtube_url(video_source)
+        if not normalized_url:
+            raise ValueError(f"Invalid YouTube URL: {video_source}")
+        contents = [
+            user_text,
+            genai_types.Part.from_uri(
+                file_uri=normalized_url,
+                mime_type="video/mp4",
+            ),
+        ]
+
     try:
         client = _get_gemini_client()
         response = client.models.generate_content(
             model=model_path,
-            contents=[
-                user_text,
-                genai_types.Part.from_uri(
-                    file_uri=normalized_url,
-                    mime_type="video/mp4",
-                ),
-            ],
+            contents=contents,
             config=genai_types.GenerateContentConfig(
                 system_instruction=GEMINI_SYSTEM_INSTRUCTION,
                 temperature=0.1,
@@ -420,83 +496,6 @@ def run_deepseek_coaching(
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# Google Sheets — Session History & Logging
-# ══════════════════════════════════════════════════════════════════════════
-
-SHEET_HEADERS = [
-    "Date",
-    "Video URL",
-    "Overall Score",
-    "Technique Ratings (JSON)",
-    "Key Timestamps & Notes",
-    "Direct Advice / The Verdict",
-]
-
-
-def _ensure_sheet_headers(worksheet) -> None:
-    """Write headers if the sheet is empty."""
-    if worksheet.row_count == 0:
-        worksheet.append_row(SHEET_HEADERS)
-
-
-def fetch_recent_sessions(n: int = 5) -> list[list]:
-    """Fetch the last N rows from the Google Sheet (excluding header)."""
-    try:
-        client = _get_gsheet_client()
-        sheet = client.open_by_key(GOOGLE_SHEET_ID).sheet1
-        _ensure_sheet_headers(sheet)
-        all_rows = sheet.get_all_values()
-        if len(all_rows) <= 1:
-            return []
-        # Last N data rows (skip header at index 0)
-        data_rows = all_rows[1:]
-        return data_rows[-n:]
-    except Exception as e:
-        print(f"[warn] Google Sheets fetch failed: {e}")
-        return []
-
-
-def append_session_log(
-    video_url: str,
-    overall_score: int,
-    technique_ratings: dict,
-    timestamps_notes: str,
-    verdict: str,
-) -> None:
-    """Append one row to the Google Sheet."""
-    try:
-        client = _get_gsheet_client()
-        sheet = client.open_by_key(GOOGLE_SHEET_ID).sheet1
-        _ensure_sheet_headers(sheet)
-        row = [
-            datetime.now().strftime("%Y-%m-%d %H:%M"),
-            video_url,
-            str(overall_score),
-            json.dumps(technique_ratings, ensure_ascii=False),
-            timestamps_notes,
-            verdict,
-        ]
-        sheet.append_row(row)
-    except Exception as e:
-        print(f"[warn] Google Sheets append failed: {e}")
-
-
-def _format_historical_data(rows: list[list]) -> str:
-    """Pretty-print historical rows for the DeepSeek prompt."""
-    if not rows:
-        return "NO HISTORY — this is the fighter's first recorded session."
-    parts = []
-    for r in rows:
-        parts.append(
-            f"Session: {r[0] if len(r) > 0 else '?'} | "
-            f"Score: {r[2] if len(r) > 2 else '?'} | "
-            f"Ratings: {r[3] if len(r) > 3 else '?'} | "
-            f"Verdict: {r[5] if len(r) > 5 else '?'}"
-        )
-    return "\n".join(parts)
-
-
-# ══════════════════════════════════════════════════════════════════════════
 # DeepSeek parser — extract structured fields from coaching output
 # ══════════════════════════════════════════════════════════════════════════
 
@@ -582,8 +581,6 @@ def health():
         missing.append("GEMINI_API_KEY")
     if not DEEPSEEK_API_KEY:
         missing.append("DEEPSEEK_API_KEY")
-    if not GOOGLE_SHEET_ID:
-        missing.append("GOOGLE_SHEET_ID")
     return jsonify(
         {
             "status": "degraded" if missing else "ok",
@@ -602,6 +599,72 @@ def list_models():
         return jsonify({"models": [{"id": m, "status": "error", "error": str(e)[:100]} for m in AVAILABLE_MODELS]})
 
 
+@app.route("/upload", methods=["POST"])
+def upload_video():
+    """
+    Accept a video file upload, send it to Gemini's File API,
+    and return a file URI for use in /analyze.
+
+    Usage:
+        curl -F "video=@boxing.mp4" http://localhost:5001/upload
+    """
+    if "video" not in request.files:
+        return jsonify({"error": "No 'video' field in upload"}), 400
+
+    file = request.files["video"]
+    if file.filename == "":
+        return jsonify({"error": "Empty filename"}), 400
+
+    # Save temporarily
+    ts = int(time.time())
+    ext = Path(file.filename).suffix or ".mp4"
+    tmp_path = UPLOAD_DIR / f"upload_{ts}{ext}"
+    file.save(str(tmp_path))
+
+    file_size_mb = tmp_path.stat().st_size / (1024 * 1024)
+    if file_size_mb > MAX_UPLOAD_MB:
+        tmp_path.unlink(missing_ok=True)
+        return jsonify({"error": f"File too large ({file_size_mb:.0f}MB). Max: {MAX_UPLOAD_MB}MB"}), 413
+
+    try:
+        client = _get_gemini_client()
+        print(f"[pogibot] Uploading {file_size_mb:.1f}MB to Gemini File API...")
+
+        # Upload to Gemini
+        gemini_file = client.files.upload(file=str(tmp_path))
+
+        # Wait for processing
+        import time as _time
+        attempts = 0
+        while gemini_file.state.name == "PROCESSING" and attempts < 30:
+            _time.sleep(2)
+            gemini_file = client.files.get(name=gemini_file.name)
+            attempts += 1
+
+        if gemini_file.state.name != "ACTIVE":
+            tmp_path.unlink(missing_ok=True)
+            return jsonify({
+                "error": f"Gemini processing failed or timed out. State: {gemini_file.state.name}"
+            }), 502
+
+        file_uri = gemini_file.uri
+        print(f"[pogibot] Upload complete. URI: {file_uri}")
+
+        # Clean up temp file
+        tmp_path.unlink(missing_ok=True)
+
+        return jsonify({
+            "success": True,
+            "file_uri": file_uri,
+            "file_name": file.filename,
+            "size_mb": round(file_size_mb, 1),
+        })
+
+    except Exception as e:
+        tmp_path.unlink(missing_ok=True)
+        return jsonify({"error": f"Upload failed: {e}"}), 502
+
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     """
@@ -617,22 +680,29 @@ def analyze():
     """
     data = request.get_json(silent=True) or {}
     video_url = (data.get("video_url") or "").strip()
+    file_uri = (data.get("file_uri") or "").strip()
+    source_type = (data.get("source_type") or "url").strip()
     selected_model = (data.get("model") or "").strip()
 
-    if not video_url:
-        return jsonify({"error": "Missing required field: video_url"}), 400
-
-    normalized = _normalize_youtube_url(video_url)
-    if not normalized:
-        return jsonify({"error": "Invalid YouTube URL"}), 400
+    if source_type == "file_uri":
+        if not file_uri:
+            return jsonify({"error": "Missing 'file_uri' for source_type=file_uri"}), 400
+        video_source = file_uri
+    else:
+        if not video_url:
+            return jsonify({"error": "Missing required field: video_url"}), 400
+        normalized = _normalize_youtube_url(video_url)
+        if not normalized:
+            return jsonify({"error": "Invalid YouTube URL"}), 400
+        video_source = normalized
 
     try:
         # ── Step 1: Fetch history ────────────────────────────────────────
         history = fetch_recent_sessions(5)
 
         # ── Step 2: Gemini video analysis ────────────────────────────────
-        print(f"[pogibot] Analyzing video: {normalized}")
-        events = run_gemini_analysis(normalized, selected_model)
+        print(f"[pogibot] Analyzing video ({source_type}): {video_source[:80]}")
+        events = run_gemini_analysis(video_source, selected_model, source_type)
         print(f"[pogibot] Gemini returned {len(events)} events")
 
         # ── Step 3: DeepSeek coaching ────────────────────────────────────
@@ -649,9 +719,9 @@ def analyze():
             {"highlights": highlights, "flaws": flaws}, ensure_ascii=False
         )
 
-        # ── Step 5: Log to Google Sheets ─────────────────────────────────
+        # ── Step 5: Log to SQLite ─────────────────────────────────────────
         append_session_log(
-            video_url=normalized,
+            video_url=video_source,
             overall_score=overall_score,
             technique_ratings=technique_ratings,
             timestamps_notes=timestamps_notes,
@@ -663,7 +733,7 @@ def analyze():
         return jsonify(
             {
                 "success": True,
-                "video_url": normalized,
+                "video_url": video_source,
                 "events": events,
                 "overall_score": overall_score,
                 "technique_ratings": technique_ratings,

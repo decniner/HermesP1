@@ -1,7 +1,7 @@
 ---
 name: news-briefing
 description: "Fetch current news headlines from Japan, Philippines, and global sources and produce a structured digest (plain-text or HTML). Covers the full pipeline: source discovery, extraction via browser fallback, multi-region compilation, output formatting, and delivery."
-version: 1.1.0
+version: 1.2.0
 author: agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -69,10 +69,44 @@ NHK World is authoritative and free but JS-heavy — the accessibility tree is o
 
 Firecrawl billing issues can cause web_search and web_extract to fail with "Payment Required" or "Charge authorization failed". When this happens:
 
-1. **Do NOT retry the failing tool** — it will fail again.
-2. **Switch to browser tools immediately** — navigate directly to the news site.
-3. **Use browser_vision for content extraction** — JS-heavy news sites render headlines visually even when the accessibility tree is empty. The vision tool captures all visible text.
-4. **Use browser_navigate on article URLs** to get full story text from the page snapshot.
+#### Tier 1: Terminal curl (preferred — faster than browser)
+
+Many news sites serve headlines and metadata in server-rendered HTML that curl can extract directly, bypassing both Firecrawl and the browser overhead entirely.
+
+**Basic pattern:**
+```bash
+# Fetch the homepage and grep for headlines
+curl -sL --max-time 15 "https://english.kyodonews.net/" | grep -oP '<h[23][^>]*>.*?</h[23]>' | sed 's/<[^>]*>//g' | head -30
+
+# Extract article-level summaries from meta tags
+curl -sL --max-time 10 "https://english.kyodonews.net/articles/-/79598" | \
+  grep -oP '<meta[^>]*name="description"[^>]*content="[^"]*"' | \
+  sed 's/<meta name="description" content="//;s/"//'
+```
+
+**Working grep selectors per source (see `references/curl-extraction-patterns.md`):**
+| Source | Headline selector | Summary selector |
+|--------|-------------------|------------------|
+| Kyodo News | `<h[23][^>]*>.*?</h[23]>` | `<meta name="description"` |
+| BBC News | `<h2[^>]*data-testid="card-headline"[^>]*>.*?</h2>` | `<meta name="description"` |
+| Inquirer.net | `<h[1-4][^>]*>.*?</h[1-4]>` | `<meta name="description"` or `og:description` |
+| PhilStar | `<h[1-4][^>]*>.*?</h[1-4]>` | `<meta name="description"` |
+| AP News | JS-heavy — curl not useful | Use browser or BBC instead |
+
+**Meta-tag trick for article summaries:**
+After finding headlines, open each article URL with curl and extract its `<meta name="description" content="...">` or `<meta property="og:description" content="...">` for a ready-made 1-2 sentence summary — no full-page parsing needed.
+
+**Caveat:** Reuters (reuters.com) blocks curl with a CAPTCHA wall. BBC and AP work fine.
+
+#### Tier 2: Browser fallback (when curl is blocked or the site is JS-only)
+
+If curl returns only `<script>` tags, empty content, or a CAPTCHA wall:
+
+1. **Switch to browser tools** — navigate directly to the news site.
+2. **Use browser_vision for content extraction** — JS-heavy news sites render headlines visually even when the accessibility tree is empty. The vision tool captures all visible text.
+3. **Use browser_navigate on article URLs** to get full story text from the page snapshot.
+
+Sources that require browser (JS-rendered): NHK World, Reuters, AP News headline pages.
 
 ### Alternative Sources
 
@@ -236,6 +270,7 @@ If the user also wants email delivery, use smtp-email to send the HTML as an att
 ## References
 
 See `references/sources-by-region.md` for a comprehensive multi-region news source reference table with URL patterns, accessibility notes, and bot-handling behavior.
+See `references/curl-extraction-patterns.md` for source-specific curl+grep selectors and batch-summary workflows when Firecrawl is unavailable.
 
 ## Common Pitfalls
 
@@ -244,6 +279,8 @@ See `references/sources-by-region.md` for a comprehensive multi-region news sour
 3. **Terminal curl blocked** — The user may deny terminal curl commands for external fetches. Always use browser tools for web content by default on this setup.
 4. **Reuters CAPTCHA** — reuters.com hits a DataDome CAPTCHA via the browser tool. Do not use Reuters. Use BBC News (bbc.com/news) for global coverage instead.
 5. **Date handling** — News site timestamps are often relative ("8 hours ago"). Use the current date in the report header. For cron jobs, use the actual run date.
-6. **Firecrawl billing exhaustion** — web_search and web_extract may fail with "Payment Required" / "Charge authorization failed". Do NOT retry — switch immediately to browser_navigate on known news URLs. See the "Fallback" section above.
+6. **Firecrawl billing exhaustion** — web_search and web_extract may fail with "Payment Required" / "Charge authorization failed". Do NOT retry — switch immediately to terminal curl on known news URLs, or to browser_navigate as a second fallback. See the "Fallback" section above for the two-tier fallback chain.
+7. **curl timeout** — Some news sites are slow (BBC, Inquirer). Always set `--max-time 10` to 15 seconds per URL. Batch article-summary fetches in a single terminal call using a loop for speed.
+8. **Multi-article summary gathering** — When you have 5+ article URLs from the same domain, batch them in a single terminal call: `for url in ...; do curl ...; done`. This is much faster than reading each article individually.
 7. **Multi-region attribution** — BBC's World section includes Asia stories that overlap with Japan/PH coverage. Attribute stories to the correct regional section in your digest.
 8. **Cron job silence** — If a cron news briefing finds nothing new to report, respond with exactly `[SILENT]` and nothing else to suppress empty deliveries.

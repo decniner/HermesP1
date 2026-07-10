@@ -1,0 +1,102 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have comprehensive data from NHK World (via browser), Kyodo News, Inquirer, PhilStar, Rappler, and BBC. Let me compile the digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Friday, July 10, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Japan 10-Year Bond Yield Hits 29-Year High on Middle East Fears
+   Summary: The yield on Japan's benchmark 10-year government bond briefly rose to 2.900%, its highest level in over 29 years, driven by concerns over escalating tensions in the Middle East and potential impacts on energy markets.
+   Source: https://english.kyodonews.net/articles/-/79598
+
+2. Powerful Typhoon Bavi May Approach Okinawa Over the Weekend
+   Summary: Typhoon Bavi is expected to approach Japan's southern Okinawa prefecture and the Sakishima Islands over the weekend, with authorities monitoring its path for potential impacts on the mainland.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+3. Imperial Law Revision Bill to Clear Lower House as Diet Gridlock Ends
+   Summary: Ruling and opposition parties have formally agreed to hold a House of Representatives plenary session to deliberate a bill ensuring the sustainability of the imperial family system, moving closer to enacting controversial changes.
+   Source: https://english.kyodonews.net/articles/-/79628
+
+4. Tokyo Study: Heatstroke Death Risk Rises When Temps Top 27.1°C
+   Summary: A joint study by the Tokyo metropolitan government and the University of Tokyo found that heatstroke mortality risk increases when daytime highs exceed 27.1°C, urging residents to use air conditioning as midsummer approaches.
+   Source: https://english.kyodonews.net/articles/-/79617
+
+5. New Private Compartments for Shinkansen Bullet Trains Shown to Media
+   Summary: Japan's railway operators revealed new private compartments for Shinkansen trains, offering premium privacy and comfort for travelers, as the industry innovates to meet evolving passenger expectations.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+6. Onitsuka Tiger Unveils Largest Flagship Store in Tokyo's Shinjuku
+   Summary: Asics Corp. unveiled its new flagship store for the Onitsuka Tiger brand in Shinjuku, Tokyo — its largest store yet — stocking nearly all products in the high-end sneaker lineup.
+   Source: https://english.kyodonews.net/articles/-/79615
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Kanlaon Volcano Erupts — Ashfall Blankets Negros, Cebu, Halts Flights
+   Summary: A three-minute moderate eruption of Kanlaon Volcano on Negros Island sent ashfall across Negros and Cebu provinces, forcing the suspension of flight operations at Mactan-Cebu International Airport. Authorities deployed masks and prepared hospitals.
+   Source: https://newsinfo.inquirer.net/2260988/ashfall-from-kanlaon-blankets-negros-cebu
+
+2. Super Typhoon Inday (Bavi) Strengthens — 1 Dead, Signal No. 2 Up Over Batanes
+   Summary: Super Typhoon Inday enhanced the "habagat" (southwest monsoon), dumping heavy rains that killed at least one person in Mindanao. Signal No. 2 was raised over Batanes as the typhoon heads toward northern Luzon with Metro Manila expected to feel impacts by the weekend.
+   Source: https://newsinfo.inquirer.net/2260984/1-dead-as-rains-batter-mindanao-inday-heading-to-north-luzon
+
+3. Senate Studying Ways to Speed Up Sara Duterte Impeachment Trial
+   Summary: The Philippine Senate is exploring ways to expedite the impeachment trial of Vice President Sara Duterte. The House prosecution panel argued the impeachment is "not a criminal trial," while New Zealand cyber experts are examining evidence related to VP's alleged grave threats.
+   Source: https://www.philstar.com/headlines/2026/07/10/2445796
+
+4. PH Secures $60-Million MCC Grant from US for Energy Sector
+   Summary: The Philippines secured a $60-million Millennium Challenge Corporation (MCC) grant from the United States to modernize energy sector governance and infrastructure, the Department of Finance announced.
+   Source: https://business.inquirer.net/599697/ph-secures-60-m-mcc-grant-for-energy-sector
+
+5. Romualdez Camp Says Bonoan Being Pressured to Testify in Flood Control Scandal
+   Summary: Former DPWH Secretary Manuel Bonoan may have been pressured to turn state witness in the flood control corruption scandal, according to the camp of House Speaker Martin Romualdez.
+   Source: https://newsinfo.inquirer.net/2261046/romualdez-camp-bonoan-being-pressured-to-testify
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. US and Iran Trade New Strikes — 14 Killed in Southern Iran
+   Summary: The US Central Command said it hit 90 Iranian targets in the latest round of strikes, with the Iranian health ministry reporting 14 people killed since Tuesday. Tehran launched further strikes after explosions were reported in southern Iran, with concerns growing over Strait of Hormuz shipping lanes.
+   Source: https://www.bbc.com/news/articles/cz75zjj5wp8o
+
+2. Factory Fire Kills at Least 28 in China's "Shoe Capital"
+   Summary: A massive factory fire in China's "shoe capital" killed at least 28 people, with footage showing huge flames and thick black smoke rising from the building. Authorities are investigating the cause.
+   Source: https://www.bbc.com/news/articles/cx2vz51v2pjo
+
+3. China Rain and Wind Disasters Leave Over 70 Dead
+   Summary: The death toll from recent rain and wind disasters in China has exceeded 70 after Tropical Storm Maysak made landfall in the southern part of the country earlier this month.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+4. Ukraine Strikes Russian Ships Near Crimea, Escalates Attacks on Fuel Supplies
+   Summary: Ukraine launched fresh strikes on Russian ships near occupied Crimea, escalating its campaign to choke off supply routes and fuel infrastructure into and out of the peninsula.
+   Source: https://www.bbc.com/news/articles/c70yd1g67z5o
+
+5. Landslides Kill 8 Children at Bangladesh Refugee Camp
+   Summary: Eight children were killed in landslides at a refugee camp in Bangladesh, as heavy monsoon rains triggered the disaster. Separately, Bangladesh is reporting over 120,000 measles cases after previously making huge progress against the disease.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/ + https://www.bbc.com/news/articles/cj0gel72mlgo
+
+6. France Advances to World Cup Semi-Finals — Mbappé and Dembélé Shine
+   Summary: Kylian Mbappé and Ousmane Dembélé powered France into the World Cup semi-finals, as the football world turns attention to the upcoming England vs. Norway showdown.
+   Source: https://www.bbc.com/news
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 TOP STORIES AT A GLANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌊 PH: Super Typhoon Inday (Bavi) threatens Luzon; Kanlaon Volcano ash grounds flights in Cebu
+🌋 IRAN: US strikes 90 targets, Iran retaliates — Strait of Hormuz concerns escalate
+🏛️ PH: Sara Duterte impeachment trial proceedings accelerate
+🇯🇵 JAPAN: Bond yields hit 29-year high on Middle East instability
+🔥 CHINA: Factory fire kills 28; storm-related deaths pass 70
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
