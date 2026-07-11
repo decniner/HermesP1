@@ -226,4 +226,32 @@ Always create a kanban task (`hermes kanban create "..." --body "..."`) for ever
 
    This lets the server boot, serve `/health` (showing missing keys), and only fail with a clear error when a key-dependent endpoint is actually called.
 
+## Project Versioning (User Preference)
+
+**Every iteration MUST have a clear, sequential version identifier.** The user tracks builds by filename. When making changes, use versioned filenames:
+
+```
+Good:  project_Opt_V5.py → project_Opt_V5_1.py → project_Opt_V5_2.py
+Bad:   project_Opt.py (overwritten — no history to compare)
+```
+
+Also update any internal version strings (`#property version`, etc.) to match.
+
 ## Remote Access (Tunneling)
+
+For apps with AI API calls that take 30-120s, tunnels must handle long requests.
+
+| Tunnel | Long requests | Setup | Reliability |
+|--------|--------------|-------|-------------|
+| serveo.net | ❌ Drops | `ssh -R 80:localhost:PORT serveo.net` | Poor |
+| localtunnel | ❌ Drops | `npx localtunnel --port PORT` | Poor |
+| **cloudflared** | ✅ Handles | `cloudflared tunnel --url http://localhost:PORT` | **Best** |
+
+**Always prefer cloudflared.** Install via npm or download the binary:
+
+```bash
+npm install -g cloudflared
+cloudflared tunnel --url http://localhost:5001
+```
+
+Returns a `https://xxxx.trycloudflare.com` URL.

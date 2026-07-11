@@ -1,0 +1,102 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Saturday, July 11, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Typhoon Bavi to Bring Heavy Rain, Winds to Okinawa
+   Summary: A powerful typhoon bearing down on Japan's southern prefecture of Okinawa is forecast to bring extremely strong winds starting Friday. The 1,000 km-wide Bavi is expected to be one of the strongest storms in decades, also heading for Taiwan and southeastern China.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260710_04/
+
+2. Xi Meets North Korean Premier in Beijing
+   Summary: Chinese President Xi Jinping held talks with North Korean Premier Pak Thae Song in Beijing. Xi told Pak the two sides should strengthen "strategic coordination" in light of an international landscape "fraught with changes and turbulence."
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260711_02/
+
+3. Apple Files Lawsuit Accusing OpenAI of Stealing Trade Secrets
+   Summary: Apple accused ChatGPT-maker OpenAI of stealing trade secrets as it seeks to build its own hardware for the AI platform, marking a major rupture in a partnership between the iPhone maker and the AI company.
+   Source: https://japantoday.com/category/tech/apple-files-lawsuit-accusing-chatgpt-maker-openai-of-stealing-trade-secrets1
+
+4. Ohtani to Miss All-Star Game for Treatment on Knee
+   Summary: Los Angeles Dodgers superstar Shohei Ohtani was scratched from his scheduled pitching start Friday with left knee "irritation" and will not play in the MLB All-Star Game as he seeks treatment.
+   Source: https://japantoday.com/category/sports/ohtani-to-miss-all-star-game-for-treatment-on-knee
+
+5. Zelenskyy Mulls Japan Firm to Help Ukraine Produce Patriot Missiles
+   Summary: Ukrainian President Volodymyr Zelenskyy expressed interest in coordinating with a Japanese company to manufacture Patriot interceptor missiles for Ukraine's defense.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260710_08/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Landslides Caused by Typhoon Kill 16 in Mindanao
+   Summary: Landslides triggered by heavy rain from Typhoon Bavi killed 16 people on the southern Philippine island of Mindanao. Authorities continue searching for others who remain unaccounted for. The BBC reports at least 15 dead, while NHK reports 16.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/20260711_01/
+
+2. ICC Cancels July 14 Status Conference in Duterte Case
+   Summary: Trial judges of the International Criminal Court have canceled the scheduled July 14 status conference in the crimes against humanity case against former president Rodrigo Duterte.
+   Source: https://www.philstar.com/headlines/2026/07/11/2541322/icc-cancels-july-14-status-conference-duterte-case
+
+3. Palace to Dutertes: Stop Politicizing Impeachment Trial
+   Summary: Palace press officer Claire Castro lashed out at Vice President Sara Duterte and Davao City Mayor Sebastian Duterte for accusing the administration of using impeachment to prevent her 2028 presidential run. The Senate is working to make the trial more understandable to the public.
+   Source: https://www.philstar.com/headlines/2026/07/11/2541328/palace-dutertes-stop-politicizing-impeachment-trial
+
+4. Marcos: Arbitral Award a Win for Lives, Livelihoods
+   Summary: President Marcos said the 2016 Arbitral Award on the South China Sea is not just an "abstract triumph of jurisprudence" but about defending lives, as the Philippines marked the 10th anniversary of the ruling. An OCTA survey found 66% of Filipinos support his assertive response to the West Philippine Sea dispute.
+   Source: https://www.philstar.com/headlines/2026/07/11/2541330/arbitral-award-win-lives-livelihoods-president-marcos
+
+5. Marcos Cabinet OKs 2027 National Expenditure Program
+   Summary: President Marcos' Cabinet approved the 2027 National Expenditure Program as presented by the Department of Budget and Management during a final review at Malacañang on Friday.
+   Source: https://www.philstar.com/headlines/2026/07/11/2541324/president-marcos-cabinet-oks-2027-nep
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Wildfire in Southern Spain Leaves at Least 12 Dead, 23 Missing
+   Summary: A massive wildfire in Andalusia, southern Spain near Los Gallardos, Almería has become one of the deadliest on record. A local official said four of the victims may be British. Many were foreign tourists. At least 12 confirmed dead with 23 still unaccounted for.
+   Source: https://www.bbc.co.uk/news/articles/c8e2382jk7jo
+
+2. Iran's Supreme Leader Remains Absent, Power Vacuum at Top
+   Summary: Ayatollah Mojtaba Khamenei did not appear at his father's funeral this week, fueling speculation about his physical condition. Mediators from Qatar try to pull the U.S. and Iran back from the brink — President Trump said the ceasefire is "over" but talks would continue.
+   Source: https://www.nytimes.com/2026/07/10/world/middleeast/iran-supreme-leader-mojtaba-khamenei.html
+
+3. US Demands Iran Guarantee Strait of Hormuz is Open
+   Summary: The United States is demanding Iran publicly state that the Strait of Hormuz is open and that Tehran will not attack ships anymore, amid rising tensions and a widening rift between the two countries.
+   Source: https://apnews.com/hub/world-news
+
+4. China Lands Reusable Rocket for First Time
+   Summary: China successfully landed a reusable rocket for the first time, state media reported. It follows similar landings by U.S.-owned companies SpaceX and Blue Origin, marking a significant milestone in China's space program.
+   Source: https://www.bbc.co.uk/news/articles/cm2rmmx86pdo
+
+5. Harry and Meghan Pay Rare Visit to King Charles and Queen Camilla
+   Summary: Friday's visit signaled a détente in relations with Prince Harry and his wife, who stepped down from royal duties and moved to the United States in 2020, representing a potential royal rapprochement.
+   Source: https://www.nytimes.com/2026/07/10/world/europe/harry-meghan-visit-charles-camilla.html
+
+6. After Venezuela Earthquakes, a Youth Baseball League Counts the Dead
+   Summary: Children who played for Venezuela's youth baseball league, a symbol of national pride, have been left injured, orphaned or dead following massive quakes that hit the country over two weeks ago. Many remain missing.
+   Source: https://www.nytimes.com/2026/07/10/world/americas/venezuela-earthquake-death-baseball-los-criollitos.html
+
+7. EU Demands Facebook Dismantle Addictive Design Features
+   Summary: The European Union is demanding Facebook and Instagram dismantle design features it calls addictive for users, in a major regulatory push.
+   Source: https://apnews.com/hub/world-news
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 OTHER NOTEWORTHY STORIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• New dinosaur species with neck as long as a cricket pitch discovered in Thailand (BBC)
+• US declassifies fourth installment of UFO files on unresolved cases (BBC)
+• China blocks exports of helium, key for chipmaking, as Iran war squeezes supply (AP)
+• Kia recalls 463,000 Telluride SUVs due to fire risk (AP)
+• Man fatally shot by ICE in Houston was not the intended target, DHS says (BBC)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Report generated from: NHK World, Japan Today, PhilStar, BBC News, NYT, AP News
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").

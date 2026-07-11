@@ -495,6 +495,116 @@ def run_deepseek_coaching(
         raise RuntimeError(f"DeepSeek API call failed: {e}")
 
 
+# ── Chat/Conversation endpoint ─────────────────────────────────────────
+
+
+CHAT_SYSTEM_PROMPT = """You are POGIBOT — a brutally honest VR boxing coach. You analyze video of a fighter's performance and give direct, no-sugarcoating feedback.
+
+You have access to the last video analysis results (events, ratings, score, flaws, highlights). Use them as context for your answers.
+
+Rules:
+1. Be direct and brutally honest — tell the fighter what they're doing wrong
+2. Be specific — reference actual events and techniques from the analysis
+3. Give actionable advice — tell them HOW to fix the problem, not just what's wrong
+4. If they ask about something not in the analysis, say so
+5. Keep responses concise — 2-4 paragraphs max unless they ask for detail
+6. Use boxing terminology naturally (footwork, guard, head movement, etc.)
+7. Track their questions across the conversation for continuity"""
+
+
+def run_deepseek_chat(
+    user_message: str,
+    conversation: list[dict],
+    last_analysis: dict | None,
+    historical_rows: list[list],
+) -> str:
+    """Chat with the POGIBOT coach using conversation history + last analysis context."""
+
+    if last_analysis:
+        events_json = json.dumps(last_analysis.get("events", []), indent=2)
+        ratings = last_analysis.get("technique_ratings", {})
+        score = last_analysis.get("overall_score", "N/A")
+        verdict = last_analysis.get("coaching_output", "")[:500]
+
+        analysis_context = (
+            "## LAST VIDEO ANALYSIS CONTEXT\n\n"
+            f"Overall Score: {score}/100\n"
+            f"Ratings: {json.dumps(ratings)}\n"
+            f"Events ({len(last_analysis.get('events', []))}):\n{events_json}\n\n"
+            f"Verdict excerpt:\n{verdict}\n"
+        )
+    else:
+        analysis_context = "No video analysis has been performed yet."
+
+    hist_text = _format_historical_data(historical_rows) if historical_rows else "No history."
+
+    messages = [
+        {"role": "system", "content": CHAT_SYSTEM_PROMPT},
+        {
+            "role": "system",
+            "content": f"{analysis_context}\n\nTraining history:\n{hist_text}",
+        },
+    ]
+
+    # Append conversation history (last 10 exchanges)
+    for msg in (conversation or [])[-10:]:
+        role = msg.get("role", "user")
+        if role in ("user", "assistant"):
+            messages.append({"role": role, "content": msg.get("content", "")})
+
+    # Append the new user message
+    messages.append({"role": "user", "content": user_message})
+
+    try:
+        client = _get_deepseek_client()
+        resp = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=messages,
+            temperature=0.5,
+            max_tokens=1024,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception as e:
+        raise RuntimeError(f"DeepSeek chat failed: {e}")
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    Chat with the POGIBOT coach.
+
+    Request body:
+      {
+        "message": "string (required) — user's message",
+        "conversation": [{"role": "user"/"assistant", "content": "..."}] (optional),
+        "last_analysis": { ... } (optional — the most recent /analyze response data)
+      }
+
+    Returns: { "reply": "string" }
+    """
+    data = request.get_json(silent=True) or {}
+    user_message = (data.get("message") or "").strip()
+    if not user_message:
+        return jsonify({"error": "message is required"}), 400
+
+    conversation = data.get("conversation") or []
+    last_analysis = data.get("last_analysis")
+
+    # Fetch history from SQLite for context
+    try:
+        historical_rows = fetch_recent_sessions(5)
+    except Exception:
+        historical_rows = []
+
+    try:
+        reply = run_deepseek_chat(
+            user_message, conversation, last_analysis, historical_rows
+        )
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ══════════════════════════════════════════════════════════════════════════
 # DeepSeek parser — extract structured fields from coaching output
 # ══════════════════════════════════════════════════════════════════════════

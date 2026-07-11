@@ -17,6 +17,18 @@ and exposing it via tunnels for mobile access.
 
 ---
 
+## ⚠️ Mandatory: QA Protocol (User Expectation)
+
+**QA your own work before reporting.** The user will say: *"Not working, qa it yourself to make sure it works before asking me."* Do not skip.
+
+1. **Build** the code
+2. **Smoke test locally** — syntax, imports, `curl localhost/health`
+3. **Full workflow test** — hit every endpoint with real data through the tunnel
+4. **Verify error handling** — test with invalid input, missing keys, API timeouts
+5. **Report** — only after all above pass
+
+Diagnose and fix failures silently. Do not ask the user to check if something works.
+
 ## 1. Architecture: Single-Origin Flask
 
 Serve frontend static files FROM the Flask backend — not from a separate HTTP server.
@@ -54,6 +66,8 @@ No CORS headers needed. No cross-tunnel fetch issues.
 npm install -g cloudflared
 cloudflared tunnel --url http://localhost:5001
 ```
+
+> **Windows port 5000:** Port 5000 is reserved by `Universal.Server` on Windows 10/11. Use port **5001+** or kill the process with `taskkill /PID $(netstat -ano | grep ':5000' | awk '{print $5}' | head -1)`.
 
 ## 3. Gemini API — Quota Handling
 

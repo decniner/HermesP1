@@ -288,6 +288,62 @@
       border-top: 1px solid var(--border);
       margin-top: 40px;
     }
+
+    /* ═══════════════════════════════════════════════
+       Mobile Responsive
+       ═══════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .container { max-width: 100%; }
+
+      header { padding: 20px 10px 20px; margin-bottom: 20px; }
+      header h1 { font-size: 1.8rem; }
+      header p  { font-size: 0.8rem; }
+
+      .input-area { flex-direction: column; gap: 8px; margin-bottom: 20px; }
+      .input-area input,
+      .input-area button { width: 100%; border-radius: 6px; }
+      .input-area button { padding: 14px; font-size: 0.95rem; }
+      .input-area input { padding: 14px; font-size: 0.95rem; }
+
+      #uploadInputArea .input-area { flex-direction: column; }
+      #uploadInputArea input[type="file"] { width: 100%; padding: 10px; font-size: 0.85rem; }
+
+      .results-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+      }
+
+      .card { padding: 14px; }
+      .card h2 { font-size: 1rem; }
+
+      .score-badge .number { font-size: 3rem; }
+      .score-badge .label  { font-size: 1rem; }
+
+      .rating-bar { flex-wrap: wrap; gap: 4px; }
+      .rating-bar .label { min-width: 70px; font-size: 0.8rem; }
+      .rating-bar .track { height: 8px; }
+      .rating-bar .value { width: 30px; font-size: 0.75rem; }
+
+      .event-list li { font-size: 0.8rem; padding: 6px 0; }
+
+      .verdict { font-size: 0.85rem; padding: 12px; }
+
+      .history-table { font-size: 0.75rem; }
+      .history-table th,
+      .history-table td { padding: 6px 6px; }
+
+      #raw-events { font-size: 0.7rem; max-height: 200px; }
+
+      #chatMessages { max-height: 300px; font-size: 0.85rem; }
+      #chatInput { font-size: 0.85rem !important; padding: 10px 12px !important; }
+      #chatSendBtn { padding: 10px 16px !important; font-size: 0.85rem !important; }
+
+      #modelSelect { min-width: 140px !important; font-size: 0.8rem !important; }
+      [style*="display:flex;gap:10px;align-items"] { gap: 6px !important; }
+
+      footer { font-size: 0.7rem; padding: 20px 0 10px; }
+    }
   </style>
 </head>
 <body>
@@ -389,7 +445,30 @@
       <div id="raw-events">—</div>
     </div>
 
-  </div>
+    <!-- ═══ Chat / Coach Conversation ═══ -->
+    <div class="card card-full" id="chatCard">
+      <h2>🎤 Talk to POGIBOT</h2>
+      <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:12px;">
+        Ask follow-up questions about your performance. POGIBOT remembers the last analysis.
+      </p>
+      <div id="chatMessages" style="max-height:400px;overflow-y:auto;margin-bottom:12px;padding:8px;background:#111;border-radius:6px;display:flex;flex-direction:column;gap:8px;">
+        <div class="chat-msg assistant">
+          <span style="color:var(--accent);font-weight:700;">POGIBOT:</span>
+          <span>Run an analysis first, then ask me anything about your technique.</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="chatInput" placeholder="Ask about your technique..." autocomplete="off"
+          style="flex:1;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;outline:none;"
+          onkeydown="if(event.key==='Enter') sendChat()" />
+        <button onclick="sendChat()" id="chatSendBtn"
+          style="padding:12px 24px;background:var(--accent2);color:#fff;border:none;border-radius:6px;font-size:0.9rem;font-weight:700;cursor:pointer;white-space:nowrap;">
+          SEND
+        </button>
+      </div>
+    </div>
+
+  </div>  <!-- /results-grid -->
 
   <footer>
     POGIBOT · VR Boxing AI Coach · All analysis runs through your local backend on localhost:5000
@@ -562,6 +641,7 @@ async function uploadAndAnalyze() {
     }
 
     // Render
+    storeLastAnalysis(data);
     renderOverallScore(data.overall_score);
     renderTechniqueRatings(data.technique_ratings);
     renderEvents(data.events);
@@ -632,6 +712,7 @@ async function analyzeVideo() {
     }
 
     // ── Populate UI ──
+    storeLastAnalysis(data);
     renderOverallScore(data.overall_score);
     renderTechniqueRatings(data.technique_ratings);
     renderEvents(data.events);
@@ -781,6 +862,112 @@ function renderHistory(data) {
 
   container.innerHTML = html;
 }
+
+/* ── Chat / Conversation ── */
+let chatConversation = [];
+let lastAnalysisData = null;
+
+// Store last analysis data whenever we render results
+function storeLastAnalysis(data) {
+  lastAnalysisData = {
+    events: data.events,
+    overall_score: data.overall_score,
+    technique_ratings: data.technique_ratings,
+    highlights: data.highlights,
+    flaws: data.flaws,
+    coaching_output: data.coaching_output,
+  };
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const messagesDiv = document.getElementById('chatMessages');
+  const sendBtn = document.getElementById('chatSendBtn');
+
+  // Add user message
+  appendChatMsg('user', msg);
+  input.value = '';
+  sendBtn.disabled = true;
+  sendBtn.textContent = '...';
+
+  // Add a loading indicator
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'chat-msg assistant';
+  loadingDiv.id = 'chatLoading';
+  loadingDiv.innerHTML = '<span style="color:var(--accent);font-weight:700;">POGIBOT:</span> <span style="color:var(--text-dim);">thinking...</span>';
+  messagesDiv.appendChild(loadingDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        conversation: chatConversation,
+        last_analysis: lastAnalysisData,
+      }),
+    });
+    const data = await resp.json();
+
+    // Remove loading
+    const loading = document.getElementById('chatLoading');
+    if (loading) loading.remove();
+
+    if (resp.ok && data.reply) {
+      appendChatMsg('assistant', data.reply);
+      chatConversation.push({ role: 'user', content: msg });
+      chatConversation.push({ role: 'assistant', content: data.reply });
+    } else {
+      appendChatMsg('assistant', `⚠️ Error: ${data.error || resp.statusText}`);
+    }
+  } catch (err) {
+    const loading = document.getElementById('chatLoading');
+    if (loading) loading.remove();
+    appendChatMsg('assistant', `⚠️ Connection failed: ${err.message}`);
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'SEND';
+  }
+}
+
+function appendChatMsg(role, text) {
+  const div = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = `chat-msg ${role}`;
+  el.style.cssText = role === 'user'
+    ? 'text-align:right;'
+    : 'text-align:left;';
+  el.innerHTML = role === 'user'
+    ? `<span style="color:var(--accent2);font-weight:700;">You:</span> ${escapeHtml(text)}`
+    : `<span style="color:var(--accent);font-weight:700;">POGIBOT:</span> ${escapeHtml(text)}`;
+  div.appendChild(el);
+  div.scrollTop = div.scrollHeight;
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Patch existing render functions to store analysis data
+const _origRenderOverall = renderOverallScore;
+renderOverallScore = function(score) {
+  _origRenderOverall(score);
+  // Clear chat welcome message after first analysis
+  const msgDiv = document.getElementById('chatMessages');
+  if (msgDiv && msgDiv.children.length === 1) {
+    const first = msgDiv.children[0];
+    if (first.textContent.includes('Run an analysis first')) {
+      first.remove();
+    }
+  }
+};
+
 </script>
 </body>
 </html>
