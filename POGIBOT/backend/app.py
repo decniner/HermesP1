@@ -605,6 +605,32 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/history", methods=["GET"])
+def get_history():
+    """
+    Return session history for charting.
+
+    Returns:
+      { "sessions": [{ "id", "video_url", "overall_score", "technique_ratings",
+                       "timestamp", "session_order" }] }
+    Sorted oldest first for chart plotting.
+    """
+    try:
+        rows = fetch_recent_sessions(50)
+        sessions = []
+        for row in rows:
+            sessions.append({
+                "session_order": row[0],
+                "timestamp": row[1],
+                "video_url": row[2],
+                "overall_score": row[3],
+                "technique_ratings": row[4],
+            })
+        return jsonify({"sessions": sessions})
+    except Exception as e:
+        return jsonify({"error": str(e), "sessions": []}), 500
+
+
 # ══════════════════════════════════════════════════════════════════════════
 # DeepSeek parser — extract structured fields from coaching output
 # ══════════════════════════════════════════════════════════════════════════

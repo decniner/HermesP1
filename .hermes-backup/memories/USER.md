@@ -4,6 +4,8 @@ When user gives exact step-by-step specs/instructions, follow them precisely wit
 §
 Wants short, direct answers when the answer is essentially 'no' — no preamble, no explanation. 'Short answer only' means give the bottom line immediately.
 §
-EA workflow: write → compile → user backtests → check → iterate. Always state exact filename to test. Version filenames clearly (_V5, _V5_1). He runs his own MT5 backtests.
+EA workflow: write → compile → user backtests. Always say exact filename + version to test (V5, V5_1, etc). He runs his own MT5 backtests.
 §
 Gets frustrated fast with broken/losing EAs. Prefers direct honesty — if multiple versions fail, recommend what worked instead of iterating broken concepts.
+§
+Has Google TV + Android phone. Tests APKs on both. Switches approaches fast when current one fails — iterates quickly. QA must include testing the actual deliverable, not just APIs/components.

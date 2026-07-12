@@ -10,4 +10,10 @@ Gemini free tier: gemini-1.5-flash removed from API. gemini-2.5-flash works with
 §
 MQL5 EA with DEN_EA folder (XMTrading MT5, BTCJPY M15, ¥50K JPY 1:1000 leverage). Optimized: StopLossATR=3.6, TakeProfitATR=12.95. BodyStrengthMin 45-55, EMA(88), RSI(14) 30-75 range. Version files V5.x. Compile via MetaEditor64.exe.
 §
-EA dev: compile .mq5 via MetaEditor64.exe, version filenames (V5, V5_1). Runs full optimization (8281 passes) before finalizing. Uses .set files in DEN_EA/Sets/.
+EA dev lesson: BTCJPY needs simple entry + wide SL/TP (3.6/12.95) + trailing. Over-filtering kills trades. Zone + trail + loss protection only. Sniper/BoS/RSI all failed.
+§
+QA rule: must end-to-end test every deliverable through its real channel before reporting success. No emulator = use browser/curl/visual. Never say 'ready' without exercising the artifact.
+§
+OnStream Flutter app: embed sites (vidsrc.to) failed in WebView. Pivoted to TPB API (apibay.org) for torrent magnet links + external torrent client. APK on GitHub HermesP1. Major version bump on architecture pivot.
+§
+QA expectation: User has repeatedly called me out for not properly QAing deliverables. Must actually test the built artifact (APK/app) end-to-end, not just test APIs or URLs separately. Saying "done" without real verification gets called out. This applies to all builds, not just mobile apps.

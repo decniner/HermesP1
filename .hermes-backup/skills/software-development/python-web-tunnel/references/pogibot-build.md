@@ -87,3 +87,80 @@ and rebuilt it using `normalized_url` — which only exists in the "url" code pa
 Result: crash on every uploaded file analysis.
 
 **Fix:** Use the already-assigned `contents` variable, never reconstruct.
+
+## Session 2 Features Added (Jul 11, 2026)
+
+### Chat / Conversational Coach (POST /chat)
+
+A `POST /chat` endpoint was added so the user can have a continuing conversation with the AI coach after a video analysis.
+
+**Backend design:**
+```python
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_message = data.get("message")
+    conversation = data.get("conversation", [])      # [{role, content}, ...]
+    last_analysis = data.get("last_analysis", None)   # from /analyze response
+
+    # Inject analysis context as system message
+    if last_analysis:
+        context = f"Score: {last_analysis['overall_score']}\nRatings: {json.dumps(last_analysis['technique_ratings'])}"
+        messages.append({"role": "system", "content": f"LAST ANALYSIS:\n{context}"})
+
+    # Append conversation history (last 10)
+    for msg in conversation[-10:]:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+
+    messages.append({"role": "user", "content": user_message})
+    reply = client.chat.completions.create(messages=messages)
+    return jsonify({"reply": reply})
+```
+
+**Frontend design:**
+- `chatConversation[]` array persists the message history (client-side)
+- `lastAnalysisData` object stores the most recent /analyze response fields
+- Both are sent with each chat request for context continuity
+- Loading indicator ("thinking...") while waiting for reply
+- HTML escaping on chat output for XSS safety
+
+**System prompt persona:**
+Brutally honest VR boxing coach. Direct, specific, references real events from analysis. Gives actionable advice. If asked about something not in the data, says so.
+
+### Progress Chart (GET /history + Canvas API)
+
+A `/history` endpoint returns all logged sessions for charting.
+
+**Backend:** `GET /history` returns `{"sessions": [{"session_order", "timestamp", "overall_score", "technique_ratings"}, ...]}` sorted oldest-first.
+
+**Frontend:** Pure Canvas 2D API chart — no external libraries:
+- Line connecting overall scores across sessions (#1, #2, #3...)
+- Gradient fill under the line (red to transparent)
+- Score dots color-coded: red <50, yellow 50-69, green 70+
+- Latest dot in orange for emphasis
+- Trend arrow at top: 📈 Improving / 📉 Declining / 📊 Stable (+/- pts diff)
+- Grid lines with Y-axis labels
+- Auto-updates after each analysis via `setTimeout(loadProgressChart, 500)`
+- Shows "Run 2+ analyses to see progress" placeholder when <2 sessions exist
+
+### Mobile Responsive CSS
+
+Full `@media (max-width: 600px)` breakpoint:
+- All inputs stack vertically (flex-direction: column)
+- Buttons go full-width (width: 100%)
+- Results grid collapses to single column (grid-template-columns: 1fr)
+- Font sizes reduced: header 1.8rem, body 0.85rem, verbatim 0.7rem
+- Padding reduced on cards, header, inputs
+- Score badge number shrinks to 3rem
+- Rating bars wrap and shrink
+- History table cells tighten
+- Chat box limited to 300px height, font 0.85rem
+- Model selector min-width shrinks to 140px
+
+### SQLite Reset (User Request)
+
+When the user wants to start fresh:
+```bash
+rm -f ~/projects/POGIBOT/backend/pogibot_history.db
+```
+The database is auto-created on next startup by the `_init_db()` function.

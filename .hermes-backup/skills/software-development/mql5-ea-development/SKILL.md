@@ -17,17 +17,36 @@ version: 1.0.0
 
 Class-level guide for working with MetaTrader 5 Expert Advisors: reading source code, running backtests, interpreting reports, and iterating on strategy logic.
 
-## ⚠️ Mandatory: QA Protocol (User Expectation)
+## ⚠️ Mandatory: End-to-End QA Before Reporting (UNIVERSAL)
 
-**QA your own work before reporting.** The user will say: *"Not working, qa it yourself to make sure it works before asking me."* Do not skip.
+**This user requires you to actually test every deliverable through its real delivery channel before saying it's done.** This is not EA-specific — it applies to code, APKs, scripts, config changes, and any artifact the user will consume.
 
-1. **After compilation** — verify `.ex5` file exists and has nonzero size
-2. **After strategy changes** — run one backtest to confirm trades fire
-3. **Check tester logs** — look for `final balance` line, verify trades occurred
-4. **Verify inputs** — confirm the report shows the intended parameters, not stale ones
-5. **Report** — only after all above pass
+The user will say: *"Not working, qa it yourself to make sure it works before asking me."* — or simply report the failure. Do not skip.
 
-Diagnose and fix silently. Never ask the user to check if a version works.
+### The Rule
+
+If you can build it, you can test it. "There's no emulator" or "I can't test on a phone" is not an acceptable excuse — use the tools you have (browser tool for web apps, curl for APIs, visual inspection for static files, etc.) to validate the deliverable in the same way the user will consume it.
+
+### Minimum QA Checklist (every deliverable)
+
+1. **Compilation/Generation** — verify the artifact exists, has nonzero size, and has a recent timestamp
+2. **Functional test** — run the artifact once. For an EA: run a backtest and check trades fire. For an APK: verify the URLs and structure work. For a script: run it and check output.
+3. **Delivery channel** — confirm the user can actually consume it (GitHub link is accessible, file is at the stated path, upload service returned a 200)
+4. **Report** — only after all above pass. State what was tested and the result.
+
+### Concrete examples of failure
+
+| Task | What I did wrong | What I should have done |
+|------|-----------------|------------------------|
+| Flutter APK with video player | Tested embed URLs in browser, said "QA complete" | Built the APK, verified the Watch Now to WebView flow on a real device/simulator |
+| EA with trade logic | Compiled successfully, said "ready to test" | Compiled AND ran a backtest to confirm trades actually fire before reporting |
+| YouTube video analysis | Got API response, said "pipeline works" | Verified the full POST to analysis to response flow through the tunnel URL |
+
+### Triage: When the user reports a failure
+
+1. **First check what was actually tested** — verify the report/artifact matches your intended version. User may have tested a different file or stale parameters.
+2. **Then debug** — do not jump into fixing code before confirming the right version was tested.
+3. **Fix + retest** — never report a fix without re-QA'ing through the delivery channel.
 
 ## Key Skills Required
 
@@ -104,15 +123,29 @@ Test BTCJPY_LowDDWithBoS_Opt_V5_2 in the Strategy Tester.
 
 Every version bump gets its filename called out explicitly at delivery time.
 
+## Verify What the User Actually Tested
+
+When the user reports a bad test result, **check the test report input parameters before debugging code.** The user may have accidentally run a different EA or the same EA with default inputs instead of your intended .set file.
+
+Read the report Settings section and verify every parameter matches what you intended. Common mismatch: StopLossPercent=3.48 (original default) instead of StopLossPercent=10.09 (optimized value).
+
+**Concrete example from this session:** The user sent an Excel report showing `SlowMAPeriod=579`, `StopLossPercent=8.0`, `MaxSLPercent=2.0` — these were NOT parameters from the V6 I'd written (which used `StopLossATR=3.6`). The report was from a **completely different pre-existing EA** (`BTCJPY_LowDDWithBoS_v6`) that the user had on their system, not the V6 I'd just compiled. The mistake wasted an iteration because I started debugging the code before checking what was actually tested.
+
+Triage order:
+1. Check the report **expert/adviser name** at the top — does it match the filename you sent?
+2. Check the report **input parameter names** — do they match the `input` declarations in your source file?
+3. Check the report **parameter values** — do they match what you set?
+4. Only then look at the code for bugs
+
 ## Providing File Paths
 
-When the user asks for a file location, always provide the **full absolute path starting from `C:\`**, not a relative or shortened path. Example:
+When the user asks for a file location, always provide the **full absolute path starting from `C:\\`**, not a relative or shortened path. Example:
 
 ```
-C:\Users\decni\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\DEN_EA\Sets\BTCJPY_LowDDWithBoS_Opt_V6.set
+C:\\Users\\decni\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5\\Experts\\DEN_EA\\Sets\\BTCJPY_LowDDWithBoS_Opt_V6.set
 ```
 
-Not `...\DEN_EA\Sets\...` or `~/AppData/...`
+Not `...\\DEN_EA\\Sets\\...` or `~/AppData/...`
 
 ## Versioned Filenames (CRITICAL preference)
 
@@ -133,6 +166,12 @@ Also update the `#property version` directive inside the source file to match:
 ```mql5
 #property version   "5.10"
 ```
+
+## Delivery: Short / Direct Answers for Negatives
+
+When the user's question has a simple negative answer (e.g. "can you predict lottery numbers?"), give the bottom line immediately — no preamble, no explanation, no hedging. The user's explicit instruction: *"Short answer only" means give the bottom line immediately.*
+
+For complex multi-part tasks, normal verbosity applies. This rule only triggers for questions where the core answer is an unambiguous 'no' or a single-sentence fact.
 
 ## Interpreting Strategy Tester Reports
 
@@ -298,7 +337,7 @@ MT5 can export optimization results as XML (Excel-compatible format). Parse them
 ### How to parse in conversation
 
 1. Read the first 20-30 rows from the XML (sorted by best result)
-2. Check column headers above data rows to know parameter order
+2. Check column headers above data rows to know parameter order — first 10 columns are fixed (Pass, Result, Profit, Expected Payoff, Profit Factor, Recovery Factor, Sharpe Ratio, Custom, Equity DD %, Trades), then the remaining columns are EA input parameters in declaration order
 3. Focus on **Profit Factor** as primary ranking, **Net Profit** as secondary
 4. Trade off between PF, DD%, and Trade Count — PF 2.0 with 3 trades is unreliable
 5. Cross-check parameters against the EA's declared inputs
@@ -316,11 +355,6 @@ MT5 can export optimization results as XML (Excel-compatible format). Parse them
 
 - PF ≥ 1.5, DD ≤ 15%, Trades ≥ 10, Sharpe ≥ 1.0
 - Extreme parameters that worked in one period likely won't generalize
-
-## See Also
-
-- `self-hosted-python-web-apps` — For Python-based trading dashboards (Streamlit/yfinance)
-- `python-web-tunnel` — For tunneling local servers to mobile access
 
 ## Backtest Automation (.set Files & Runner Scripts)
 
@@ -353,11 +387,11 @@ A PowerShell script automates the workflow:
 
 ```powershell
 # Detect MT5 terminal instance
-$terminalData = "$env:APPDATA\MetaQuotes\Terminal"
+$terminalData = "$env:APPDATA\\MetaQuotes\\Terminal"
 $instance = Get-ChildItem $terminalData | Where-Object { $_.Name -notin @("Common","Community") } | Select-Object -First 1
 
 # .set file goes under the Sets directory
-$setDir = "$terminalData\$instance\MQL5\Experts\DEN_EA\Sets"
+$setDir = "$terminalData\\$instance\\MQL5\\Experts\\DEN_EA\\Sets"
 ```
 
 ### metatester64.exe Limitations
@@ -392,8 +426,9 @@ bool canLong  = trendUp || (!trendDn && consecutiveLosses == 0);
 bool canShort = trendDn;
 ```
 
-**Design rules:**
-- Use a small deadband instead of strict zero — flat EMA should still allow the default bias
-- Normalize slope as percentage of price so it works across different price levels
-- Reset bias after consecutive losses to prevent revenge trading
-- Prefer longs for bull-biased assets unless EMA clearly signals otherwise
+**Design rules:**\n- Use a small deadband instead of strict zero — flat EMA should still allow the default bias. **Critical practical finding:** `slopePct > 0` (strictly positive = bullish) blocks ALL trades during flat or slightly declining EMA periods. On BTCJPY, EMA(88) is often flat for days between trend phases. **Fix:** Use `slopePct > -0.5` for longs (allows near-flat EMAs). Same for shorts: `slopePct < 0.5` instead of `< 0`.\n- Normalize slope as percentage of price (`slope / price * 100`) so it works across different price levels (e.g. ¥10,000 vs ¥1,000,000)\n- Reset bias after consecutive losses to prevent revenge trading\n- Prefer longs for bull-biased assets unless EMA clearly signals otherwise\n- **Verification:** Add `Print()` to log the normalized slope value in every OnTick. This helped identify that the slope was hovering around -0.2 to 0.1 for days, never crossing the strict 0 threshold.\n\n**If a long/short bias EA fires zero trades or very few:**\n1. Log the raw `slopePct` value every tick to see what range it actually operates in\n2. Look for the minimum/maximum slope over a 1-month period\n3. Set your deadband threshold at 1/10 of the observed slope range (e.g., if slope ranges from -1.5 to +1.5, use > -0.15 for longs)
+
+## See Also
+
+- `self-hosted-python-web-apps` — For Python-based trading dashboards (Streamlit/yfinance)
+- `python-web-tunnel` — For tunneling local servers to mobile access

@@ -169,6 +169,7 @@ data.columns = [str(c).lower() for c in data.columns]
 - `references/google-genai-sdk-migration.md` — Migrating `google.generativeai` → `google.genai` SDK.
 - `references/gemini-video-analysis.md` — YouTube URL input, file upload, JSON truncation, model probing.
 - `references/dual-ai-pipeline.md` — Two-phase AI pipeline: Gemini extraction → DeepSeek reasoning.
+- `references/conversational-ai-chat-pattern.md` — Adding conversational chat to a Flask AI backend.
 
 ## Kanban Task Per Project
 
@@ -197,6 +198,17 @@ Always create a kanban task (`hermes kanban create "..." --body "..."`) for ever
 6. **File upload** — `POST /upload` accepts video files, uploads to Gemini File API, returns URI. `POST /analyze` accepts both `video_url` and `file_uri`+`source_type`.
 7. **Gemini JSON truncation fix** — Walk bytes tracking bracket depth and string state to find valid JSON cut point. Close unclosed brackets.
 8. **Dual-mode input** — Frontend tab toggle: 🔗 YouTube URL / 📤 Upload Video. Both hit `/analyze` with different `source_type`.
+
+## Adding Conversational AI Chat
+
+For any AI-powered Flask app that needs a chat follow-up feature:
+
+1. Add a `POST /chat` endpoint that accepts `{message, conversation[], last_analysis}`
+2. Injects analysis context + SQLite history as system messages
+3. Maintains conversation via client-side array (last 10 exchanges)
+4. Uses a persona-driven system prompt
+
+See `references/conversational-ai-chat-pattern.md` for full implementation.
 
 ## Common Pitfalls
 

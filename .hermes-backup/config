@@ -172,9 +172,12 @@ skills:
 approvals:
   destructive_slash_confirm: false
 command_allowlist:
-  - script execution via -e/-c flag
   - execute_code
+  - recursive delete
+  - PowerShell encoded command execution
+  - delete in root path
   - shell command via -c/-lc flag
+  - script execution via -e/-c flag
 code_execution:
   timeout: 300
   max_tool_calls: 50

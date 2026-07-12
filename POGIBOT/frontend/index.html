@@ -433,11 +433,17 @@
       <div id="verdictText" class="verdict">—</div>
     </div>
 
-    <!-- Historical Progress -->
-    <div class="card card-full" id="historyCard">
-      <h2>📈 Progress Comparison</h2>
-      <div id="historyContainer"></div>
+    <!-- Historical Progress Chart -->
+    <div class="card card-full" id="progressCard">
+      <h2>📈 Progress Trend</h2>
+      <div id="progressChartContainer" style="position:relative;">
+        <canvas id="progressCanvas" width="900" height="320"
+          style="width:100%;height:auto;max-width:900px;background:#111;border-radius:6px;"></canvas>
+        <p id="progressEmpty" class="empty" style="display:none;">Run 2+ analyses to see your progress chart.</p>
+      </div>
     </div>
+
+    <!-- Historical Progress Comparison -->
 
     <!-- Raw events JSON (debug expandable) -->
     <div class="card card-full">
@@ -508,13 +514,16 @@ const modelStatus = document.getElementById('modelStatus');
 
 /* ── Model loader ── */
 async function refreshModels() {
-  modelSelect.innerHTML = '<option value="">Loading...</option>';
-  modelStatus.textContent = '⟳ probing quota...';
+  const sel = document.getElementById('modelSelect');
+  const st = document.getElementById('modelStatus');
+  if (!sel || !st) return;
+  sel.innerHTML = '<option value="">Loading...</option>';
+  st.textContent = '⟳ probing quota...';
   try {
     const resp = await fetch(`${BACKEND_URL}/models`);
     const data = await resp.json();
     const models = data.models || [];
-    modelSelect.innerHTML = '';
+    sel.innerHTML = '';
     let hasAvailable = false;
     models.forEach(m => {
       const opt = document.createElement('option');
@@ -533,21 +542,21 @@ async function refreshModels() {
         opt.style.color = '#ffd600';
         opt.disabled = true;
       }
-      modelSelect.appendChild(opt);
+      sel.appendChild(opt);
     });
     // Auto-select first available
     const firstAvail = models.find(m => m.status === 'available');
     if (firstAvail) {
-      modelSelect.value = firstAvail.id;
+      sel.value = firstAvail.id;
     }
     const avail = models.filter(m => m.status === 'available').length;
     const total = models.length;
-    modelStatus.textContent = `(${avail}/${total} available)`;
-    modelStatus.style.color = avail > 0 ? '#00c853' : '#ff1744';
+    st.textContent = `(${avail}/${total} available)`;
+    st.style.color = avail > 0 ? '#00c853' : '#ff1744';
   } catch (err) {
-    modelSelect.innerHTML = '<option value="">Probe failed — using default</option>';
-    modelStatus.textContent = '⚠️ offline';
-    modelStatus.style.color = '#ffd600';
+    sel.innerHTML = '<option value="">Probe failed — using default</option>';
+    st.textContent = '⚠️ offline';
+    st.style.color = '#ffd600';
   }
 }
 
@@ -953,6 +962,144 @@ function escapeHtml(str) {
   d.textContent = str;
   return d.innerHTML;
 }
+
+/* ── Progress Chart ── */
+async function loadProgressChart() {
+  const canvas = document.getElementById('progressCanvas');
+  const empty = document.getElementById('progressEmpty');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}/history`);
+    const data = await resp.json();
+    const sessions = (data.sessions || []).filter(s => s.overall_score != null);
+
+    if (sessions.length < 2) {
+      canvas.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    canvas.style.display = 'block';
+    empty.style.display = 'none';
+
+    // Clear
+    ctx.clearRect(0, 0, W, H);
+
+    // Extract scores
+    const scores = sessions.map(s => Number(s.overall_score));
+    const labels = sessions.map((s, i) => `#${i + 1}`);
+
+    const minScore = Math.max(0, Math.min(...scores) - 10);
+    const maxScore = Math.min(100, Math.max(...scores) + 10);
+    const pad = { top: 30, bottom: 30, left: 45, right: 20 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+
+    // Grid lines
+    ctx.strokeStyle = '#2a2a2a';
+    ctx.lineWidth = 1;
+    for (let g = 0; g <= 4; g++) {
+      const y = pad.top + (chartH * (1 - g / 4));
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+      ctx.fillStyle = '#666';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(minScore + (maxScore - minScore) * g / 4), pad.left - 6, y + 4);
+    }
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = '#e62429';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+
+    scores.forEach((s, i) => {
+      const x = pad.left + (chartW * i / (scores.length - 1));
+      const y = pad.top + (chartH * (1 - (s - minScore) / (maxScore - minScore)));
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Gradient fill under line
+    const gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+    gradient.addColorStop(0, 'rgba(230, 36, 41, 0.25)');
+    gradient.addColorStop(1, 'rgba(230, 36, 41, 0.01)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    const lastY = pad.top + (chartH * (1 - (scores[scores.length - 1] - minScore) / (maxScore - minScore)));
+    scores.forEach((s, i) => {
+      const x = pad.left + (chartW * i / (scores.length - 1));
+      const y = pad.top + (chartH * (1 - (s - minScore) / (maxScore - minScore)));
+      if (i === 0) {
+        ctx.moveTo(x, pad.top + chartH);
+        ctx.lineTo(x, y);
+      } else ctx.lineTo(x, y);
+    });
+    ctx.lineTo(pad.left + chartW, pad.top + chartH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Dots + labels
+    scores.forEach((s, i) => {
+      const x = pad.left + (chartW * i / (scores.length - 1));
+      const y = pad.top + (chartH * (1 - (s - minScore) / (maxScore - minScore)));
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = i === scores.length - 1 ? '#ff6b35' : '#e62429';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Label below
+      ctx.fillStyle = '#888';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[i], x, pad.top + chartH + 16);
+
+      // Score above
+      ctx.fillStyle = i === scores.length - 1 ? '#ff6b35' : (s >= 70 ? '#00c853' : s >= 50 ? '#ffd600' : '#ff1744');
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText(s, x, y - 10);
+    });
+
+    // Trend arrow
+    if (scores.length >= 2) {
+      const first = scores[0], last = scores[scores.length - 1];
+      const diff = last - first;
+      const trend = diff > 0 ? '📈 Improving' : diff < 0 ? '📉 Declining' : '📊 Stable';
+      const color = diff > 0 ? '#00c853' : diff < 0 ? '#ff1744' : '#ffd600';
+      ctx.fillStyle = color;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${trend} (${diff > 0 ? '+' : ''}${diff} pts)`, pad.left, 18);
+    }
+
+  } catch (err) {
+    canvas.style.display = 'none';
+    empty.style.display = 'block';
+    empty.textContent = '⚠️ Could not load history.';
+  }
+}
+
+// Load chart on page load
+loadProgressChart();
+
+// Patch render functions to reload chart after analysis
+const _origRenderEvents = renderEvents;
+renderEvents = function(events) {
+  _origRenderEvents(events);
+  // Reload chart after delay to let SQLite update
+  setTimeout(loadProgressChart, 500);
+};
 
 // Patch existing render functions to store analysis data
 const _origRenderOverall = renderOverallScore;
