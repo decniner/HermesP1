@@ -1,0 +1,94 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have comprehensive data from all sources. Let me compile the digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 **DAILY NEWS DIGEST**
+📅 **Monday, July 13, 2026**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**🇯🇵 JAPAN**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. How Putin turned Japan into a den of spies**
+An investigation reveals how Russia has exploited Japan's post-WWII intelligence constraints, turning the country into a hub for espionage operations. Japan's weak intelligence services and legal limitations have made it a "spy paradise" for foreign operatives.
+*Source: Japan Times → https://www.japantimes.co.jp/*
+
+**2. Japan and others mark 10 years since South China Sea arbitration**
+Japan joined other nations in marking the decade anniversary of the 2016 Hague ruling, stressing the decision "is final, legally binding and definitive between China and the Philippines" regarding the territorial dispute — directly urging Beijing to comply.
+*Source: Japan Times → https://www.japantimes.co.jp/*
+
+**3. Japan's top pension fund likely to brush off political pressure**
+The Government Pension Investment Fund (GPIF), one of the world's largest pension funds, is expected to ignore the finance minister's call to boost domestic investment, at least in the short run.
+*Source: Japan Times → https://www.japantimes.co.jp/*
+
+**4. Global demand is reshaping secondhand fashion in Japan**
+The growing international appetite for vintage and secondhand Japanese clothing is transforming the domestic resale market, with global buyers driving demand for thrifted fashion.
+*Source: Japan Times → https://www.japantimes.co.jp/*
+
+**5. Modi courts Indo-Pacific partners as China and U.S. reshape region**
+Indian PM Narendra Modi has stepped up engagement across the Indo-Pacific, signing a flurry of agreements and underscoring New Delhi's ambition to play a bigger role in the region amid shifting great-power dynamics.
+*Source: Japan Times → https://www.japantimes.co.jp/*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**🇵🇭 PHILIPPINES**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. US strikes Iran, Tehran hits Gulf states, says Strait of Hormuz closed**
+The US and Iran exchanged direct strikes, with Iran's Revolutionary Guards announcing the Strait of Hormuz is closed until "the end of US interference in this region." A significant escalation in the US-Israel-Iran conflict.
+*Source: Rappler → https://www.rappler.com/*
+
+**2. PH, 13 countries urge Beijing: Abide by 2016 South China Sea Arbitral award**
+On the 10th anniversary of the landmark 2016 ruling, the Philippines and 13 other countries called on China to abide by the international arbitration decision regarding territorial claims in the South China Sea.
+*Source: Rappler → https://www.rappler.com/*
+
+**3. Meinrado Paredes, Cebu judge who protested Duterte's IBP award, dies at 79**
+A prominent Cebu judge known for publicly protesting a controversial IBP award during the Duterte administration has passed away at age 79.
+*Source: Rappler → https://www.rappler.com/*
+
+**4. FAST FACTS: What is a school counselor associate?**
+A detailed explainer on the role, qualifications, and scope of school counselor associates in the Philippine education system.
+*Source: Rappler → https://www.rappler.com/*
+
+**5. The Philippines is now upper-middle income. Really?**
+A critical look at the Philippines' recent reclassification as an upper-middle-income economy, examining whether the label reflects real economic conditions for ordinary Filipinos.
+*Source: Rappler → https://www.rappler.com/*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**🌍 GLOBAL**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. US launches more strikes on Iran as Strait of Hormuz standoff escalates**
+The US launched additional strikes on Iran after Iran's forces declared the Strait of Hormuz closed and attacked US allies and bases in the region. Washington insists the strategic waterway remains open to navigation.
+*Sources: BBC, AP News*
+
+**2. At least 27 killed in Bangkok bar fire**
+A devastating fire at a bar in Bangkok's Chatuchak district killed at least 27 people. Firefighters arrived to find patrons running through blasting flames to escape the venue.
+*Source: BBC → https://www.bbc.com/news/world*
+
+**3. US Senator Lindsey Graham dies after 'brief and sudden illness' at 71**
+South Carolina Senator Lindsey Graham, a close Trump ally, died after a sudden illness. The medical examiner indicated a likely aorta rupture. Trump called him a "true American patriot" who will be "greatly missed."
+*Sources: BBC, AP News*
+
+**4. China evacuates nearly two million people as powerful typhoon makes landfall**
+A powerful typhoon made landfall in Zhejiang province, forcing the evacuation of nearly 2 million people. Schools, work, and outdoor activities have been suspended, with many transport services cancelled.
+*Source: BBC → https://www.bbc.com/news/world*
+
+**5. McConnell says a fall led to his hospitalization, breaking silence on health**
+Senator Mitch McConnell revealed for the first time that a fall led to his recent hospitalization, breaking weeks of mounting speculation about the Kentucky Republican's health condition.
+*Source: AP News → https://apnews.com/*
+
+**6. Badly burned British couple rescued from ravine during Spain wildfires**
+An unnamed British couple was found semi-conscious with 40% burns after being trapped by wildfires raging through Almeria province, Spain. Local media reports they were rescued from a ravine.
+*Source: BBC → https://www.bbc.com/news/world*
+
+**7. Qatar's former ruler Sheikh Hamad bin Khalifa Al Thani dies at 74**
+The former Emir of Qatar, who led the country through a period of rapid modernization and economic growth before abdicating in 2013, has passed away.
+*Source: AP News → https://apnews.com/*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*Digest compiled from NHK World, Japan Times, Kyodo News, Rappler, BBC News, and AP News*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
