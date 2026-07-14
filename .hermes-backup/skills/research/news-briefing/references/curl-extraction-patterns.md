@@ -15,6 +15,41 @@ When Firecrawl is unavailable (billing exhaustion), use `curl` via terminal to e
 | AP News | apnews.com | ❌ JS-rendered | ❌ | Yes |
 | Reuters | reuters.com/world | ❌ CAPTCHA-blocked | ❌ | Yes (blocked) |
 
+## RSS Feed Extraction (Tier 0 — cleanest)
+
+See the SKILL.md "Tier 0: RSS Feeds via curl" section for the full guide and common grep patterns. Key commands:
+
+**BBC World RSS:**
+```bash
+curl -sL --max-time 10 "https://feeds.bbci.co.uk/news/world/rss.xml" | \
+  grep -oP '<title><![CDATA[[^\]]+]]></title>' | \
+  sed 's/<title><!\[CDATA\[//;s/\]\]><\/title>//' | head -15
+```
+
+**PhilStar RSS:**
+```bash
+curl -sL --max-time 10 "https://www.philstar.com/rss/headlines" | \
+  grep -oP '<title>[^<]+</title>' | sed 's/<title>//;s/<\/title>//' | tail -n +2 | head -15
+```
+
+**NHK Japanese RSS (translation needed):**
+```bash
+curl -sL --max-time 10 "https://www3.nhk.or.jp/rss/news/cat0.xml"
+# Extract Japanese headlines and descriptions
+grep -oP '(?<=<title>)[^<]+|(?<=<description>)[^<]+' | head -20
+```
+
+## 🇯🇵 Japan Today
+
+**Headlines from homepage (curl-friendly):**
+```bash
+curl -sL --max-time 15 "https://japantoday.com/" | \
+  grep -oP '<h[1-6][^>]*>.*?</h[1-6]>' | \
+  sed 's/<[^>]*>//g' | head -20
+```
+
+Note: dupes are common — pipe through `sort -u` if needed.
+
 ## 🇯🇵 Kyodo News
 
 **Headlines from homepage:**

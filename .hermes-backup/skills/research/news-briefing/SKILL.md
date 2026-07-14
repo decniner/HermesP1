@@ -1,7 +1,7 @@
 ---
 name: news-briefing
 description: "Fetch current news headlines from Japan, Philippines, and global sources and produce a structured digest (plain-text or HTML). Covers the full pipeline: source discovery, extraction via browser fallback, multi-region compilation, output formatting, and delivery."
-version: 1.2.0
+version: 1.3.0
 author: agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -69,9 +69,56 @@ NHK World is authoritative and free but JS-heavy — the accessibility tree is o
 
 Firecrawl billing issues can cause web_search and web_extract to fail with "Payment Required" or "Charge authorization failed". When this happens:
 
-#### Tier 1: Terminal curl (preferred — faster than browser)
+#### Tier 0: RSS Feeds via curl (cleanest — best signal-to-noise)
 
-Many news sites serve headlines and metadata in server-rendered HTML that curl can extract directly, bypassing both Firecrawl and the browser overhead entirely.
+Many major news outlets publish RSS feeds that return clean, structured XML with titles, descriptions, and links — no HTML parsing, no JS, no ad blocks. Prefer this over HTML grep whenever a source has a known RSS feed.
+
+**BBC World News RSS:**
+```bash
+curl -sL --max-time 10 "https://feeds.bbci.co.uk/news/world/rss.xml"
+# Extract headlines: grep -oP '<title><!\[CDATA\[[^\]]+\]\]></title>' | head -15
+# Extract descriptions: grep -oP '<description><!\[CDATA\[[^\]]+\]\]></description>' | head -15
+```
+
+**PhilStar RSS:**
+```bash
+curl -sL --max-time 10 "https://www.philstar.com/rss/headlines"
+# Headlines: grep -oP '<title>[^<]+</title>' | head -15
+```
+
+**NHK Japanese RSS (headlines only — requires translation):**
+```bash
+curl -sL --max-time 10 "https://www3.nhk.or.jp/rss/news/cat0.xml"
+# Gives Japanese-language headlines and descriptions via <title> and <description> tags
+```
+
+**Common RSS grep patterns:**
+```bash
+# Headlines
+grep -oP '<title>[^<]+</title>'
+# Headlines wrapped in CDATA (BBC)
+grep -oP '<title><![CDATA[[^\]]+]]></title>'
+# Plain descriptions
+grep -oP '<description>[^<]+</description>'
+# Descriptions in CDATA
+grep -oP '<description><![CDATA[[^\]]+]]></description>'
+# Article links
+grep -oP '<link>[^<]+</link>' | grep -v 'rss\|xml\|feeds'
+# Publication dates
+grep -oP '<pubDate>[^<]+</pubDate>'
+```
+
+**RSS feed URL cheat-sheet:**
+| Source | RSS URL |
+|--------|---------|
+| BBC World | `https://feeds.bbci.co.uk/news/world/rss.xml` |
+| BBC Top | `https://feeds.bbci.co.uk/news/rss.xml` |
+| PhilStar | `https://www.philstar.com/rss/headlines` |
+| NHK (Japanese) | `https://www3.nhk.or.jp/rss/news/cat0.xml` |
+
+#### Tier 1: Terminal curl on HTML (faster than browser)
+
+When RSS is unavailable, many news sites serve headlines and metadata in server-rendered HTML that curl can extract directly.
 
 **Basic pattern:**
 ```bash
@@ -112,10 +159,11 @@ Sources that require browser (JS-rendered): NHK World, Reuters, AP News headline
 
 If Kyodo and NHK are down or you need broader coverage:
 
-| Source | URL | Notes |
-|--------|-----|-------|
-| Japan Times | japantimes.co.jp | English-language, paywall on some articles |
-| Mainichi | mainichi.jp/english | Another major Japanese English paper |
+| Source | URL | Notes | curl extraction |
+|--------|-----|-------|----------------|
+| Japan Times | japantimes.co.jp | English-language, paywall on some articles | Use browser |
+| Mainichi | mainichi.jp/english | Another major Japanese English paper | Use browser |
+| **Japan Today** | japantoday.com | Good English-language headlines, curl-friendly | ✅ curl: `grep -oP '<h[1-6][^>]*>.*?</h[1-6]>' \| sed 's/<[^>]*>//g'` |
 
 ### 🇵🇭 Philippines: Rappler (preferred)
 
@@ -125,6 +173,7 @@ Rappler loads headlines and summaries into the accessibility tree — no vision 
 
 1. **Open the site**:
    `browser_navigate(url='https://www.rappler.com/')`
+   For the richest headline list, use `https://www.rappler.com/latest/` — it shows all recent stories in reverse-chronological order with full accessibility tree support.
 
 2. **Read headlines from snapshot**:
    The accessibility tree shows article headings with category links, summaries, and timestamps. Scroll for more stories.
@@ -146,6 +195,7 @@ BBC News loads well via browser. It has a CAPTCHA wall on reuters.com, so prefer
 
 1. **Open the site**:
    `browser_navigate(url='https://www.bbc.com/news')`
+   For strictly global (non-UK) coverage, use `https://www.bbc.com/news/world` — the /world section filters out UK domestic stories.
 
 2. **Scroll and snapshot**:
    The top section contains the lead story and 5-7 secondary headlines. Scroll down and call `browser_snapshot()` to reveal more articles.
@@ -217,8 +267,16 @@ Use this when the user wants the output in their chat/delivery channel (not a fi
 (3-6 headlines, same format)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 TOP STORY: [highlight the most significant story of the day]
+📌 Headlines in brief
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[One-line bullet list of additional notable headlines per region]
+• Japan: [headline] — Source
+• PH: [headline] — Source
+• Global: [headline] — Source
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*Digest compiled from [list of sources used].*
 ```
 
 ### Option B: HTML Report

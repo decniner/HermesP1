@@ -1,0 +1,105 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have all the data I need. Let me compile the digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Tuesday, July 14, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Trump reinstates Iran blockade; US launches 3rd day of strikes on Iran**
+   Summary: US Central Command announced a third consecutive day of attacks on Iran. President Trump declared a reinstated naval blockade of Iranian shipping in the Strait of Hormuz and vowed to impose a 20% charge on all cargo passing through the strategic waterway. Iran has pushed back, asserting its right to manage the Strait.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+2. **Japan ruling party pushes "sub-capital" bill as Diet session deadline looms**
+   Summary: With just 3 days left in the current Diet session, the ruling coalition is pushing to pass remaining legislation including the Imperial House Law amendments and the "sub-capital" (副首都) bill. Some ruling party members suggest a short session extension to ensure passage amid opposition calls for more thorough deliberation.
+   Source: https://japantoday.com/
+
+3. **Tokyo ward's facial recognition camera trial raises privacy concerns**
+   Summary: A Tokyo ward's trial deployment of facial recognition surveillance cameras has sparked debate over privacy rights and government surveillance in public spaces.
+   Source: https://japantoday.com/
+
+4. **China protests Japan coast guard sheltering in Taiwan Strait due to typhoon**
+   Summary: China has lodged a protest after Japan's coast guard sought shelter in the Taiwan Strait during a typhoon, escalating diplomatic tensions over territorial claims in the region.
+   Source: https://japantoday.com/
+
+5. **Extreme heat warning: Western and Eastern Japan face scorching temperatures**
+   Summary: Western Japan continues to bake under extreme heat, and now eastern Japan is also forecast to see temperatures exceeding 35°C (95°F). Authorities urge thorough heatstroke countermeasures including proper use of air conditioning and frequent hydration.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Sara Duterte impeachment trial continues; NBI found no hitman evidence**
+   Summary: The impeachment trial of Vice President Sara Duterte is ongoing. A prosecution witness testified that the NBI did not find evidence of Duterte's alleged hired hitman. Duterte's defense called the NBI probe inconsistent, while the NBI's own executive confirmed that threats against Marcos Jr., the First Lady, and Romualdez were deemed "real."
+   Source: https://www.rappler.com/latest/
+
+2. **Marcos Jr. to visit Singapore (July 14-16); hails Alex Eala at Malacañang**
+   Summary: President Marcos Jr. is visiting Singapore from July 14-16. Meanwhile, he hosted tennis star Alex Eala at Malacañang, calling her a "fanboy" and vowing full government support. Eala vowed to continue bearing the Philippine flag on the global stage.
+   Source: https://www.philstar.com/
+
+3. **Homicide raps recommended vs Alec Baldwin, 11 others**
+   Summary: The NBI has recommended filing homicide charges against actor Alec Baldwin and 11 others. The Inquirer also reports the NBI wants homicide raps vs Baldwin and 7 others, related to the ongoing investigation.
+   Source: https://www.inquirer.net/
+
+4. **Herbosa steps down as health secretary; TD Haishen approaches PAR**
+   Summary: Health Secretary Teodoro Herbosa has stepped down. In weather news, Tropical Depression Haishen is approaching the Philippine Area of Responsibility (PAR), though authorities say it is unlikely to directly affect the country.
+   Source: https://www.philstar.com/
+
+5. **OFW repatriation continues amid Middle East tensions – DMW**
+   Summary: The Department of Migrant Workers reports that repatriation efforts for Overseas Filipino Workers are ongoing as tensions escalate between the US and Iran in the Middle East.
+   Source: https://www.inquirer.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Trump reinstates Iran port blockade, vows 20% charge on Strait of Hormuz cargo**
+   Summary: US President Trump announced the reinstatement of a naval blockade on Iranian shipping and a 20% charge on all cargo passing through the Strait of Hormuz. This follows new clashes between US and Iranian forces. Iran strongly opposes the move.
+   Source: https://www.bbc.com/news/world
+
+2. **At least 28 killed, 25 critically injured in Bangkok bar fire**
+   Summary: A fire engulfed a bar in Bangkok's Chatuchak district, killing at least 28 people and critically injuring 25 others. Firefighters arrived to find patrons running through flames to escape the blaze.
+   Source: https://www.bbc.com/news/world
+
+3. **Venezuela earthquake death toll exceeds 4,500; search efforts hampered**
+   Summary: The death toll from last month's devastating earthquake in Venezuela has surpassed 4,500. Rescue and search operations continue for missing persons in the hardest-hit areas, but efforts remain difficult.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+4. **Hungary parliament votes to remove president from office**
+   Summary: Hungary's parliament has voted to remove President Tamás Sulyok, who was widely seen as a loyalist of former prime minister Viktor Orbán. Orbán lost power in April after 16 years in office.
+   Source: https://www.bbc.com/news/world
+
+5. **Sam Neill, Jurassic Park actor, dies aged 78**
+   Summary: Beloved Jurassic Park actor Sam Neill has died suddenly and unexpectedly at age 78. Friends, politicians, and fellow film stars have paid tribute to the New Zealand-born actor, calling him a "hero, legend, and sweetheart."
+   Source: https://www.bbc.com/news/world
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 Headlines in brief
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• **Japan:** Man arrested for assaulting female police officer, breaking her nose — Japan Today
+• **Japan:** Turkey man dies during Tokyo police detention — Japan Today
+• **Japan:** Japan OKs rules on social media in elections to maintain fairness — Japan Today
+• **Japan:** Oita Saeki stabbing: 4 injured, no known connection between suspect and victims — NHK
+• **PH:** DOE to reinstate stricter fuel price rules — PhilStar
+• **PH:** COA flags ₱1B spent on delayed CCMC project — Inquirer
+• **PH:** Palace says "Arbitral Award not a piece of paper" — PhilStar
+• **PH:** Fact Check: Lacson quote on 14-vote threshold for VP impeachment is fake — Rappler
+• **Global:** Briton survives Spain wildfire in car as wife and friends died — BBC
+• **Global:** Wildfire raging south of Paris may have been set deliberately — BBC
+• **Global:** Lindsey Graham's sister chosen as Senate replacement — BBC
+• **Global:** UK-Switzerland deal scraps roaming charges, allows e-gate use — BBC
+• **Global:** German court convicts Iraqi couple of enslaving Yazidi girls — BBC
+• **Global:** Infantino opens door to 64-team World Cup — BBC
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*Digest compiled from NHK World, Japan Today, Rappler, PhilStar, Inquirer, and BBC News. Reply with a number (e.g., "1" under 🌍) to request the full article text.*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
