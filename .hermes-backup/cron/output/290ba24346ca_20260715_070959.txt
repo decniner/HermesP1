@@ -1,0 +1,92 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I have all the data. Let me compile the daily news digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Wednesday, July 15, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 **JAPAN**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Japan Builds Intelligence Agency It Hasn't Had Since WWII**
+   Summary: Japan is constructing a new foreign intelligence agency — its first centralized spy service since World War II — to counter rising threats from China, Russia, and North Korea. The move marks a major shift in Japan's post-war security posture.
+   Source: https://www.aljazeera.com/news/2026/7/14/what-is-japans-new-intelligence-agency
+
+**2. Heat Wave Widening to Eastern Japan as Temps Hit 38°C**
+   Summary: Dangerous heat of 38°C is forecast across Toyama, Niigata, and Yamanashi, with extreme temperatures also expected in the Tohoku region. Authorities urge precautions as the heat wave expands eastward.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+**3. Over 10 Injured as M7.2 Quake Hits Northeastern Japan**
+   Summary: A magnitude 7.2 earthquake struck northeastern Japan, injuring more than 10 people and disrupting traffic. The quake triggered tsunami advisories in affected coastal areas.
+   Source: https://japantoday.com/
+
+**4. Japan Enacts Law to Establish Disaster Management Agency**
+   Summary: Japan's parliament passed legislation to create a dedicated disaster management agency, consolidating response efforts as the country faces increasingly frequent natural disasters and extreme weather.
+   Source: https://japantoday.com/
+
+**5. Japan to Provide Up to ¥159 Billion in Aid to Israeli Chipmaker**
+   Summary: Tokyo announced it will provide up to 159 billion yen in aid to an Israeli semiconductor company, as part of efforts to strengthen Japan's domestic chip supply chain amid global tech competition.
+   Source: https://www.japantimes.co.jp/
+
+**Also notable:** GMO fully abolishes remote work after 6.5 years as "earliest in Japan"; Japan's patent competitiveness ranks lowest in G7; MLB All-Star Murakami and Yamamoto appear on red carpet; Man held for allegedly planning indiscriminate killing in Tokyo; Osaka Dotonbori fire linked to discarded cigarette.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 **PHILIPPINES**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Marcos Leaves for Singapore to Boost Trade, ASEAN Ties**
+   Summary: President Ferdinand Marcos Jr. departed for Singapore on a working visit aimed at strengthening bilateral trade ties and regional cooperation within ASEAN. Trade and investment deals are expected to be signed.
+   Source: https://www.pna.gov.ph/
+
+**2. American Biologist Who Testified for PH in South China Sea Case Killed**
+   Summary: Dr. Kent Carpenter, the renowned American marine biologist who served as an expert witness for the Philippines in its landmark 2016 South China Sea arbitration case, has been killed. He spent over 50 years documenting Philippine reef biodiversity.
+   Source: https://www.rappler.com/
+
+**3. 14 Nations Mark 10 Years of South China Sea Ruling, Reject China's Claims**
+   Summary: Fourteen countries commemorated the 10th anniversary of the 2016 Permanent Court of Arbitration ruling, reaffirming rejection of China's sweeping maritime claims in the South China Sea. The Philippines led the joint statement urging Beijing to abide by the award.
+   Source: https://www.rappler.com/
+
+**4. China Supercharging a Rooftop Solar Boom in the Philippines**
+   Summary: Chinese companies are driving a massive expansion of rooftop solar installations across the Philippines, providing cheap panels that are transforming the country's renewable energy landscape — though concerns over dependency on Beijing persist.
+   Source: https://www.bloomberg.com/
+
+**5. AI & Global Competition Force Philippines' IT-BPM Industry to Cut Targets**
+   Summary: The Philippines' IT and business process management sector is slashing growth targets as AI automation and intensifying global competition reshape the industry. The sector, a key pillar of the economy, faces an uncertain transition.
+   Source: https://www.bworldonline.com/
+
+**Also notable:** Sara Duterte impeachment trial enters Day 5 — defense casts doubt on NBI witness; Tropical Depression Josie briefly enters PAR; Alex Eala eyes Asian Games gold; Starlink Wi-Fi coming to Cebu Pacific flights by 2027; Prosecution drops Zuleika Lopez as witness in VP trial.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 **GLOBAL**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Trump Drops Threat of 20% Hormuz Fee as US Resumes Iran Ports Blockade**
+   Summary: President Trump scrapped his 24-hour-old vow to charge cargo ships a 20% fee for transiting the Strait of Hormuz, replacing it with "massive" trade deals with Gulf states. Hours later, the US resumed its blockade of Iranian ports as renewed US-Iran strikes sent oil prices surging and tanker traffic through the Strait virtually stalling.
+   Source: https://www.bbc.co.uk/news/articles/cy0608wy8pro
+
+**2. Ann Widdecombe Killed in 'Targeted Attack' — UK Counter-Terror Police Investigate**
+   Summary: Former Conservative minister and Reform UK spokeswoman Ann Widdecombe, 78, was killed at her home in Devon in what police describe as a targeted attack. Counter-terror police have obtained a warrant to hold a 28-year-old suspect for up to seven days. Security review of MPs demanded.
+   Source: https://www.bbc.co.uk/news/articles/c0ryr74zjzvo
+
+**3. Senate Democrats Block Defence Bill Over Iran War, Israel Provisions**
+   Summary: US Senate Democrats blocked the annual defence authorization bill, citing objections to provisions related to the Iran conflict and Israel. The procedural hurdle threatens to delay military funding amid active US operations in the Middle East.
+   Source: https://www.aljazeera.com/
+
+**4. IBM Shares Crash 25% in Worst Day Ever**
+   Summary: IBM suffered its worst single-day stock decline in history, plunging 25% after a disappointing earnings report that revealed slowing cloud growth and rising AI competition. The sell-off wiped out tens of billions in market value.
+   Source: https://www.forbes.com/
+
+**5. Billionaire Warren Buffett Stops Donations to Bill Gates Charity**
+   Summary: Warren Buffett has ceased donations to the Bill & Melinda Gates Foundation, ending one of the largest philanthropic partnerships in history. The decision comes weeks after Gates appeared before US Congress over his ties to Jeffrey Epstein.
+   Source: https://www.bbc.co.uk/news/
+
+**Also notable:** UK Covid inquiry finds £10bn wasted on PPE — NHS staff poorly protected; Israeli strike on Gaza police post kills seven; Starmer becomes first UK PM to receive France's top honor; House passes Trump's plan to make daylight saving time permanent; De Beers halts flagship South African mine; T. rex skeleton becomes most expensive dinosaur ever sold at Sotheby's; Singapore court orders Bloomberg to pay $356K defamation judgment to ministers.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📬 *Reply with a number (1-5) from any section to read the full article.*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").

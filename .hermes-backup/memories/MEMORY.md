@@ -17,3 +17,5 @@ QA rule: must end-to-end test every deliverable through its real channel before 
 OnStream Flutter app: embed sites (vidsrc.to) failed in WebView. Pivoted to TPB API (apibay.org) for torrent magnet links + external torrent client. APK on GitHub HermesP1. Major version bump on architecture pivot.
 §
 QA expectation: User has repeatedly called me out for not properly QAing deliverables. Must actually test the built artifact (APK/app) end-to-end, not just test APIs or URLs separately. Saying "done" without real verification gets called out. This applies to all builds, not just mobile apps.
+§
+File delivery: prefers GitHub Releases over free file hosting (tmpfiles too many ads). Deliver APK files as direct GitHub download URLs from HermesP1 repo releases.

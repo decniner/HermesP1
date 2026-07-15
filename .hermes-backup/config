@@ -178,6 +178,7 @@ command_allowlist:
   - delete in root path
   - shell command via -c/-lc flag
   - script execution via -e/-c flag
+  - stop/restart hermes gateway (kills running agents)
 code_execution:
   timeout: 300
   max_tool_calls: 50

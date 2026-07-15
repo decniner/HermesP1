@@ -230,3 +230,27 @@ When embed sites fail: Phase 1 (WebView with vidsrc.to/2embed.cc) → Phase 2 (T
 ### Result Display
 
 Show quality, title, size, seeds/peers in a compact Card+ListTile. Sort by seeds descending, pull title from TMDb API for the search query.
+
+### Android 11+ Manifest: Custom URL Schemes (Critical)
+
+Android 11+ requires apps to **declare** what URL schemes they want to open via `<queries>` in `AndroidManifest.xml`. Without this, `launchUrl()` for custom schemes like `magnet:` silently returns `false` and nothing happens.
+
+**Symptom:** The user sees the torrent list, taps a result, and **nothing happens** — no error, no dialog, no crash. The `launchUrl` call completes but returns `false`.
+
+**Fix in `android/app/src/main/AndroidManifest.xml`:**
+```xml
+<queries>
+    <intent>
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="magnet"/>
+    </intent>
+    <intent>
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="intent"/>
+    </intent>
+</queries>
+```
+
+**Common schemes to declare:** `magnet` (torrent streaming), `intent` (app redirects), `market` (Play Store links).
+
+**Diagnosis when `launchUrl` fails silently:** Check if the scheme needs `<queries>` declaration for Android 11+. Test with `launchUrl(uri, mode: LaunchMode.externalApplication)` and check the returned boolean. If false, show an install/fallback dialog instead of failing silently.
