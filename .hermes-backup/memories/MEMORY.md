@@ -6,7 +6,7 @@ Delivery: prefers audio/voice for summaries kanban status, cron reports, briefin
 §
 POGIBOT live: https://garmin-microwave-exports-mesa.trycloudflare.com . Flask + Gemini + DeepSeek VR boxing coach. SQLite history, file upload, model selector.
 §
-Gemini free tier: gemini-1.5-flash removed from API. gemini-2.5-flash works with free tier and supports video. Quotas are per-model — switching models can bypass rate limits.
+Created Wealth Manager Telegram bot — separate Hermes profile, finance/personal advisor persona.
 §
 MQL5 EA with DEN_EA folder (XMTrading MT5, BTCJPY M15, ¥50K JPY 1:1000 leverage). Optimized: StopLossATR=3.6, TakeProfitATR=12.95. BodyStrengthMin 45-55, EMA(88), RSI(14) 30-75 range. Version files V5.x. Compile via MetaEditor64.exe.
 §
