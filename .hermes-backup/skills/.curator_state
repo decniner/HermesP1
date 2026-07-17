@@ -1,9 +1,9 @@
 {
-  "last_report_path": "C:\\Users\\decni\\AppData\\Local\\hermes\\logs\\curator\\20260710-062616",
-  "last_run_at": "2026-07-10T06:26:16.504487+00:00",
-  "last_run_duration_seconds": 4.787267,
+  "last_report_path": "C:\\Users\\decni\\AppData\\Local\\hermes\\logs\\curator\\20260717-062827",
+  "last_run_at": "2026-07-17T06:28:27.220662+00:00",
+  "last_run_duration_seconds": 5.724781,
   "last_run_summary": "auto: no changes; llm: skipped (consolidation off)",
   "last_run_summary_shown_at": null,
   "paused": false,
-  "run_count": 1
+  "run_count": 2
 }

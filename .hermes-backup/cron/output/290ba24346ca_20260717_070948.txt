@@ -1,0 +1,91 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have comprehensive data from all three regions. Let me compile the digest.
+
+Here's today's news digest:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Friday, July 17, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Nvidia supports Japan developing homegrown AI infrastructure**
+   Summary: Nvidia CEO Jensen Huang announced the company will help Japan develop a domestic AI foundation model by providing advanced AI chips. The $6 billion project partners with government-backed Noetra Corp., established by 44 Japanese companies including Sony, SoftBank, NEC, and Honda, to build an AI factory enabling autonomous robotics technology.
+   Source: https://english.kyodonews.net/
+
+2. **Credit card outage hits convenience stores, other merchants across Japan**
+   Summary: A major credit card processing outage disrupted payments at convenience stores and other merchants across Japan, causing widespread inconvenience for consumers and businesses relying on cashless transactions.
+   Source: https://english.kyodonews.net/
+
+3. **Japan, U.S., S. Korea uniformed defense chiefs reaffirm unity on N. Korea**
+   Summary: The top uniformed military leaders of Japan, the United States, and South Korea met to reaffirm their unified stance on North Korea, signaling continued trilateral defense coordination amid regional security challenges.
+   Source: https://english.kyodonews.net/
+
+4. **Deer population in Japan's Nara Park hits record high amid overfeeding**
+   Summary: The deer population in Nara Park has reached a record high, driven partly by overfeeding by visitors. The situation raises ecological concerns about the famed deer that roam the historic park and are designated as natural treasures.
+   Source: https://english.kyodonews.net/
+
+5. **FEATURE: Tokyo ward's facial recognition camera trial raises privacy concerns**
+   Summary: A Tokyo ward's trial deployment of facial recognition cameras has sparked privacy concerns among residents and civil liberties advocates, highlighting the tension between public safety technology and individual privacy rights in Japan.
+   Source: https://english.kyodonews.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Sara Duterte impeachment trial: 'Trial of the century' framing and where it's headed**
+   Summary: The impeachment trial of Vice President Sara Duterte continues to dominate headlines. Rappler examines the "trial of the century" framing device often used by media, and investigates the direction of the proceedings as the prosecution drops more witnesses.
+   Source: https://www.rappler.com/
+
+2. **Manila to host ASEAN, US, China foreign ministers for high-level meetings**
+   Summary: The Philippines is set to host foreign ministers from ASEAN nations, the United States, and China for high-level diplomatic meetings in Manila, positioning the country as a key hub for regional dialogue amid ongoing geopolitical tensions.
+   Source: https://www.rappler.com/
+
+3. **Government sells idle Atrium of Makati units for P1 billion**
+   Summary: The Philippine government has sold idle units at the Atrium of Makati for approximately 1 billion pesos, part of ongoing efforts to monetize underutilized state assets and generate revenue.
+   Source: https://www.rappler.com/
+
+4. **Cash aid for 7.5 million 'poor' and 'near-poor' households**
+   Summary: The government has announced cash assistance for 7.5 million Filipino households classified as poor or near-poor, as part of social welfare programs aimed at alleviating economic hardship.
+   Source: https://www.rappler.com/
+
+5. **Do typos in NBI documents weaken case vs Sara Duterte?**
+   Summary: Questions are being raised about whether typographical errors in National Bureau of Investigation (NBI) documents could undermine the legal case against Vice President Sara Duterte in her ongoing impeachment trial.
+   Source: https://www.rappler.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Blasts reported in Iran as US launches new wave of strikes**
+   Summary: The US has launched a new wave of airstrikes against Iran, with explosions reported in the region. The Pentagon says the strikes aim to "further degrade Iranian military capabilities" as fighting continues for a sixth consecutive day. Activity was reported near the strategic Strait of Hormuz.
+   Source: https://www.bbc.com/news/world
+
+2. **Zelensky's removal of popular defence minister sparks protests in Ukraine**
+   Summary: Ukrainian President Volodymyr Zelensky's decision to replace Defence Minister Mykhailo Fedorov has sparked protests in Kyiv. A rift between Fedorov and Commander-in-Chief Oleksandr Syrskyi was reportedly at the heart of the decision.
+   Source: https://www.bbc.com/news/world
+
+3. **White House teleprompter operator accused of making $100k off Trump speech bets**
+   Summary: A White House staffer has been accused of using inside knowledge of President Trump's speeches to make nearly $100,000 on prediction market Kalshi, raising ethical and legal questions about insider trading on political events.
+   Source: https://www.bbc.com/news/world
+
+4. **Hundreds of Canada wildfires prompt US air quality alerts as smoke spreads south**
+   Summary: Smoke from more than 800 wildfires burning across Canada has triggered air quality alerts in cities from Toronto to New York and across the US Midwest, as vast plumes of smoke drift southward.
+   Source: https://www.bbc.com/news/world
+
+5. **Italian officials handed jail terms for Genoa bridge disaster that killed 43**
+   Summary: An Italian court sentenced the former head of motorway operator Autostrade, Giovanni Castellucci, to 12 years in prison over the 2018 collapse of the Morandi Bridge in Genoa, which killed 43 people. Multiple other officials also received prison terms.
+   Source: https://www.bbc.com/news/world
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*Note: Web search and extraction tools were temporarily unavailable due to a billing issue (Firecrawl). News was gathered directly via browser from Kyodo News, Rappler, and BBC News as primary sources.*
+
+Reply with a number (1-5 per section) to request full article details.
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
