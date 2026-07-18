@@ -18,4 +18,4 @@ OnStream Flutter app: embed sites (vidsrc.to) failed in WebView. Pivoted to TPB 
 §
 QA expectation: User has repeatedly called me out for not properly QAing deliverables. Must actually test the built artifact (APK/app) end-to-end, not just test APIs or URLs separately. Saying "done" without real verification gets called out. This applies to all builds, not just mobile apps.
 §
-File delivery: prefers GitHub Releases over free file hosting (tmpfiles too many ads). Deliver APK files as direct GitHub download URLs from HermesP1 repo releases.
+MT5 reinstall wipes DEN_EA folder. Backup .mq5 at ~/projects/POGIBOT/backend/. Restore: recreate DEN_EA/, copy .mq5, convert UTF-8→UTF-16LE, regenerate .set files, compile in MetaEditor GUI.

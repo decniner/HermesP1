@@ -1,0 +1,88 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have all the data I need. Here's the compiled daily news digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Saturday, July 18, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Japan Revises Imperial House Law, Keeps Male-Only Succession
+   Summary: Japan's parliament passed the first substantive revision to the 1947 Imperial House Law, allowing adoption of males from former imperial branch families and letting female imperial members retain their status after marrying commoners — but maintaining the ban on female emperors despite public support. Opposition lawmakers criticized the ruling coalition for holding only about 8 hours of debate on the historic change.
+   Source: https://english.kyodonews.net/
+
+2. Japan Diet Enacts Divisive Law Penalizing National Flag Desecration
+   Summary: The Japanese Diet passed a controversial law criminalizing desecration of the national flag, sparking debate over free speech and national identity. The legislation was part of a broader conservative agenda advanced by Prime Minister Sanae Takaichi's ruling coalition.
+   Source: https://english.kyodonews.net/
+
+3. Japan Diet Extended 8 Days to Debate Ruling Bloc's Key Bills
+   Summary: The parliamentary session was extended by eight days as the ruling coalition pushed to pass remaining priority legislation before the summer recess.
+   Source: https://english.kyodonews.net/
+
+4. Sumo: Yokozuna Hoshoryu Suffers 2nd Loss as Shishi Takes Sole Nagoya Lead
+   Summary: In Nagoya Grand Sumo Tournament action, yokozuna Hoshoryu suffered his second defeat, allowing rising star Shishi to claim the sole lead in the competition.
+   Source: https://english.kyodonews.net/
+
+5. Lolita Fashion from Japan Finds Growing Fan Base in China
+   Summary: The distinctive Japanese Lolita fashion subculture is gaining significant traction among young Chinese consumers, with cross-cultural exchanges driving a growing market for the style across the region.
+   Source: https://english.kyodonews.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Philippines Formally Protests China Media's Racist Video, Cartoons
+   Summary: The Philippines condemned state-run China Daily's release of "dehumanizing" and "racist" AI-generated videos and editorial cartoons depicting Filipinos as monkeys while criticizing the 2016 South China Sea Arbitral Award. The video showed a monkey in Philippine garments singing about China's territorial claims.
+   Source: https://www.philstar.com/headlines/2026/07/18/2542896/philippines-formally-protests-china-medias-racist-video-cartoons
+
+2. 'High Ratings Not a Shield from Impeachment' — VP Sara Duterte
+   Summary: The House prosecution team said Vice President Sara Duterte's improved satisfaction ratings do not shield her from accountability over alleged constitutional violations and betrayal of public trust, as impeachment is decided on evidence, not popularity.
+   Source: https://www.philstar.com/headlines/2026/07/18/2542876/high-ratings-not-shield-impeachment
+
+3. Plunder Raps vs Ex-Speaker Romualdez 'Very Close' to Being Filed
+   Summary: The Office of the Ombudsman is nearing the filing of plunder charges against former House Speaker Martin Romualdez, with the high-profile case now moving into the preliminary investigation phase.
+   Source: https://www.philstar.com/headlines/2026/07/18/2542879/plunder-raps-vs-romualdez-very-close-being-filed
+
+4. 3,000 Filipino Seafarers Stranded in Strait of Hormuz
+   Summary: Around 3,000 Filipino seafarers remain stranded in the Strait of Hormuz following its closure due to renewed Middle East hostilities, the Department of Migrant Workers reported.
+   Source: https://www.philstar.com/headlines/2026/07/18/2542888/3000-philippines-seafarers-stranded-hormuz
+
+5. Global Oil Supply Stable Amid Middle East Crisis — DOE
+   Summary: The Department of Energy downplayed oil supply risks despite renewed US-Iran hostilities, noting that global markets have adapted to the ongoing conflict.
+   Source: https://www.philstar.com/headlines/2026/07/18/2542885/global-oil-supply-stable-amid-me-crisis-doe
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. US Denies Iranian Claims It Hit Civilian Infrastructure in Latest Strikes
+   Summary: The US military says its latest attacks were intended to "further degrade Iranian military capabilities" and denies hitting civilian infrastructure, as tensions in the Middle East continue to escalate.
+   Source: https://www.bbc.co.uk/news/articles/c151gdjwd10o
+
+2. Trump Threatens to Tariff Canada over Wildfire Smoke Choking Northern US Cities
+   Summary: President Trump threatened trade action against Canada as smoke from more than 800 wildfires blanketed major cities from Toronto and New York to parts of the US Midwest and Great Lakes. Canadian leader Mark Carney responded that both countries share responsibility for fighting climate change.
+   Source: https://www.bbc.co.uk/news/articles/cwyq93j34lgo
+
+3. Magnitude 7.3 Earthquake Strikes off Mexico Coast
+   Summary: A powerful 7.3 magnitude earthquake hit off Mexico's coast, with the US Tsunami Warning Center recording waves 0.3m high in Puerto Madero and Chiapas. Tsunami warnings were issued for nearby coastal areas.
+   Source: https://www.bbc.co.uk/news/articles/cwyjv3815yxo
+
+4. JD Vance Accuses Israel of 'Manipulating' US Public Opinion to Prolong Iran War
+   Summary: US Vice President JD Vance said he believes some Israeli politicians are trying to derail efforts to end the conflict, accusing Israel of manipulating American public opinion to prolong the war with Iran.
+   Source: https://www.bbc.co.uk/news/articles/c1m107yj327o
+
+5. Ukraine Soldiers Outraged Over Removal of Popular Defence Minister
+   Summary: Protests erupted in Ukraine after President Zelensky removed Defence Minister Mykhailo Fedorov, with troops now also criticizing the move. A reported rift between Fedorov and Commander-in-Chief Oleksandr Syrskyi was at the heart of the decision.
+   Source: https://www.bbc.co.uk/news/articles/cvg8w4dpjkwo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*Digest compiled from Kyodo News, PhilStar, BBC News (July 17-18, 2026).*
+*Web search tools were unavailable due to a billing issue; news gathered via direct RSS and page scraping.*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
