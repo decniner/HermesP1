@@ -1,0 +1,99 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have comprehensive data from BBC, AP News, Kyodo News, and Rappler. Let me compile the full digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Sunday, July 19, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. JR Central, Shizuoka Sign Agreement to Begin Maglev Construction
+   Summary: JR Central and Shizuoka Prefecture have signed a formal agreement to begin construction on the Chuo Shinkansen maglev line, a major step forward for the superconducting rail project that will eventually link Tokyo and Nagoya in 40 minutes.
+   Source: https://english.kyodonews.net/
+
+2. Basketball: Japan Guard Yamamoto Signs for Aces in WNBA
+   Summary: Japanese basketball guard Yamamoto has signed with the Las Vegas Aces of the WNBA, marking a significant milestone for Japanese basketball as another player enters the world's top women's league.
+   Source: https://english.kyodonews.net/
+
+3. Japan Gallery Home to Famous A-Bomb Paintings Seeks Financial Support
+   Summary: A Japanese gallery housing the acclaimed Hiroshima atomic bomb paintings is appealing for financial support to preserve and maintain the collection, which serves as an important historical and artistic record of the bombing's aftermath.
+   Source: https://english.kyodonews.net/
+
+4. Monorail Opens in Disaster-Hit Area in Northeastern Japan to Boost Tourism
+   Summary: A new monorail has opened in a region of northeastern Japan devastated by the 2011 earthquake and tsunami, aimed at revitalizing local tourism and providing new transportation infrastructure for the recovering area.
+   Source: https://english.kyodonews.net/
+
+5. Rugby: Japan Lose 42-15 to France, Drop to 1-2 in Nations Championship
+   Summary: The Japan national rugby team lost 42-15 to France in the Nations Championship, dropping their record to 1-2 in the tournament as they struggled against the powerful French side.
+   Source: https://english.kyodonews.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. China Daily's AI-Generated Video Depicts the Philippines as a Monkey
+   Summary: China's state-run newspaper China Daily has drawn sharp criticism for releasing an AI-generated video that depicts the Philippines as a monkey, escalating online tensions between the two countries amid ongoing South China Sea disputes. The Philippine government has urged Beijing to remove the video.
+   Source: https://www.rappler.com/
+
+2. Delta Air Lines to Fly Nonstop Between Los Angeles and Manila in 2027
+   Summary: Delta Air Lines has announced plans to launch a direct nonstop flight route connecting Los Angeles and Manila starting in 2027, expanding transpacific connectivity and offering Filipino travelers and the diaspora a new option for US-Philippines travel.
+   Source: https://www.rappler.com/
+
+3. Alex Eala Captures Filipinos' Hearts by Staying True to Herself
+   Summary: Filipino tennis star Alex Eala continues to win the hearts of Filipinos with her authenticity and conviction on and off the court. Her recent homecoming demonstrated that she has transcended being merely an athlete to become a cultural figure in the Philippines.
+   Source: https://www.rappler.com/
+
+4. JV Gallego, Former San Beda Guard, Dies at 28
+   Summary: JV Gallego, a former guard for the San Beda Red Lions collegiate basketball team, has passed away at the age of 28, prompting an outpouring of tributes from the Philippine basketball community.
+   Source: https://www.rappler.com/
+
+5. Rome Declaration for an 'Unarmed and Disarming Peace' Signed by Nobel Laureates, Experts
+   Summary: A group of Nobel laureates and international experts gathered in Rome to sign a declaration calling for an "unarmed and disarming peace," advocating for nonviolent conflict resolution and disarmament on a global scale.
+   Source: https://www.rappler.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 🔴 Two US Troops Killed and One Missing After Iranian Attack in Jordan
+   Summary: The US military confirmed the first American troop deaths from direct Iranian fire since the conflict's escalation, with an Iranian attack on a US base in Jordan killing at least two service members and leaving one missing. The US and Iran have traded escalating strikes across the Middle East this week.
+   Source: https://apnews.com/world-news / https://www.bbc.com/news/world
+
+2. Ukrainian Drones Hit Warehouses Across Russia, Killing 9 and Wounding Over 80
+   Summary: A large-scale Ukrainian drone attack struck Wildberries online retail warehouses near Moscow and in Tambov, killing at least 9 people and wounding over 80. Ukraine's leader called them "major logistics facilities" supplying "sanctioned components" for the Russian military.
+   Source: https://apnews.com/world-news / https://www.bbc.com/news/world
+
+3. The US and Iran Have Blown Past Red Lines as They Lurch Back Toward All-Out War
+   Summary: The US and Iran have dramatically escalated hostilities, with US airstrikes expanding to hit bridges inside Iran and Iranian strikes reaching as far as a Kuwait desalination plant. Analysts warn both sides have abandoned previous red lines, raising fears of a full-scale regional war.
+   Source: https://apnews.com/world-news
+
+4. Hungary's President Agrees to Stand Down After Parliament Backs Removal
+   Summary: Hungarian President Tamás Sulyok, seen as an Orbán loyalist, has agreed to end his term after parliament voted to remove him. He had until Saturday night to step down voluntarily following the political crisis.
+   Source: https://www.bbc.com/news/world
+
+5. Indian Space Start-Up Launches Country's First Commercial Rocket Designed for Orbit
+   Summary: Skyroot Aerospace, India's first space-tech unicorn, successfully launched the Vikram-1 rocket — India's first commercial rocket designed to reach orbit — marking a major milestone for the country's private space industry.
+   Source: https://www.bbc.com/news/world
+
+6. Trump Threatens New Canada Tariffs Over Wildfires Sending 'Filthy' Air Into US Cities
+   Summary: President Trump threatened new tariffs on Canada over massive Canadian wildfires whose smoke has engulfed US cities. Canadian PM Mark Carney responded that both nations share equal responsibility to fight climate change, which experts say is worsening wildfire conditions.
+   Source: https://www.bbc.com/news/world
+
+7. German Politician Resigns Over Surrogacy Child Controversy
+   Summary: German politician Jens Spahn has resigned after facing criticism over his use of a surrogate to have a child — a practice he had previously backed legislation to ban, sparking accusations of hypocrisy.
+   Source: https://www.bbc.com/news/world
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+> Reply with a number (1-7) from the Global section or any headline name to read the full article. Firecrawl (web search/extract engine) is currently down due to a billing issue, but I can open individual article links via the browser.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
