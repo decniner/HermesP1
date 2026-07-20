@@ -367,14 +367,27 @@
     "archived_at": null,
     "created_at": "2026-07-12T10:36:44.981053+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-07-15T11:33:34.633533+00:00",
-    "last_used_at": "2026-07-15T14:59:08.128066+00:00",
-    "last_viewed_at": "2026-07-15T14:59:08.085028+00:00",
-    "patch_count": 4,
+    "last_patched_at": "2026-07-20T08:37:21.364724+00:00",
+    "last_used_at": "2026-07-20T08:37:32.092288+00:00",
+    "last_viewed_at": "2026-07-20T08:37:32.079275+00:00",
+    "patch_count": 7,
     "pinned": false,
     "state": "active",
-    "use_count": 8,
-    "view_count": 8
+    "use_count": 14,
+    "view_count": 14
+  },
+  "flutter-mobile-development": {
+    "archived_at": "2026-07-20T08:26:36.896681+00:00",
+    "created_at": "2026-07-20T08:25:47.297087+00:00",
+    "created_by": "agent",
+    "last_patched_at": null,
+    "last_used_at": null,
+    "last_viewed_at": null,
+    "patch_count": 0,
+    "pinned": false,
+    "state": "archived",
+    "use_count": 0,
+    "view_count": 0
   },
   "gif-search": {
     "archived_at": null,
@@ -744,14 +757,14 @@
     "archived_at": null,
     "created_at": "2026-07-10T13:54:04.098574+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-07-18T03:45:50.820451+00:00",
-    "last_used_at": "2026-07-18T03:44:35.110386+00:00",
-    "last_viewed_at": "2026-07-18T03:44:35.097775+00:00",
-    "patch_count": 32,
+    "last_patched_at": "2026-07-20T08:26:45.351371+00:00",
+    "last_used_at": "2026-07-20T08:37:25.775053+00:00",
+    "last_viewed_at": "2026-07-20T08:37:25.762041+00:00",
+    "patch_count": 41,
     "pinned": false,
     "state": "active",
-    "use_count": 44,
-    "view_count": 44
+    "use_count": 52,
+    "view_count": 52
   },
   "multi-channel-agent-deployment": {
     "archived_at": null,
@@ -784,13 +797,13 @@
     "created_at": "2026-07-08T11:07:19.833303+00:00",
     "created_by": "agent",
     "last_patched_at": "2026-07-13T22:11:54.204817+00:00",
-    "last_used_at": "2026-07-13T22:11:35.102750+00:00",
-    "last_viewed_at": "2026-07-13T22:11:35.090738+00:00",
+    "last_used_at": "2026-07-19T22:11:44.951897+00:00",
+    "last_viewed_at": "2026-07-19T22:11:44.938837+00:00",
     "patch_count": 26,
     "pinned": false,
     "state": "active",
-    "use_count": 11,
-    "view_count": 11
+    "use_count": 14,
+    "view_count": 14
   },
   "node-inspect-debugger": {
     "archived_at": null,
@@ -991,14 +1004,14 @@
     "archived_at": null,
     "created_at": "2026-07-10T04:54:03.336694+00:00",
     "created_by": "agent",
-    "last_patched_at": "2026-07-12T01:11:00.072413+00:00",
-    "last_used_at": "2026-07-12T01:10:18.676274+00:00",
-    "last_viewed_at": "2026-07-12T01:10:18.664776+00:00",
-    "patch_count": 7,
+    "last_patched_at": "2026-07-20T08:29:48.239876+00:00",
+    "last_used_at": "2026-07-20T08:29:02.703849+00:00",
+    "last_viewed_at": "2026-07-20T08:29:02.688722+00:00",
+    "patch_count": 10,
     "pinned": false,
     "state": "active",
-    "use_count": 17,
-    "view_count": 17
+    "use_count": 19,
+    "view_count": 19
   },
   "requesting-code-review": {
     "archived_at": null,

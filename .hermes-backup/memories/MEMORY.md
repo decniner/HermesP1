@@ -4,7 +4,7 @@ Workflow: ask clarifying Qs one at a time, no assumptions. EAs: DEN_EA folder + 
 §
 Delivery: prefers audio/voice for summaries kanban status, cron reports, briefings. Email HTML attachments for detailed reports.
 §
-POGIBOT live: https://garmin-microwave-exports-mesa.trycloudflare.com . Flask + Gemini + DeepSeek VR boxing coach. SQLite history, file upload, model selector.
+POGIBOT: https://enjoy-outlined-sentences-concentration.trycloudflare.com + BME: https://physiology-photographic-belfast-sys.trycloudflare.com
 §
 Created Wealth Manager Telegram bot — separate Hermes profile, finance/personal advisor persona.
 §
@@ -17,5 +17,3 @@ QA rule: must end-to-end test every deliverable through its real channel before 
 OnStream Flutter app: embed sites (vidsrc.to) failed in WebView. Pivoted to TPB API (apibay.org) for torrent magnet links + external torrent client. APK on GitHub HermesP1. Major version bump on architecture pivot.
 §
 QA expectation: User has repeatedly called me out for not properly QAing deliverables. Must actually test the built artifact (APK/app) end-to-end, not just test APIs or URLs separately. Saying "done" without real verification gets called out. This applies to all builds, not just mobile apps.
-§
-MT5 reinstall wipes DEN_EA folder. Backup .mq5 at ~/projects/POGIBOT/backend/. Restore: recreate DEN_EA/, copy .mq5, convert UTF-8→UTF-16LE, regenerate .set files, compile in MetaEditor GUI.

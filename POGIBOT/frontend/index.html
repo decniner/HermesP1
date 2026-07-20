@@ -657,7 +657,8 @@ async function uploadAndAnalyze() {
     renderHighlights(data.highlights);
     renderFlaws(data.flaws);
     renderVerdict(data.coaching_output);
-    renderHistory(data);
+
+    // Load progress chart
 
     resultsEl.style.display = 'grid';
     setStatus('success', `✅ Done — ${data.events.length} events from uploaded video.`);
@@ -728,7 +729,8 @@ async function analyzeVideo() {
     renderHighlights(data.highlights);
     renderFlaws(data.flaws);
     renderVerdict(data.coaching_output);
-    renderHistory(data);
+
+    // Load progress chart
 
     resultsEl.style.display = 'grid';
     setStatus('success', `✅ Analysis complete — ${data.events.length} events detected.`);

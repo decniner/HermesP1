@@ -621,10 +621,9 @@ def get_history():
         for row in rows:
             sessions.append({
                 "session_order": row[0],
-                "timestamp": row[1],
-                "video_url": row[2],
-                "overall_score": row[3],
-                "technique_ratings": row[4],
+                "video_url": row[1],
+                "overall_score": row[2],
+                "technique_ratings": row[3],
             })
         return jsonify({"sessions": sessions})
     except Exception as e:

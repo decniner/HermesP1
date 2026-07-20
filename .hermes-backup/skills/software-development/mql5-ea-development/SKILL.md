@@ -125,13 +125,15 @@ Every version bump gets its filename called out explicitly at delivery time.
 
 ## Verify What the User Actually Tested
 
-When the user reports a bad test result, **check the test report input parameters before debugging code.** The user may have accidentally run a different EA or the same EA with default inputs instead of your intended .set file.
+**CRITICAL TRIAGE STEP:** When the user reports a bad test result, **read the report's expert/adviser name and input parameters before touching any code.** The user may have tested a different EA entirely.
 
-Read the report Settings section and verify every parameter matches what you intended. Common mismatch: StopLossPercent=3.48 (original default) instead of StopLossPercent=10.09 (optimized value).
+**Concrete failure from this session:** User sent an Excel report titled "2ReportTester-75574236" showing:
+- `SlowMAPeriod=579`, `StopLossPercent=8.0`, `MaxSLPercent=2.0`
+- These were NOT parameters from my V6 (which used `StopLossATR=3.6`)
+- The report was from a **pre-existing EA** (`BTCJPY_LowDDWithBoS_v6`) the user had on their system, not the V6 I'd just compiled
+- I wasted an iteration debugging my code before checking what was actually tested
 
-**Concrete example from this session:** The user sent an Excel report showing `SlowMAPeriod=579`, `StopLossPercent=8.0`, `MaxSLPercent=2.0` — these were NOT parameters from the V6 I'd written (which used `StopLossATR=3.6`). The report was from a **completely different pre-existing EA** (`BTCJPY_LowDDWithBoS_v6`) that the user had on their system, not the V6 I'd just compiled. The mistake wasted an iteration because I started debugging the code before checking what was actually tested.
-
-Triage order:
+**Triage order:**
 1. Check the report **expert/adviser name** at the top — does it match the filename you sent?
 2. Check the report **input parameter names** — do they match the `input` declarations in your source file?
 3. Check the report **parameter values** — do they match what you set?
@@ -139,32 +141,16 @@ Triage order:
 
 ## Providing File Paths
 
-When the user asks for a file location, always provide the **full absolute path starting from `C:\\`**, not a relative or shortened path. Example:
+When the user asks for a file location, always provide the **full absolute path starting from `C:\\`**, not a relative or shortened path.
 
+**Right:**
 ```
-C:\\Users\\decni\\AppData\\Roaming\\MetaQuotes\\Terminal\\D0E8209F77C8CF37AD8BF550E51FF075\\MQL5\\Experts\\DEN_EA\\Sets\\BTCJPY_LowDDWithBoS_Opt_V6.set
-```
-
-Not `...\\DEN_EA\\Sets\\...` or `~/AppData/...`
-
-## Versioned Filenames (CRITICAL preference)
-
-**Each iteration MUST have a unique, sequential version in the filename.** This user tracks EAs by filename — `_V5`, `_V5_1`, `_V5_2`, etc.
-
-```mql5
-// BAD — user can't tell which is which
-BTCJPY_LowDDWithBoS_Opt.mq5
-BTCJPY_LowDDWithBoS_Opt.mq5  (overwritten!)
-
-// GOOD — clear progression
-BTCJPY_LowDDWithBoS_Opt_V5.mq5
-BTCJPY_LowDDWithBoS_Opt_V5_1.mq5
-BTCJPY_LowDDWithBoS_Opt_V5_2.mq5
+C:\Users\decni\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\DEN_EA\Sets\my-ea.set
 ```
 
-Also update the `#property version` directive inside the source file to match:
-```mql5
-#property version   "5.10"
+**Wrong:**
+```
+...\DEN_EA\Sets\my-ea.set
 ```
 
 ## Delivery: Short / Direct Answers for Negatives
@@ -309,7 +295,8 @@ Never init indicator handles or API clients at global scope in `OnInit()` — bu
 
 ## Reference Files
 
-See `references/btcjpy-ea-session.md` for the complete session transcript: all backtest results, parameter changes, and result analysis from the BTCJPY_LowDDWithBoS optimization cycle.
+- `references/btcjpy-ea-session.md` — Full session transcript: all backtest results, parameter changes, and result analysis from the BTCJPY_LowDDWithBoS optimization cycle (Part 1)
+- `references/btcjpy-ea-session-part2.md` — Session Part 2 data: V5_2 proven winner parameters, Pass 54 optimized parameters, architecture lessons from Sniper series failures
 
 ## Reading Optimizer XML Reports
 

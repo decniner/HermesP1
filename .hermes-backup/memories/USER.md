@@ -9,3 +9,5 @@ EA workflow: write → compile → user backtests. Always say exact filename + v
 Gets frustrated fast with broken/losing EAs. Prefers direct honesty — if multiple versions fail, recommend what worked instead of iterating broken concepts.
 §
 Has Google TV + Android phone. Tests APKs on both. Switches approaches fast when current one fails — iterates quickly. QA must include testing the actual deliverable, not just APIs/components.
+§
+MT5 terminal folder ID: D0E8209F77C8CF37AD8BF550E51FF075. EAs backed up on GitHub across MQL_NewStrat, MQL_NewStrat2, MQL_NewStrat3, MQLBestStrat, mql5 repos.

@@ -146,7 +146,7 @@ display:
 dashboard:
   basic_auth:
     username: admin
-    password_hash: scrypt$16384$8$1$NG9ZTuKzD/Q0/AOOQWtaLw==$troSJifsX6KLNyOeiHAw1712r63gj805W3cQ5KNerLs=
+    password_hash: scrypt$16384$8$1$+Wk3ffdqjn0VQCWRwAkPvQ==$2GGZ/GF0JD5TLyjVlfNJigGDtvxONYAdOuSzjz3cSbQ=
 tts:
   provider: openai
   use_gateway: true

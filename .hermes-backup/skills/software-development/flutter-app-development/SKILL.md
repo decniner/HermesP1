@@ -145,6 +145,88 @@ Text('AppName v1.0.0', style: TextStyle(fontSize: 12, color: Colors.grey[600]))
 
 Keep the version number in `pubspec.yaml`'s `version:` field as the single source of truth.
 
+## Per-Source URL Format (Embed Sites)
+
+**Critical finding:** Different embed sources use **different URL formats** for the same content type (TV shows). Applying a single template to all sources breaks TV playback.
+
+| Source | Movie URL | TV URL |
+|--------|-----------|--------|
+| vidsrc.to | `/embed/movie/ID` | `/embed/tv/ID/SEASON/EPISODE` (path segments) |
+| 2embed.cc | `/embed/tmdb/movie?id=ID` | `/embed/tmdb/tv?id=ID&s=SEASON&e=EPISODE` (query params) |
+
+**Wrong approach:** A single string template with query params appended:
+```dart
+final tvUrl = src.tvUrl + id.toString();
+return '$tvUrl&s=$season&e=$episode';  // BROKEN for vidsrc.to (uses paths)
+```
+
+**Right approach:** Per-source URL builder function:
+```dart
+class _Source {
+  final String name;
+  final String movieUrl;
+  final String Function(int id, int s, int e) tvUrl;
+}
+
+static final _sources = [
+  _Source(
+    name: 'vidsrc.to',
+    movieUrl: 'https://vidsrc.to/embed/movie/',
+    tvUrl: (id, s, e) => 'https://vidsrc.to/embed/tv/$id/$s/$e',
+  ),
+  _Source(
+    name: '2embed.cc',
+    movieUrl: 'https://www.2embed.cc/embed/tmdb/movie?id=',
+    tvUrl: (id, s, e) => 'https://www.2embed.cc/embed/tmdb/tv?id=$id&s=$s&e=$e',
+  ),
+];
+```
+
+**Note:** Lambdas/closures can't be in `static const` lists. Use `static final` instead:
+```dart
+static final _sources = [...];  // NOT static const
+```
+
+## DOM Cleanup Bug: Orphaned Function Calls
+
+When removing an HTML element (e.g., replacing a history card with a chart), **all JavaScript function calls that reference that element must also be removed or null-checked**.
+
+**Bug symptom:** After analysis completes, the app crashes with:
+```
+Cannot set properties of null (setting 'innerHTML')
+```
+
+**Root cause:** `renderHistory(data)` (still called from analyzeVideo) calls `document.getElementById('historyContainer')` which no longer exists in the DOM.
+
+**Fix:** Remove or null-guard the function call alongside the DOM element removal. Search for ALL references to the deleted element's ID across the entire script.
+
+## Backend API: Column Mapping Off-by-One
+
+When building a `/history` endpoint that returns SQLite data, **verify column indices match the `SELECT` order**, not the table schema order.
+
+**Bug symptom:** History endpoint returns wrong data in fields (e.g., `overall_score` contains technique ratings JSON string instead of integer score).
+
+**Root cause:** SQL `SELECT` reorders columns, but endpoint code uses old index positions:
+```python
+# SQL: SELECT date, video_url, overall_score, technique_ratings, ...
+#      row[0]      row[1]    row[2]        row[3]
+
+# WRONG mapping: rows[3] gets technique_ratings, not overall_score
+sessions.append({
+    "overall_score": row[3],
+})
+
+# RIGHT mapping - match SELECT order left to right:
+sessions.append({
+    "session_order": row[0],    # date
+    "video_url": row[1],        # video_url
+    "overall_score": row[2],    # overall_score
+    "technique_ratings": row[3], # technique_ratings
+})
+```
+
+**Fix:** Count columns left to right in your SELECT statement. Index 0 = first column.
+
 ## Android Gradle Issues
 
 ### AGP Version Mismatch
@@ -190,9 +272,22 @@ void _showDebugLog(BuildContext context) {
 }
 ```
 
+## Pitfalls
+
+### `flutter pub get` Fails in Sandbox → Use `dart pub get`
+
+In restricted environments (Hermes, CI), `flutter pub get` fails with `.hermes-tmp` creation errors. **Run `dart pub get` directly instead** — it works in the same project without the Flutter tool's sandbox interference. After it resolves, `flutter build apk` works normally.
+
+Set `PUB_CACHE=/tmp/pub-cache` and `TMPDIR=/tmp` before running.
+
+### Java 17 Required for Android SDK Tools
+
+`sdkmanager` needs Java 17+. Install via `winget install EclipseAdoptium.Temurin.17.JDK` or portable download. Set `JAVA_HOME` with no trailing space (use `&&` not `;`).
+
 ## See Also
 
 - `references/onstream-clone-session.md` — Complete session notes: video embed sources tested, WebView debugging steps, search implementation details.
+- `references/flutter-windows-setup.md` — Full Windows setup guide: Flutter SDK install, Java 17, Android cmdline-tools, SDK components, common pitfalls.
 
 ## Torrent Streaming Architecture
 

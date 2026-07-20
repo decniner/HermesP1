@@ -227,7 +227,72 @@ try:
 **Rule:** Assign the SAME result variable in BOTH branches, then use it
 downstream. Never reconstruct or reference per-branch intermediates.
 
-### 7b. Flask Config Ordering
+### 7c. Frontend DOM Orphan: Removed Elements With Live Function Calls
+
+When removing an HTML element (e.g., replacing a history card with a chart), **all JavaScript function calls that reference that element must also be removed or null-guarded**.
+
+**Symptom:** After a successful API response, the app crashes with:
+```
+Cannot set properties of null (setting 'innerHTML')
+```
+
+The error is caught by the outer `catch` block in the fetch handler and displayed to the user as if it were a network error. **The actual crash is in the render functions after a successful API call.**
+
+**Root cause:** `renderHistory(data)` still called from `analyzeVideo()` tries to `document.getElementById('historyContainer')` which no longer exists in the DOM.
+
+**Fix:**
+1. Search for ALL references to the deleted element's `id` across the entire script
+2. Remove or null-guard each function call
+3. Run a full analysis cycle to verify no crashes after successful API response
+
+### 7d. Backend SQL Column Off-by-One
+
+When querying SQLite and mapping columns to a dict, **count from 0 following the SELECT column order**, not the table schema order.
+
+**Symptom:** Endpoint returns wrong data in fields (e.g., `overall_score` is a JSON string instead of an integer, `video_url` is a number).
+
+**Root cause:** The SELECT statement reorders columns, but the Python dict mapping uses index positions from a different ordering:
+
+```python
+# WRONG — row indices based on table schema, not SELECT order
+for row in rows:
+    sessions.append({
+        "session_order": row[0],    # ✔ date
+        "video_url": row[2],        # ✘ row[2] is overall_score (integer)!
+        "overall_score": row[3],    # ✘ row[3] is technique_ratings (JSON string)!
+    })
+```
+
+Fix: Count columns left to right in your SELECT statement. Index 0 = first listed column.
+
+```python
+# SELECT: date(0), video_url(1), overall_score(2), technique_ratings(3)
+for row in rows:
+    sessions.append({
+        "session_order": row[0],    # date
+        "video_url": row[1],        # video_url
+        "overall_score": row[2],    # overall_score — NOT row[3]!
+        "technique_ratings": row[3],# technique_ratings
+    })
+```
+
+### 7e. Flask Config Ordering
+
+`MAX_CONTENT_LENGTH` must reference a constant defined BEFORE `app = Flask(__name__)`.
+
+```python
+# GOOD
+MAX_UPLOAD_MB = 500
+app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
+
+# BAD — NameError: referenced before assignment
+app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
+MAX_UPLOAD_MB = 500
+```
+
+## 8. Error Handling Pattern
 
 `MAX_CONTENT_LENGTH` must reference a constant defined BEFORE `app = Flask(__name__)`.
 

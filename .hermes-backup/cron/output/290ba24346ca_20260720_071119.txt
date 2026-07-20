@@ -1,0 +1,109 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I now have comprehensive data from all three regions. Here's the daily news digest:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 **DAILY NEWS DIGEST**
+📅 **July 20, 2026 (Monday)**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**🇯🇵 JAPAN**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. JR East Unveils "Soar" — New High-Speed Inspection Train for Shinkansen**
+   Summary: East Japan Railway Co. revealed the E927 inspection bullet train, nicknamed "Soar," featuring a white body with green and red asymmetrical stripes. The 7-car train, equipped with 48 cameras, can inspect rails and overhead lines at up to 320 km/h — matching passenger bullet train speeds. It will serve the Tohoku, Joetsu, Hokuriku, Akita, and Yamagata shinkansen lines starting fiscal 2029.
+   Source: https://english.kyodonews.net/
+
+**2. Landslides North of Tokyo Leave Two Dead**
+   Summary: Record-breaking rains triggered landslides in Tochigi Prefecture, north of Tokyo, leaving at least two people dead. Authorities issued evacuation warnings as rescue operations continued in affected areas.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+**3. Ancient Japanese Capitals Expected to Join UNESCO World Heritage List**
+   Summary: The UN cultural agency is expected to add archaeological sites of Japan's ancient capitals to the World Heritage list, recognizing their cultural and historical significance.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+**4. Defense Minister Koizumi Says Japan Needs Debate on Nuclear Weapons**
+   Summary: Japan's Defense Minister Shinjiro Koizumi stated that Japan must hold a national debate on nuclear weapons amid growing regional security threats, signaling a potential shift in Japan's long-standing non-nuclear principles.
+   Source: https://english.kyodonews.net/
+
+**5. Japan to Provide Defense Equipment to Cambodia Under OSA Program**
+   Summary: The Japanese government decided to provide defense equipment to Cambodia under its Official Security Assistance (OSA) framework, expanding defense cooperation in Southeast Asia.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+**6. 7 Injured After 20-Meter Tree Falls During Soccer Match in Central Japan**
+   Summary: A 20-meter tree fell during a soccer match in central Japan, injuring seven people. Emergency services responded to the incident at the sports venue.
+   Source: https://english.kyodonews.net/
+
+**7. Japanese Astronaut Yui Kimiya Reflects on ISS Mission**
+   Summary: Astronaut Yui Kimiya reflected on his stay at the International Space Station, sharing insights from his space mission with the public.
+   Source: https://www3.nhk.or.jp/nhkworld/en/news/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**🇵🇭 PHILIPPINES**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Who is Lorna Kapunan, Private Prosecutor in Sara Duterte Impeachment Trial?**
+   Summary: The celebrity lawyer Lorna Kapunan, known for handling high-profile cases and lawyering for controversial public figures, has been named as a private prosecutor in the impeachment trial of Vice President Sara Duterte. The trial continues to dominate Philippine political news.
+   Source: https://www.rappler.com/
+
+**2. EJ Obiena Vaults to Best Mark Since Olympics**
+   Summary: Filipino pole vaulter EJ Obiena recorded his best performance since the Olympic Games, clearing a strong mark in international competition and signaling a strong return to form.
+   Source: https://www.rappler.com/
+
+**3. Democratic Taiwan Must Not Become 'China's Taiwan,' President Says**
+   Summary: Taiwan's president delivered a strong statement asserting that democratic Taiwan must not be reduced to "China's Taiwan," addressing sovereignty concerns amid increasing Chinese pressure.
+   Source: https://www.rappler.com/
+
+**4. Philippines Urges Beijing to Take Down Racist China Daily Video**
+   Summary: The Philippine government formally urged Beijing to remove an AI-generated video by China Daily that depicts the Philippines as a monkey. Foreign affairs officials condemned the video as racist and offensive, escalating diplomatic tensions.
+   Source: https://www.rappler.com/
+
+**5. Rome Declaration for an 'Unarmed and Disarming Peace' Signed by Nobel Laureates**
+   Summary: Nobel laureates and international experts signed the Rome Declaration calling for an "unarmed and disarming peace," advocating for nuclear disarmament and non-violent conflict resolution.
+   Source: https://www.rappler.com/
+
+**6. 10 Years of the Arbitral Award on the South China Sea**
+   Summary: Rappler's "Hindi Ito Marites" series commemorates the 10th anniversary of the landmark South China Sea Arbitral Award, examining its legacy and impact on Philippine sovereignty claims.
+   Source: https://www.rappler.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**🌍 GLOBAL**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. Spain Beat Argentina to Win World Cup for Second Time in History**
+   Summary: Spain defeated Argentina 1-0 in the World Cup final in New Jersey, with Ferran Torres scoring the only goal in extra time. The match also saw Argentina play with 10 men after a red card. It's Spain's second World Cup title.
+   Source: https://www.bbc.com/news
+
+**2. US Soldier Killed, One Injured After Iranian Attack in Iraq**
+   Summary: The US military reported one American soldier killed and another injured in an Iranian attack in Iraq — the third US military death in the region within days, coming after two soldiers were killed in Jordan. The US issued a worldwide travel advisory for Americans amid escalating Middle East tensions.
+   Source: https://www.bbc.com/news / NHK World
+
+**3. Tate Brothers Arrested in US; UK Charges Now Total 59**
+  Summary: Andrew and Tristan Tate were arrested in the United States as the Crown Prosecution Service announced additional UK charges, bringing the total to 59. The CPS has requested their extradition from the US, while their lawyer maintains their innocence.
+   Source: https://www.bbc.com/news
+
+**4. Russia Intensifies Attacks on Kyiv**
+   Summary: Ukrainian officials reported that Russia launched extensive missile and drone attacks on Kyiv. The intensification comes amid reports that President Zelenskyy is considering firing the military's commander-in-chief.
+   Source: NHK World
+
+**5. India's 'Cockroach' Protesters Set to March to Parliament**
+   Summary: The Cockroach Janta Party (CJP) organized a march to parliament demanding reforms in India's education system following the NEET examination controversy. Protesters staged overnight sit-ins at Jantar Mantar in New Delhi.
+   Source: https://www.bbc.com/news
+
+**6. US Issues Worldwide Travel Advisory for Americans**
+   Summary: The US State Department issued a worldwide travel advisory advising Americans, especially those in the Middle East, to exercise heightened caution due to the deteriorating security situation across the region.
+   Source: NHK World
+
+**7. India's Ganesh Idol Makers Count Cost of Devastating Floods**
+   Summary: Weeks before the Ganesh Chaturthi festival, devastating floods in Maharashtra washed away months of work for idol makers, dealing a severe economic blow to artisans preparing for one of India's most important religious celebrations.
+   Source: https://www.bbc.com/news
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*Sources: Kyodo News, NHK World, Rappler, BBC News | Compiled July 20, 2026*
+
+*Note: Web search tools experienced a temporary service disruption; news was gathered directly from publisher websites via browser.*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
