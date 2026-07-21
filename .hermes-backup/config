@@ -143,10 +143,10 @@ display:
   long_running_notifications: true
   busy_ack_detail: true
   background_process_notifications: all
-dashboard:
-  basic_auth:
-    username: admin
-    password_hash: scrypt$16384$8$1$+Wk3ffdqjn0VQCWRwAkPvQ==$2GGZ/GF0JD5TLyjVlfNJigGDtvxONYAdOuSzjz3cSbQ=
+# dashboard: DISABLED
+#   basic_auth:
+#     username: admin
+#     password_hash: ...
 tts:
   provider: openai
   use_gateway: true

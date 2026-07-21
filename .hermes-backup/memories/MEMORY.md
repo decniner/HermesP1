@@ -4,9 +4,9 @@ Workflow: ask clarifying Qs one at a time, no assumptions. EAs: DEN_EA folder + 
 §
 Delivery: prefers audio/voice for summaries kanban status, cron reports, briefings. Email HTML attachments for detailed reports.
 §
-POGIBOT: https://enjoy-outlined-sentences-concentration.trycloudflare.com + BME: https://physiology-photographic-belfast-sys.trycloudflare.com
+POGIBOT https://enjoy-outlined-sentences-concentration.trycloudflare.com · BME https://physiology-photographic-belfast-sys.trycloudflare.com · Kanban(no-auth) http://192.168.3.72:8324/kanban
 §
-Created Wealth Manager Telegram bot — separate Hermes profile, finance/personal advisor persona.
+Wealth Manager Telegram bot profile(wealth-manager) with SOUL.md — finance advisor persona, gateway running
 §
 MQL5 EA with DEN_EA folder (XMTrading MT5, BTCJPY M15, ¥50K JPY 1:1000 leverage). Optimized: StopLossATR=3.6, TakeProfitATR=12.95. BodyStrengthMin 45-55, EMA(88), RSI(14) 30-75 range. Version files V5.x. Compile via MetaEditor64.exe.
 §

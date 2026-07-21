@@ -1,0 +1,104 @@
+Cronjob Response: Daily News Digest
+(job_id: 290ba24346ca)
+-------------
+
+I have solid content from Kyodo News (Japan), Rappler (Philippines), and BBC (World). Let me compile the digest.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📰 DAILY NEWS DIGEST
+📅 Tuesday, July 21, 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇯🇵 JAPAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **China, Russia navies hold live drills within Japan's EEZ**
+   Summary: Japan's defense minister confirmed that Chinese and Russian naval forces conducted live-fire military drills inside Japan's Exclusive Economic Zone, marking a significant escalation in military activity near Japanese waters.
+   Source: https://english.kyodonews.net/
+
+2. **Japan begins 1st war dead remains search in Taiwan in 50 years**
+   Summary: An excavation to recover the remains of Japanese soldiers who died in Taiwan during WWII began in Hengchun — the first such operation in about 50 years. Around 41,900 Japanese are estimated to have died in Taiwan during the war, with remains of about 15,600 still unrecovered.
+   Source: https://english.kyodonews.net/
+
+3. **Rainy season over in Tokyo, mercury hits 35°C as "extremely hot" day logged**
+   Summary: Tokyo's rainy season has officially ended with temperatures reaching 35°C (95°F), marking the first "extremely hot" day of the summer season.
+   Source: https://english.kyodonews.net/
+
+4. **Curator in Hokkaido creates 3D whale skeleton from photos**
+   Summary: A museum curator in Hokkaido has succeeded in creating a 3D-printed whale skeleton model using only photographs — a breakthrough technique for museum exhibits and educational displays.
+   Source: https://english.kyodonews.net/
+
+5. **Sumo: Aonishiki keeps share of lead with breakthrough win over Onosato**
+   Summary: Rising sumo star Aonishiki maintained his share of the tournament lead after a key victory over top-ranked wrestler Onosato in the ongoing grand tournament.
+   Source: https://english.kyodonews.net/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🇵🇭 PHILIPPINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Impeachment court grants subpoenas for Sara Duterte's bank, tax records**
+   Summary: The impeachment court approved subpoenas for Vice President Sara Duterte's financial records, which House prosecutors intend to use as evidence to prove alleged unexplained wealth in the ongoing impeachment trial.
+   Source: https://www.rappler.com/
+
+2. **'Bank documents don't lie': Financial records can trace Duterte's money trail – ex-prosecutor**
+   Summary: A former prosecutor argued that bank documents could provide a clear money trail in the Duterte impeachment case, stating that financial records are powerful evidence that can reveal undisclosed assets and transactions.
+   Source: https://www.rappler.com/
+
+3. **Ombudsman probe tags Romualdez as 'central figure' in flood control corruption scheme**
+   Summary: House Speaker Martin Romualdez has been identified as a "central figure" in an Ombudsman investigation into a multi-billion peso flood control corruption scheme.
+   Source: https://www.rappler.com/
+
+4. **Chinese Coast Guard hits Filipino soldier in head in Ayungin clash**
+   Summary: A Chinese Coast Guard vessel struck a Filipino soldier in the head during a confrontation at Ayungin Shoal (Second Thomas Shoal) in the South China Sea, escalating tensions between Manila and Beijing.
+   Source: https://www.rappler.com/
+
+5. **[Rappler's Best] A troll in the Senate — Robin Padilla investigated**
+   Summary: Rappler's investigative piece examines Senator Robin Padilla's online activities and alleged use of troll accounts to amplify political messaging and attack critics from the Senate floor.
+   Source: https://www.rappler.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌍 GLOBAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. **Trump imposes 50% tariff on Canadian imports**
+   Summary: US President Donald Trump announced a 50% tariff on Canadian imports, taking effect within 30 days. The move marks a major escalation in trade tensions between the North American neighbors.
+   Source: https://www.bbc.com/news/world
+
+2. **US launches fresh strikes on Iran; Trump warns of retaliation**
+   Summary: The US military launched new strikes targeting Iran's capabilities to attack ships in the Strait of Hormuz, as Trump warned of retaliation for the deaths of American soldiers.
+   Source: https://www.bbc.com/news/world
+
+3. **Ten killed as Russian attacks on merchant ships in Black Sea intensify**
+   Summary: Russian strikes on the Odesa region have killed 28 people in July alone, including attacks on merchant ships in the Black Sea. Local authorities report intensifying bombardment of civilian maritime infrastructure.
+   Source: https://www.bbc.com/news/world
+
+4. **Yemen's Houthis announce 'maritime embargo' on Saudi Arabia**
+   Summary: Yemen's Houthi movement announced an immediate maritime embargo on Saudi Arabia, calling it a response to a Saudi blockade of ports and airports in Yemen. The move threatens shipping in the Red Sea.
+   Source: https://www.bbc.com/news/world
+
+5. **Notorious drug cartel leader Ismael Zambada sentenced to life in US prison**
+   Summary: Ismael "El Mayo" Zambada, co-founder of the Sinaloa Cartel, was sentenced to life in US prison and ordered to pay $15 billion after admitting to sending vast quantities of drugs to the United States.
+   Source: https://www.bbc.com/news/world
+
+6. **Tate brothers appear in US court for extradition proceedings**
+   Summary: Andrew and Tristan Tate appeared in a US court on Saturday after arrest, facing UK charges including rape and sex trafficking brought by British authorities. They deny all allegations.
+   Source: https://www.bbc.com/news/world
+
+7. **Boy, 13, dies during World Cup celebrations in Spain**
+   Summary: A 13-year-old boy died and two others were injured when a fountain partially collapsed in Salamanca's Ciudad Rodrigo during World Cup victory celebrations.
+   Source: https://www.bbc.com/news/world
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Today's top themes across regions:
+• **Japan**: Tensions with China/Russia over EEZ incursions; extreme heat begins; WWII remains recovery in Taiwan
+• **Philippines**: Sara Duterte impeachment trial intensifies; Romualdez corruption probe; South China Sea confrontation with China
+• **Global**: US-Canada trade war escalation; US-Iran military strikes; Houthi embargo on Saudi Arabia; Sinaloa cartel boss sentenced
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*Sources: Kyodo News, Rappler, BBC News*
+*Generated: July 21, 2026*
+
+To stop or manage this job, send me a new message (e.g. "stop reminder Daily News Digest").
