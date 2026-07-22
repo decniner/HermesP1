@@ -116,7 +116,7 @@ const ring = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
 );
 ring.rotation.x = -Math.PI / 2;
-ring.position.y = -0.45;
+ring.position.y = -0.25;
 scene.add(ring);
 
 // ═══ BUILD CLIPPY (procedural paperclip) ═══
@@ -131,103 +131,88 @@ let bubbleObj = null; // CSS2D bubble element
 function buildClippy() {
   const g = new THREE.Group();
 
-  // ── Body: rounded wire shape ──
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.4, roughness: 0.3, emissive: 0x332200, emissiveIntensity: 0.05 });
+  // ── Body — smooth white ovoid (EVE-like) ──
+  const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2, emissive: 0x222222, emissiveIntensity: 0.05 });
+  const whiteMatShiny = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.5, roughness: 0.15, emissive: 0x333333, emissiveIntensity: 0.05 });
 
-  // Main body — pill shape (capsule-like)
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.7, 20, 1, true), bodyMat);
+  // Main body — stretched sphere (egg shape)
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.5, 28, 28), whiteMat);
+  body.scale.set(1, 1.15, 0.85);
   body.position.y = 0.35;
-  body.rotation.x = 0.05;
   g.add(body);
 
-  // Head — sphere on top
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 24, 24), bodyMat);
-  head.position.y = 0.85;
-  head.scale.set(1, 0.85, 1);
-  g.add(head);
+  // Body accent ring
+  const accentMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.6, roughness: 0.1 });
+  const ringAccent = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.015, 12, 32), accentMat);
+  ringAccent.position.y = 0.1;
+  ringAccent.rotation.x = Math.PI / 2;
+  g.add(ringAccent);
 
-  // ── Eyes (googly) ──
-  const eyeWhite = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.3 });
-  const eyePupil = new THREE.MeshBasicMaterial({ color: 0x222222 });
+  // ── Eyes — blue glow ──
+  const blueGlow = new THREE.MeshStandardMaterial({ color: 0x88ddff, emissive: 0x44aaff, emissiveIntensity: 0.6 });
+  const eyeBack = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.3, roughness: 0.2 });
 
-  const addEye = (x, y, z, s) => {
-    const w = new THREE.Mesh(new THREE.SphereGeometry(0.08 * s, 12, 12), eyeWhite);
-    w.position.set(x, y, z);
-    g.add(w);
-    const p = new THREE.Mesh(new THREE.SphereGeometry(0.035 * s, 8, 8), eyePupil);
-    p.position.set(x + 0.015, y + 0.005, z + 0.06);
-    g.add(p);
+  // Eye sockets (shallow indent)
+  const addEye = (x) => {
+    // Dark socket
+    const socket = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), eyeBack);
+    socket.position.set(x, 0.55, 0.45);
+    socket.scale.set(1, 0.8, 0.6);
+    g.add(socket);
+    // Blue glow eye
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 14), blueGlow);
+    eye.position.set(x, 0.55, 0.5);
+    eye.scale.set(1, 0.9, 0.6);
+    g.add(eye);
+    // Bright center dot
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    dot.position.set(x, 0.555, 0.53);
+    g.add(dot);
   };
-  addEye(-0.14, 0.92, 0.32, 1.2);
-  addEye(0.14, 0.92, 0.32, 1.2);
+  addEye(-0.15);
+  addEye(0.15);
 
-  // ── Wire arms (curved paperclip-like) ──
-  const wireMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.6, roughness: 0.2 });
+  // ── Mouth (animated LED line) ──
+  const mouthMat = new THREE.MeshBasicMaterial({ color: 0x88ddff, transparent: true, opacity: 0.7 });
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.012, 0.02), mouthMat);
+  mouth.position.set(0, 0.38, 0.5);
+  mouth.name = 'mouth';
+  g.add(mouth);
+
+  // ── Arms — thin white ovals ──
+  const armMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.25 });
   const addArm = (side) => {
-    const s = side; // -1 left, 1 right
-    const pts = [];
-    const y0 = 0.35, y1 = 0.7;
-    const x0 = s * 0.55, x1 = s * 0.95, x2 = s * 0.8;
-    for (let t = 0; t <= 1; t += 0.05) {
-      const cx = x0 + (x1 - x0) * t;
-      const cy = y0 + (y1 - y0) * Math.sin(t * Math.PI) * 0.6;
-      const cz = 0.2 * Math.sin(t * Math.PI * 1.5);
-      pts.push(new THREE.Vector3(cx, cy, cz));
-    }
-    const curve = new THREE.CatmullRomCurve3(pts);
-    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 12, 0.03, 6, false), wireMat);
-    g.add(tube);
-    // Tip loop
-    const loopCenter = new THREE.Vector3(x1, y0 + (y1 - y0) * 0.5 * Math.sin(1 * Math.PI), 0);
-    const loop = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.025, 8, 12), wireMat);
-    loop.position.copy(pts[pts.length - 1]);
-    loop.position.x += s * 0.04;
-    g.add(loop);
+    const s = side;
+    const arm = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), armMat);
+    arm.position.set(s * 0.55, 0.3, 0);
+    arm.scale.set(1, 0.7, 0.8);
+    g.add(arm);
+    // Upper arm
+    const upper = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), armMat);
+    upper.position.set(s * 0.5, 0.45, 0);
+    upper.scale.set(1, 0.8, 0.7);
+    g.add(upper);
   };
   addArm(-1);
   addArm(1);
 
-  // ── Feet ──
-  const footMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.5, roughness: 0.3 });
-  const footL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), footMat);
-  footL.position.set(-0.25, -0.05, 0);
-  footL.scale.set(1, 0.5, 1.3);
-  footL.name = 'footL';
-  g.add(footL);
-  const footR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), footMat);
-  footR.position.set(0.25, -0.05, 0);
-  footR.scale.set(1, 0.5, 1.3);
-  footR.name = 'footR';
-  g.add(footR);
+  // ── Floating glow ring under body ──
+  const floatGlow = new THREE.Mesh(
+    new THREE.RingGeometry(0.15, 0.25, 24),
+    new THREE.MeshBasicMaterial({ color: 0x44aaff, transparent: true, opacity: 0.15, side: THREE.DoubleSide })
+  );
+  floatGlow.rotation.x = -Math.PI / 2;
+  floatGlow.position.y = -0.15;
+  g.add(floatGlow);
 
-  // ── Eyebrows + Mouth (references for animation) ──
-  let _browL, _browR, _mouth;
-
-  // ── Smile (mouth that can animate) ──
-  const smileMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
-  _mouth = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.025, 0.03), smileMat);
-  _mouth.position.set(0, 0.76, 0.36);
-  _mouth.name = 'mouth';
-  g.add(_mouth);
-
-  // ── Eyebrows (animated) ──
-  const browMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
-  _browL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
-  _browL.position.set(-0.14, 1.02, 0.32);
-  _browL.name = 'browL';
-  g.add(_browL);
-  _browR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
-  _browR.position.set(0.14, 1.02, 0.32);
-  _browR.name = 'browR';
-  g.add(_browR);
+  // Store references
+  const _browL = null, _browR = null, _mouth = mouth, _footL = null, _footR = null;
 
   clippy = g;
   clippy.scale.set(0.6, 0.6, 0.6);
-  clippy.position.set(0, -0.4, 0);
+  clippy.position.set(0, -0.2, 0);
   scene.add(clippy);
-
-  // Store brow/mouth/foot refs on clippy for animation
-  clippy.userData = { browL: _browL, browR: _browR, mouth: _mouth, footL: footL, footR: footR };
+  clippy.userData = { browL: null, browR: null, mouth: _mouth, footL: null, footR: null };
 
   // ── Speech bubble (CSS2D) ──
   const div = document.createElement('div');
@@ -323,7 +308,7 @@ function setRoamTarget() {
   if (!roaming) return;
   const a = Math.random() * Math.PI * 2;
   const d = 0.3 + Math.random() * (CONFIG.roamRadius * 0.7);
-  roamTarget.set(Math.cos(a) * d, -0.2 + Math.random() * 0.4, Math.sin(a) * d * 0.6);
+  roamTarget.set(Math.cos(a) * d, -0.1 + Math.random() * 0.3, Math.sin(a) * d * 0.6);
   isPausing = false;
 }
 
@@ -340,70 +325,46 @@ function updateRoaming() {
   if (!clippy || isDragging) return;
   movePhase += 0.016;
   idleTime += 0.016;
-  walkPhase += 0.08; // 60fps step cycle
 
   // ── Speaking animation ──
   if (isSpeaking) {
     speakPhase += 0.016;
     clippy.rotation.y = 0;
-    clippy.position.y = -0.4 + Math.sin(speakPhase * 2.5) * 0.015;
+    clippy.position.y = -0.2 + Math.sin(speakPhase * 2.5) * 0.015;
     const mouthOpen = 0.5 + Math.sin(speakPhase * 14) * 0.3 + Math.sin(speakPhase * 22) * 0.15;
     if (clippy.userData.mouth) clippy.userData.mouth.scale.y = Math.max(0.3, mouthOpen);
-    const bw = Math.sin(speakPhase * 3) * 0.04;
-    if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02 + bw; clippy.userData.browR.position.y = 1.02 + Math.sin(speakPhase * 3 + 0.5) * 0.04; }
-    // Feet still while speaking
-    if (clippy.userData.footL) { clippy.userData.footL.position.y = -0.05; clippy.userData.footR.position.y = -0.05; }
     ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
 
   const dist = clippy.position.distanceTo(roamTarget);
 
-  // ── Pause at destination (standing still) ──
+  // ── Pause at destination ──
   if (dist < 0.12 && !isPausing) {
     isPausing = true; pauseTimer = 0;
   }
   if (isPausing) {
     pauseTimer += 0.016;
-    clippy.position.y = -0.4 + Math.sin(idleTime * 1.6) * 0.02;
-    clippy.rotation.z = Math.sin(idleTime * 0.8) * 0.01;
-    // Reset feet to flat
-    if (clippy.userData.footL) { clippy.userData.footL.position.y = -0.05; clippy.userData.footR.position.y = -0.05; }
+    clippy.position.y = -0.2 + Math.sin(idleTime * 1.6) * 0.025;
     if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
-    if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02; clippy.userData.browR.position.y = 1.02; }
-    if (pauseTimer > 1.5 + Math.random() * 2) setRoamTarget();
+    if (pauseTimer > 1.2 + Math.random() * 2) setRoamTarget();
     ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
 
-  // ── Walk toward target ──
-  const speed = 0.015 + Math.min(dist * 0.008, 0.02);
+  // ── Float toward target ──
+  const speed = 0.02 + Math.min(dist * 0.01, 0.025);
   const ease = dist < 0.5 ? speed * (2 - speed) : speed;
   clippy.position.x += (roamTarget.x - clippy.position.x) * ease;
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
   clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
 
-  // ── Walking animation ──
-  // Body bob up/down with each step
-  const stepCycle = Math.sin(walkPhase);
-  clippy.position.y -= Math.abs(stepCycle) * 0.015;
+  // ── Gentle floating bob ──
+  clippy.position.y += Math.sin(movePhase * 1.8) * 0.005;
 
-  // Body sway side to side
-  clippy.rotation.z = Math.sin(walkPhase) * 0.035;
-
-  // Alternate foot lift
-  if (clippy.userData.footL) {
-    clippy.userData.footL.position.y = -0.05 + Math.max(0, -stepCycle) * 0.06;
-    clippy.userData.footR.position.y = -0.05 + Math.max(0, stepCycle) * 0.06;
-  }
-
-  // ── Footstep sound ──
-  const stepNorm = walkPhase / (Math.PI * 2);
-  const stepCount = Math.floor(stepNorm);
-  if (stepCount > lastStep) {
-    lastStep = stepCount;
-    if (stepCount % 2 === 0) playStep();
-  }
+  // ── Subtle body tilt ──
+  clippy.rotation.z = Math.sin(movePhase * 0.5) * 0.02;
+  clippy.rotation.x = Math.cos(movePhase * 0.3) * 0.01;
 
   // ── Face direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
@@ -413,12 +374,11 @@ function updateRoaming() {
     let diff = targetAngle - clippy.rotation.y;
     while (diff > Math.PI) diff -= Math.PI * 2;
     while (diff < -Math.PI) diff += Math.PI * 2;
-    clippy.rotation.y += diff * 0.035;
+    clippy.rotation.y += diff * 0.03;
   }
 
-  // ── Reset mouth/brows when walking ──
+  // ── Reset mouth ──
   if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
-  if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02; clippy.userData.browR.position.y = 1.02; }
 
   // ── Glow ring follows ──
   ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
