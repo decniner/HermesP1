@@ -132,119 +132,101 @@ function buildClippy() {
   const g = new THREE.Group();
 
   // ── Materials ──
-  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2 });
-  const whiteShiny = new THREE.MeshStandardMaterial({ color: 0xfafafa, metalness: 0.5, roughness: 0.1 });
+  const white = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.3, roughness: 0.25 });
+  const orange = new THREE.MeshStandardMaterial({ color: 0xff8833, metalness: 0.4, roughness: 0.3 });
   const dark = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.3 });
-  const blueGlow = new THREE.MeshStandardMaterial({ color: 0x88ddff, emissive: 0x44aaff, emissiveIntensity: 0.6 });
-  const pinkAccent = new THREE.MeshStandardMaterial({ color: 0xffaaaa, metalness: 0.1, roughness: 0.5 });
+  const darkMatte = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8, metalness: 0.1 });
+  const silver = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.7, roughness: 0.15 });
+  const eyeWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-  // ── Body ──
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), white);
-  body.scale.set(1, 0.85, 0.9);
-  body.position.y = 0.15;
-  g.add(body);
+  // ── Body: Large sphere (orange & white hemispheres) ──
+  // White half (top-back)
+  const bodyWhite = new THREE.Mesh(new THREE.SphereGeometry(0.5, 28, 28), white);
+  bodyWhite.scale.set(1, 0.95, 1);
+  bodyWhite.position.y = 0.05;
+  g.add(bodyWhite);
 
-  // Chest plate
-  const chest = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), whiteShiny);
-  chest.scale.set(0.9, 0.7, 0.3);
-  chest.position.set(0, 0.1, 0.4);
-  g.add(chest);
+  // Orange half (bottom-front wrap) — using a partial sphere approach
+  // Instead of complex geometry, overlay orange panels as flat arcs on the sphere
 
-  // ── Head ──
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 20), white);
-  head.scale.set(0.9, 0.8, 0.85);
-  head.position.set(0, 0.6, 0.25);
+  // Main orange band: Cylinder-shaped slice around the middle
+  const orangeBand = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.25, 28, 1, true, 0, Math.PI * 1.5), orange);
+  orangeBand.position.y = 0.0;
+  orangeBand.rotation.z = 0.2;
+  g.add(orangeBand);
+
+  // Orange panel on front-lower area
+  const orangePanel = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), orange);
+  orangePanel.position.set(0.15, -0.2, 0.45);
+  orangePanel.scale.set(1.2, 1.0, 0.3);
+  g.add(orangePanel);
+
+  // ── Panel lines (thin dark rings and arcs) ──
+  const lineMat = new THREE.MeshBasicMaterial({ color: 0x444444 });
+
+  // Equator ring
+  const equator = new THREE.Mesh(new THREE.TorusGeometry(0.49, 0.008, 8, 32), lineMat);
+  equator.position.y = 0.08;
+  equator.rotation.x = Math.PI / 2;
+  equator.rotation.z = 0.1;
+  g.add(equator);
+
+  // Vertical panel line
+  const vLine = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.5, 0.5), lineMat);
+  vLine.position.set(0.25, 0.05, 0);
+  g.add(vLine);
+
+  // ── Head: White dome on top ──
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 20, 0, Math.PI * 2, 0, Math.PI / 2), white);
+  head.position.set(0, 0.52, 0);
   g.add(head);
 
-  // Snout
-  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 14), white);
-  snout.scale.set(0.8, 0.5, 0.6);
-  snout.position.set(0, 0.5, 0.52);
-  g.add(snout);
+  // Head bottom rim
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.01, 8, 24), silver);
+  rim.position.set(0, 0.35, 0);
+  g.add(rim);
 
-  // Nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), dark);
-  nose.position.set(0, 0.52, 0.6);
-  g.add(nose);
+  // ── Eye: Single large dark circle with white dot ──
+  const eyeSocket = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 14), darkMatte);
+  eyeSocket.position.set(0, 0.55, 0.28);
+  eyeSocket.scale.set(1, 0.85, 0.5);
+  g.add(eyeSocket);
 
-  // ── Eyes ──
-  const addEye = (x) => {
-    const s = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), dark);
-    s.position.set(x, 0.66, 0.42);
-    s.scale.set(1, 0.8, 0.5);
-    g.add(s);
-    const e = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), blueGlow);
-    e.position.set(x, 0.665, 0.46);
-    e.scale.set(1, 0.9, 0.6);
-    g.add(e);
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    dot.position.set(x, 0.67, 0.48);
-    g.add(dot);
-  };
-  addEye(-0.1);
-  addEye(0.1);
+  const eyeDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeWhite);
+  eyeDot.position.set(0, 0.55, 0.32);
+  g.add(eyeDot);
 
-  // ── Ears ──
-  const earMat = new THREE.MeshStandardMaterial({ color: 0xe8d8d0, metalness: 0.1, roughness: 0.6 });
-  const addEar = (x) => {
-    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), earMat);
-    ear.position.set(x, 0.78, 0.25);
-    ear.scale.set(0.7, 1.4, 0.4);
-    g.add(ear);
-  };
-  addEar(-0.22);
-  addEar(0.22);
+  // ── Small indicator lights on head ──
+  const blueLight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0x44aaff }));
+  blueLight.position.set(-0.15, 0.55, 0.25);
+  g.add(blueLight);
+  const greenLight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0x44ff44 }));
+  greenLight.position.set(0.15, 0.55, 0.25);
+  g.add(greenLight);
 
-  // ── Mouth (an LED line that animates when barking) ──
-  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.01, 0.02), new THREE.MeshBasicMaterial({ color: 0x88ddff, transparent: true, opacity: 0.6 }));
-  mouth.position.set(0, 0.42, 0.56);
-  mouth.name = 'mouth';
-  g.add(mouth);
+  // ── Antenna on top of head ──
+  const antennaBase = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.08, 6), silver);
+  antennaBase.position.set(0, 0.75, -0.05);
+  g.add(antennaBase);
+  const antennaTip = new THREE.Mesh(new THREE.SphereGeometry(0.015, 6, 6), silver);
+  antennaTip.position.set(0, 0.8, -0.05);
+  g.add(antennaTip);
 
-  // ── Legs ──
-  const legMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.25 });
-  const addLeg = (x, z) => {
-    const leg = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), legMat);
-    leg.position.set(x, -0.22, z);
-    leg.scale.set(1, 0.9, 1.2);
-    leg.name = `leg_${x}_${z}`;
-    g.add(leg);
-    return leg;
-  };
-  const fl = addLeg(-0.2, 0.15);
-  const fr = addLeg(0.2, 0.15);
-  const bl = addLeg(-0.2, -0.2);
-  const br = addLeg(0.2, -0.2);
+  // ── Small panel detail on body ──
+  const rect = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.01), silver);
+  rect.position.set(-0.3, -0.05, 0.45);
+  g.add(rect);
 
-  // ── Tail ──
-  const tailMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2 });
-  const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.025, 0.18, 6, 1, false), tailMat);
-  tail.position.set(0, 0.25, -0.45);
-  tail.rotation.x = 0.5;
-  tail.name = 'tail';
-  g.add(tail);
-  // Tail tip
-  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), tailMat);
-  tip.position.set(0, 0.35, -0.48);
-  tip.name = 'tailTip';
-  g.add(tip);
-
-  // ── Collar ──
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.02, 8, 20), pinkAccent);
-  collar.position.set(0, 0.33, 0.1);
-  collar.rotation.x = Math.PI / 3;
-  g.add(collar);
-
-  // Store animatable parts
-  const _mouth = mouth;
-  const _tail = tail;
-  const _tailTip = tip;
+  // Store references
+  const _mouth = null;
+  const _tail = null;
+  const _tailTip = null;
 
   clippy = g;
-  clippy.scale.set(0.7, 0.7, 0.7);
-  clippy.position.set(0, -0.2, 0);
+  clippy.scale.set(0.65, 0.65, 0.65);
+  clippy.position.set(0, -0.1, 0);
   scene.add(clippy);
-  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [fl, fr, bl, br] };
+  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [] };
 
   // ── Speech bubble ──
   const div = document.createElement('div');
@@ -411,20 +393,16 @@ function updateRoaming() {
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
   clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
 
-  // ── Tail wag (continuous when moving or idle) ──
-  tailWagPhase += 0.12;
-  if (clippy.userData.tail) {
-    const wag = Math.sin(tailWagPhase * 2) * 0.6 + 0.3; // 0.3 to 0.9 range
-    clippy.userData.tail.rotation.z = wag;
-    clippy.userData.tailTip.position.x = Math.sin(tailWagPhase * 2) * 0.04;
-  }
-
-  // ── Gentle trot bob ──
+  // ── BB-8 wobble/roll animation ──
   clippy.position.y += Math.sin(movePhase * 1.8) * 0.004;
 
-  // ── Subtle body tilt ──
-  clippy.rotation.z = Math.sin(movePhase * 0.5) * 0.015;
-  clippy.rotation.x = Math.cos(movePhase * 0.3) * 0.008;
+  // BB-8 body roll: slight rotation on Z and X axes (like a ball wobbling)
+  clippy.rotation.z = Math.sin(movePhase * 0.7) * 0.025;
+  clippy.rotation.x = Math.cos(movePhase * 0.5) * 0.02;
+
+  // Head independent subtle wobble (head is a child group, so we use local rotation approximation)
+  // BB-8's head stays upright while body rolls — we simulate by counter-rotation on the whole group
+  // Since head isn't a separate group, we use a gentle overall bob
 
   // ── Face direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
