@@ -131,90 +131,122 @@ let bubbleObj = null; // CSS2D bubble element
 function buildClippy() {
   const g = new THREE.Group();
 
-  // ── Body — smooth white ovoid (EVE-like) ──
-  const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2, emissive: 0x222222, emissiveIntensity: 0.05 });
-  const whiteMatShiny = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.5, roughness: 0.15, emissive: 0x333333, emissiveIntensity: 0.05 });
+  // ── Materials ──
+  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2 });
+  const whiteShiny = new THREE.MeshStandardMaterial({ color: 0xfafafa, metalness: 0.5, roughness: 0.1 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.3 });
+  const blueGlow = new THREE.MeshStandardMaterial({ color: 0x88ddff, emissive: 0x44aaff, emissiveIntensity: 0.6 });
+  const pinkAccent = new THREE.MeshStandardMaterial({ color: 0xffaaaa, metalness: 0.1, roughness: 0.5 });
 
-  // Main body — stretched sphere (egg shape)
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.5, 28, 28), whiteMat);
-  body.scale.set(1, 1.15, 0.85);
-  body.position.y = 0.35;
+  // ── Body ──
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.45, 24, 24), white);
+  body.scale.set(1, 0.85, 0.9);
+  body.position.y = 0.15;
   g.add(body);
 
-  // Body accent ring
-  const accentMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.6, roughness: 0.1 });
-  const ringAccent = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.015, 12, 32), accentMat);
-  ringAccent.position.y = 0.1;
-  ringAccent.rotation.x = Math.PI / 2;
-  g.add(ringAccent);
+  // Chest plate
+  const chest = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), whiteShiny);
+  chest.scale.set(0.9, 0.7, 0.3);
+  chest.position.set(0, 0.1, 0.4);
+  g.add(chest);
 
-  // ── Eyes — blue glow ──
-  const blueGlow = new THREE.MeshStandardMaterial({ color: 0x88ddff, emissive: 0x44aaff, emissiveIntensity: 0.6 });
-  const eyeBack = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.3, roughness: 0.2 });
+  // ── Head ──
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 20), white);
+  head.scale.set(0.9, 0.8, 0.85);
+  head.position.set(0, 0.6, 0.25);
+  g.add(head);
 
-  // Eye sockets (shallow indent)
+  // Snout
+  const snout = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 14), white);
+  snout.scale.set(0.8, 0.5, 0.6);
+  snout.position.set(0, 0.5, 0.52);
+  g.add(snout);
+
+  // Nose
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), dark);
+  nose.position.set(0, 0.52, 0.6);
+  g.add(nose);
+
+  // ── Eyes ──
   const addEye = (x) => {
-    // Dark socket
-    const socket = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), eyeBack);
-    socket.position.set(x, 0.55, 0.45);
-    socket.scale.set(1, 0.8, 0.6);
-    g.add(socket);
-    // Blue glow eye
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 14), blueGlow);
-    eye.position.set(x, 0.55, 0.5);
-    eye.scale.set(1, 0.9, 0.6);
-    g.add(eye);
-    // Bright center dot
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    dot.position.set(x, 0.555, 0.53);
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), dark);
+    s.position.set(x, 0.66, 0.42);
+    s.scale.set(1, 0.8, 0.5);
+    g.add(s);
+    const e = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), blueGlow);
+    e.position.set(x, 0.665, 0.46);
+    e.scale.set(1, 0.9, 0.6);
+    g.add(e);
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    dot.position.set(x, 0.67, 0.48);
     g.add(dot);
   };
-  addEye(-0.15);
-  addEye(0.15);
+  addEye(-0.1);
+  addEye(0.1);
 
-  // ── Mouth (animated LED line) ──
-  const mouthMat = new THREE.MeshBasicMaterial({ color: 0x88ddff, transparent: true, opacity: 0.7 });
-  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.012, 0.02), mouthMat);
-  mouth.position.set(0, 0.38, 0.5);
+  // ── Ears ──
+  const earMat = new THREE.MeshStandardMaterial({ color: 0xe8d8d0, metalness: 0.1, roughness: 0.6 });
+  const addEar = (x) => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), earMat);
+    ear.position.set(x, 0.78, 0.25);
+    ear.scale.set(0.7, 1.4, 0.4);
+    g.add(ear);
+  };
+  addEar(-0.22);
+  addEar(0.22);
+
+  // ── Mouth (an LED line that animates when barking) ──
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.01, 0.02), new THREE.MeshBasicMaterial({ color: 0x88ddff, transparent: true, opacity: 0.6 }));
+  mouth.position.set(0, 0.42, 0.56);
   mouth.name = 'mouth';
   g.add(mouth);
 
-  // ── Arms — thin white ovals ──
-  const armMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.25 });
-  const addArm = (side) => {
-    const s = side;
-    const arm = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), armMat);
-    arm.position.set(s * 0.55, 0.3, 0);
-    arm.scale.set(1, 0.7, 0.8);
-    g.add(arm);
-    // Upper arm
-    const upper = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), armMat);
-    upper.position.set(s * 0.5, 0.45, 0);
-    upper.scale.set(1, 0.8, 0.7);
-    g.add(upper);
+  // ── Legs ──
+  const legMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.25 });
+  const addLeg = (x, z) => {
+    const leg = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), legMat);
+    leg.position.set(x, -0.22, z);
+    leg.scale.set(1, 0.9, 1.2);
+    leg.name = `leg_${x}_${z}`;
+    g.add(leg);
+    return leg;
   };
-  addArm(-1);
-  addArm(1);
+  const fl = addLeg(-0.2, 0.15);
+  const fr = addLeg(0.2, 0.15);
+  const bl = addLeg(-0.2, -0.2);
+  const br = addLeg(0.2, -0.2);
 
-  // ── Floating glow ring under body ──
-  const floatGlow = new THREE.Mesh(
-    new THREE.RingGeometry(0.15, 0.25, 24),
-    new THREE.MeshBasicMaterial({ color: 0x44aaff, transparent: true, opacity: 0.15, side: THREE.DoubleSide })
-  );
-  floatGlow.rotation.x = -Math.PI / 2;
-  floatGlow.position.y = -0.15;
-  g.add(floatGlow);
+  // ── Tail ──
+  const tailMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2 });
+  const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.025, 0.18, 6, 1, false), tailMat);
+  tail.position.set(0, 0.25, -0.45);
+  tail.rotation.x = 0.5;
+  tail.name = 'tail';
+  g.add(tail);
+  // Tail tip
+  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), tailMat);
+  tip.position.set(0, 0.35, -0.48);
+  tip.name = 'tailTip';
+  g.add(tip);
 
-  // Store references
-  const _browL = null, _browR = null, _mouth = mouth, _footL = null, _footR = null;
+  // ── Collar ──
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.02, 8, 20), pinkAccent);
+  collar.position.set(0, 0.33, 0.1);
+  collar.rotation.x = Math.PI / 3;
+  g.add(collar);
+
+  // Store animatable parts
+  const _mouth = mouth;
+  const _tail = tail;
+  const _tailTip = tip;
 
   clippy = g;
-  clippy.scale.set(0.6, 0.6, 0.6);
+  clippy.scale.set(0.7, 0.7, 0.7);
   clippy.position.set(0, -0.2, 0);
   scene.add(clippy);
-  clippy.userData = { browL: null, browR: null, mouth: _mouth, footL: null, footR: null };
+  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [fl, fr, bl, br] };
 
-  // ── Speech bubble (CSS2D) ──
+  // ── Speech bubble ──
   const div = document.createElement('div');
   div.id = 'bb';
   div.textContent = 'Hi!';
@@ -237,34 +269,24 @@ function showBubble(text, duration = 4000) {
 }
 
 // ── Emotion ──
+let tailWagPhase = 0;
+
 function triggerEmotion(emotion) {
   if (!clippy) return;
   currentEmotion = emotion;
-  const scale = { happy: 1.15, celebrate: 1.2, curious: 1.05, thinking: 1.0, oops: 0.9, idle: 1.0 };
+  const scale = { happy: 1.1, celebrate: 1.15, curious: 1.02, thinking: 1.0, oops: 0.95, idle: 1.0 };
   const s = scale[emotion] || 1;
   clippy.scale.set(s, s, s);
   setTimeout(() => { if (clippy) clippy.scale.set(1, 1, 1); }, 300);
-
-  // Animate eyebrows
-  const kids = clippy.children;
-  kids.forEach(k => {
-    if (k.isMesh && k.geometry.type === 'BoxGeometry' && k.position.y > 0.9) {
-      if (emotion === 'happy') { k.position.y = 1.04; k.rotation.z = 0; }
-      else if (emotion === 'oops') { k.rotation.z = 0.3; k.position.y = 1.0; }
-      else if (emotion === 'curious') { k.position.y = 1.06; k.rotation.z = 0; }
-      else if (emotion === 'thinking') { k.material.color.setHex(0x666666); setTimeout(() => k.material.color.setHex(0x333333), 2000); }
-      else { k.position.y = 1.02; k.rotation.z = 0; }
-    }
-  });
 }
 
 function emotionFromText(text) {
   const l = text.toLowerCase();
-  if (l.includes('🎉') || l.includes('amazing') || l.includes('great') || l.includes('well done') || l.includes('proud')) return 'celebrate';
-  if (l.includes('😊') || l.includes('happy') || l.includes('awesome') || l.includes('love') || l.includes('fun')) return 'happy';
-  if (l.includes('hmm') || l.includes('think') || l.includes('wonder') || l.includes('maybe') || l.includes('interest')) return 'curious';
-  if (l.includes('oops') || l.includes('sorry') || l.includes('mistake') || l.includes('error')) return 'oops';
-  if (l.includes('?') || l.includes('how') || l.includes('why') || l.includes('what') || l.includes('tell')) return 'curious';
+  if (l.includes('*tail wag*') || l.includes('*happy') || l.includes('yip') || l.includes('woof') || l.includes('excited') || l.includes('love') || l.includes('happy') || l.includes('🎉')) return 'happy';
+  if (l.includes('*tilt') || l.includes('*whimper') || l.includes('?') || l.includes('curious') || l.includes('what') || l.includes('how') || l.includes('why')) return 'curious';
+  if (l.includes('*yawn') || l.includes('*stretch') || l.includes('sleepy') || l.includes('tired')) return 'thinking';
+  if (l.includes('*play') || l.includes('fetch') || l.includes('play') || l.includes('game')) return 'celebrate';
+  if (l.includes('*growl') || l.includes('sorry') || l.includes('mistake') || l.includes('oops')) return 'oops';
   return 'happy';
 }
 
@@ -359,12 +381,20 @@ function updateRoaming() {
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
   clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
 
-  // ── Gentle floating bob ──
-  clippy.position.y += Math.sin(movePhase * 1.8) * 0.005;
+  // ── Tail wag (continuous when moving or idle) ──
+  tailWagPhase += 0.12;
+  if (clippy.userData.tail) {
+    const wag = Math.sin(tailWagPhase * 2) * 0.6 + 0.3; // 0.3 to 0.9 range
+    clippy.userData.tail.rotation.z = wag;
+    clippy.userData.tailTip.position.x = Math.sin(tailWagPhase * 2) * 0.04;
+  }
+
+  // ── Gentle trot bob ──
+  clippy.position.y += Math.sin(movePhase * 1.8) * 0.004;
 
   // ── Subtle body tilt ──
-  clippy.rotation.z = Math.sin(movePhase * 0.5) * 0.02;
-  clippy.rotation.x = Math.cos(movePhase * 0.3) * 0.01;
+  clippy.rotation.z = Math.sin(movePhase * 0.5) * 0.015;
+  clippy.rotation.x = Math.cos(movePhase * 0.3) * 0.008;
 
   // ── Face direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
