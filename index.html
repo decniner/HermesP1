@@ -393,29 +393,69 @@ function clampVec(v) {
   v.y = Math.max(_bounds.bottom, Math.min(_bounds.top, v.y));
 }
 
-// ── R2-D2 astro-droid sound generator ──
-function playR2D2Sound(textLength = 10) {
+// ── BB-8 Astromech Chirp & Whistle Sound Generator ──
+function playBB8Sound(textLength = 10) {
   let audioCtx;
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
+  try { 
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+  } catch { return; }
   if (!audioCtx) return;
-  for (let i = 0; i < Math.min(textLength, 15); i++) {
+
+  const totalChirps = Math.min(Math.max(textLength, 4), 18); // Dynamic chirp count
+  let delayAcc = 0;
+
+  for (let i = 0; i < totalChirps; i++) {
+    // BB-8 uses fast, uneven rhythm bursts rather than robotic fixed intervals
+    const stepDelay = 35 + Math.random() * 55; // 35ms - 90ms spacing
+    delayAcc += stepDelay;
+
     setTimeout(() => {
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        const startFreq = 600 + Math.random() * 2400;
-        const endFreq = startFreq + (Math.random() * 1000 - 500);
-        osc.type = Math.random() > 0.5 ? 'sine' : 'triangle';
-        osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(Math.max(100, endFreq), audioCtx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+
+        // BB-8 is high-pitched: 1200Hz up to 5500Hz
+        const baseFreq = 1200 + Math.random() * 3800;
+        const now = audioCtx.currentTime;
+        const duration = 0.05 + Math.random() * 0.08; // Short, snappy 50-130ms bursts
+
+        osc.type = 'sine'; // Crisp whistle tone
+
+        // BB-8 Pitch Sweeps: Rapid bends and double-ramps
+        const sweepType = Math.floor(Math.random() * 4);
+        osc.frequency.setValueAtTime(baseFreq, now);
+
+        if (sweepType === 0) {
+          // Rapid upward chirp
+          osc.frequency.exponentialRampToValueAtTime(Math.min(baseFreq * 1.8, 6000), now + duration);
+        } else if (sweepType === 1) {
+          // Rapid downward bleep
+          osc.frequency.exponentialRampToValueAtTime(Math.max(baseFreq * 0.4, 600), now + duration);
+        } else if (sweepType === 2) {
+          // Bouncy warble (Up then down)
+          osc.frequency.linearRampToValueAtTime(Math.min(baseFreq * 1.5, 5500), now + (duration * 0.5));
+          osc.frequency.linearRampToValueAtTime(Math.max(baseFreq * 0.6, 800), now + duration);
+        } else {
+          // Rapid vibrato frequency wobble
+          const vibratoSpeed = 25;
+          for (let v = 0; v < duration; v += 0.015) {
+            const freqOffset = (v % 0.03 < 0.015 ? 300 : -300);
+            osc.frequency.setValueAtTime(Math.min(Math.max(baseFreq + freqOffset, 800), 5500), now + v);
+          }
+        }
+
+        // Fast attack & soft fade volume envelope
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.12);
+
+        osc.start(now);
+        osc.stop(now + duration);
       } catch {}
-    }, i * 140);
+    }, delayAcc);
   }
 }
 
@@ -596,7 +636,7 @@ mic.addEventListener('click', () => {
 function speak(t) {
   const clean = t.replace(/[^\w\s.,!?'"@#$%^&*()\-=+\[\]{}|;:<>\/~`]/g,'').trim();
   // Play R2-D2 beeps based on text length
-  playR2D2Sound(clean.length);
+  playBB8Sound(clean.length);
   // Show text in bubble instead
   showBubble(clean);
   speakAnimate(true);
