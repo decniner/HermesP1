@@ -204,13 +204,22 @@ function buildClippy() {
   greenLight.position.set(0.15, 0.55, 0.25);
   g.add(greenLight);
 
-  // ── Antenna on top of head ──
+  // ── Antenna on top of head (animated + blinking) ──
+  const antennaGroup = new THREE.Group();
+  antennaGroup.position.set(0, 0.75, -0.05);
+  antennaGroup.name = 'antenna';
+
   const antennaBase = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.08, 6), silver);
-  antennaBase.position.set(0, 0.75, -0.05);
-  g.add(antennaBase);
-  const antennaTip = new THREE.Mesh(new THREE.SphereGeometry(0.015, 6, 6), silver);
-  antennaTip.position.set(0, 0.8, -0.05);
-  g.add(antennaTip);
+  antennaBase.position.y = 0.04;
+  antennaGroup.add(antennaBase);
+
+  // Blinking tip light
+  const tipLightMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+  const antennaLight = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), tipLightMat);
+  antennaLight.position.y = 0.09;
+  antennaLight.name = 'antennaLight';
+  antennaGroup.add(antennaLight);
+  g.add(antennaGroup);
 
   // ── Small panel detail on body ──
   const rect = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.01), silver);
@@ -221,12 +230,14 @@ function buildClippy() {
   const _mouth = null;
   const _tail = null;
   const _tailTip = null;
+  const _antennaLight = antennaLight;
+  const _antennaGroup = antennaGroup;
 
   clippy = g;
   clippy.scale.set(0.65, 0.65, 0.65);
   clippy.position.set(0, -0.1, 0);
   scene.add(clippy);
-  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [] };
+  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup };
 
   // ── Speech bubble ──
   const div = document.createElement('div');
@@ -616,6 +627,23 @@ function animate() {
   requestAnimationFrame(animate);
   if (mixer) mixer.update(0.016);
   updateRoaming();
+
+  // ── Antenna sway + blinking light ──
+  if (clippy && clippy.userData.antennaGroup) {
+    const ant = clippy.userData.antennaGroup;
+    ant.rotation.z = Math.sin(movePhase * 1.5) * 0.12;
+    ant.rotation.x = Math.cos(movePhase * 1.2) * 0.08;
+  }
+  if (clippy && clippy.userData.antennaLight) {
+    const light = clippy.userData.antennaLight;
+    // Cycle through colors
+    const colors = [0xff4444, 0x44ff44, 0x44aaff, 0xffdd44, 0xff44ff];
+    const idx = Math.floor(movePhase * 4) % colors.length;
+    if (light.material.color.getHex() !== colors[idx]) {
+      light.material.color.setHex(colors[idx]);
+    }
+  }
+
   renderer.render(scene, camera);
   labeler.render(scene, camera);
 }
