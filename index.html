@@ -73,7 +73,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 
 // ═══ CONFIG ═══
 const CONFIG = {
-  wsUrl: 'wss://stocks-routers-alive-wireless.trycloudflare.com',
+  wsUrl: 'wss://destinations-recommends-pumps-academic.trycloudflare.com',
   roamSpeed: 0.3,
   roamRadius: 2.5,
 };
@@ -116,7 +116,7 @@ const ring = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
 );
 ring.rotation.x = -Math.PI / 2;
-ring.position.y = -0.6;
+ring.position.y = -0.45;
 scene.add(ring);
 
 // ═══ BUILD CLIPPY (procedural paperclip) ═══
@@ -187,6 +187,19 @@ function buildClippy() {
   addArm(-1);
   addArm(1);
 
+  // ── Feet ──
+  const footMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, metalness: 0.5, roughness: 0.3 });
+  const footL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), footMat);
+  footL.position.set(-0.25, -0.05, 0);
+  footL.scale.set(1, 0.5, 1.3);
+  footL.name = 'footL';
+  g.add(footL);
+  const footR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), footMat);
+  footR.position.set(0.25, -0.05, 0);
+  footR.scale.set(1, 0.5, 1.3);
+  footR.name = 'footR';
+  g.add(footR);
+
   // ── Eyebrows + Mouth (references for animation) ──
   let _browL, _browR, _mouth;
 
@@ -210,11 +223,11 @@ function buildClippy() {
 
   clippy = g;
   clippy.scale.set(0.6, 0.6, 0.6);
-  clippy.position.set(0, -0.2, 0);
+  clippy.position.set(0, -0.4, 0);
   scene.add(clippy);
 
-  // Store brow/mouth refs on clippy for animation
-  clippy.userData = { browL: _browL, browR: _browR, mouth: _mouth };
+  // Store brow/mouth/foot refs on clippy for animation
+  clippy.userData = { browL: _browL, browR: _browR, mouth: _mouth, footL: footL, footR: footR };
 
   // ── Speech bubble (CSS2D) ──
   const div = document.createElement('div');
@@ -270,14 +283,41 @@ function emotionFromText(text) {
   return 'happy';
 }
 
-// ═══ CLIPPY GRACEFUL MOVEMENT + FACING ═══
+// ═══ CLIPPY WALKING + SOUND ═══
 
 let idleTime = 0;
 let movePhase = 0;
+let walkPhase = 0;
 let isPausing = false;
 let pauseTimer = 0;
 let isSpeaking = false;
 let speakPhase = 0;
+let lastStep = 0;
+
+// ── Footstep sound ──
+let audioCtx = null;
+function initAudio() {
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
+}
+function playStep() {
+  if (!audioCtx) return;
+  try {
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(200 + Math.random() * 100, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  } catch {}
+}
+
+initAudio();
 
 function setRoamTarget() {
   if (!roaming) return;
@@ -298,75 +338,74 @@ function speakAnimate(on) {
 
 function updateRoaming() {
   if (!clippy || isDragging) return;
-  movePhase += 0.02;
+  movePhase += 0.016;
   idleTime += 0.016;
+  walkPhase += 0.08; // 60fps step cycle
 
-  // ── Speaking animation overrides movement ──
+  // ── Speaking animation ──
   if (isSpeaking) {
     speakPhase += 0.016;
-
-    // Face camera
     clippy.rotation.y = 0;
-
-    // Gentle bob while speaking
-    clippy.position.y = -0.2 + Math.sin(speakPhase * 2.5) * 0.015;
-
-    // Mouth opens/closes rhythmically (scale Y)
+    clippy.position.y = -0.4 + Math.sin(speakPhase * 2.5) * 0.015;
     const mouthOpen = 0.5 + Math.sin(speakPhase * 14) * 0.3 + Math.sin(speakPhase * 22) * 0.15;
-    if (clippy.userData.mouth) {
-      clippy.userData.mouth.scale.y = Math.max(0.3, mouthOpen);
-    }
-
-    // Eyebrows wiggle
-    const browWiggle = Math.sin(speakPhase * 3) * 0.04;
-    if (clippy.userData.browL) {
-      clippy.userData.browL.position.y = 1.02 + browWiggle;
-      clippy.userData.browR.position.y = 1.02 + Math.sin(speakPhase * 3 + 0.5) * 0.04;
-    }
-
-    ring.position.x = clippy.position.x;
-    ring.position.z = clippy.position.z;
+    if (clippy.userData.mouth) clippy.userData.mouth.scale.y = Math.max(0.3, mouthOpen);
+    const bw = Math.sin(speakPhase * 3) * 0.04;
+    if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02 + bw; clippy.userData.browR.position.y = 1.02 + Math.sin(speakPhase * 3 + 0.5) * 0.04; }
+    // Feet still while speaking
+    if (clippy.userData.footL) { clippy.userData.footL.position.y = -0.05; clippy.userData.footR.position.y = -0.05; }
+    ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
 
   const dist = clippy.position.distanceTo(roamTarget);
 
-  // ── Pause briefly at each destination ──
-  if (dist < 0.15 && !isPausing) {
-    isPausing = true;
-    pauseTimer = 0;
+  // ── Pause at destination (standing still) ──
+  if (dist < 0.12 && !isPausing) {
+    isPausing = true; pauseTimer = 0;
   }
   if (isPausing) {
     pauseTimer += 0.016;
-    // Gentle idle bob while paused
-    clippy.position.y = -0.2 + Math.sin(idleTime * 1.6) * 0.025;
-    // Reset mouth when idle
+    clippy.position.y = -0.4 + Math.sin(idleTime * 1.6) * 0.02;
+    clippy.rotation.z = Math.sin(idleTime * 0.8) * 0.01;
+    // Reset feet to flat
+    if (clippy.userData.footL) { clippy.userData.footL.position.y = -0.05; clippy.userData.footR.position.y = -0.05; }
     if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
-    if (clippy.userData.browL) {
-      clippy.userData.browL.position.y = 1.02;
-      clippy.userData.browR.position.y = 1.02;
-    }
+    if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02; clippy.userData.browR.position.y = 1.02; }
     if (pauseTimer > 1.5 + Math.random() * 2) setRoamTarget();
-    ring.position.x = clippy.position.x;
-    ring.position.z = clippy.position.z;
+    ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
 
-  // ── Smooth ease-in-out movement ──
-  const speed = 0.02 + Math.min(dist * 0.01, 0.025);
-  const t = speed;
-  const ease = dist < 0.5 ? t * (2 - t) : t;
+  // ── Walk toward target ──
+  const speed = 0.015 + Math.min(dist * 0.008, 0.02);
+  const ease = dist < 0.5 ? speed * (2 - speed) : speed;
   clippy.position.x += (roamTarget.x - clippy.position.x) * ease;
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
   clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
 
-  // ── Gentle up/down float ──
-  clippy.position.y += Math.sin(movePhase * 1.8) * 0.004;
+  // ── Walking animation ──
+  // Body bob up/down with each step
+  const stepCycle = Math.sin(walkPhase);
+  clippy.position.y -= Math.abs(stepCycle) * 0.015;
 
-  // ── Body sway ──
-  clippy.rotation.z = Math.sin(movePhase * 0.6) * 0.025;
+  // Body sway side to side
+  clippy.rotation.z = Math.sin(walkPhase) * 0.035;
 
-  // ── Follow direction of travel ──
+  // Alternate foot lift
+  if (clippy.userData.footL) {
+    clippy.userData.footL.position.y = -0.05 + Math.max(0, -stepCycle) * 0.06;
+    clippy.userData.footR.position.y = -0.05 + Math.max(0, stepCycle) * 0.06;
+  }
+
+  // ── Footstep sound ──
+  const stepNorm = walkPhase / (Math.PI * 2);
+  const stepCount = Math.floor(stepNorm);
+  if (stepCount > lastStep) {
+    lastStep = stepCount;
+    if (stepCount % 2 === 0) playStep();
+  }
+
+  // ── Face direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
   const dirZ = roamTarget.z - clippy.position.z;
   if (Math.abs(dirX) > 0.01 || Math.abs(dirZ) > 0.01) {
@@ -374,22 +413,15 @@ function updateRoaming() {
     let diff = targetAngle - clippy.rotation.y;
     while (diff > Math.PI) diff -= Math.PI * 2;
     while (diff < -Math.PI) diff += Math.PI * 2;
-    clippy.rotation.y += diff * 0.02;
+    clippy.rotation.y += diff * 0.035;
   }
 
-  // ── Subtle head tilt wobble ──
-  clippy.rotation.x = Math.sin(movePhase * 1.2) * 0.01;
-
-  // ── Reset mouth when idle ──
+  // ── Reset mouth/brows when walking ──
   if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
-  if (clippy.userData.browL) {
-    clippy.userData.browL.position.y = 1.02;
-    clippy.userData.browR.position.y = 1.02;
-  }
+  if (clippy.userData.browL) { clippy.userData.browL.position.y = 1.02; clippy.userData.browR.position.y = 1.02; }
 
   // ── Glow ring follows ──
-  ring.position.x = clippy.position.x;
-  ring.position.z = clippy.position.z;
+  ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
 }
 
 // ═══ TOUCH / DRAG ═══
@@ -401,7 +433,7 @@ renderer.domElement.addEventListener('touchmove', (e) => {
   isDragging = true;
   const dx = (e.touches[0].clientX - touchPos.x) / window.innerWidth * 4;
   const dy = -(e.touches[0].clientY - touchPos.y) / window.innerHeight * 3;
-  clippy.position.x += dx; clippy.position.y = Math.max(-0.5, clippy.position.y + dy); clippy.position.z += dx * 0.5;
+  clippy.position.x += dx; clippy.position.y = Math.max(-0.4, clippy.position.y + dy); clippy.position.z += dx * 0.5;
   ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
   touchPos.x = e.touches[0].clientX; touchPos.y = e.touches[0].clientY;
 }, { passive: true });
