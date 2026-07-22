@@ -565,9 +565,49 @@ renderer.domElement.addEventListener('touchmove', (e) => {
   ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
   touchPos.x = e.touches[0].clientX; touchPos.y = e.touches[0].clientY;
 }, { passive: true });
+// ── Tap BB-8 for random mood sound ──
+const moods = ['happy', 'curious', 'celebrate', 'playful'];
+function tapBB8Sound() {
+  const mood = moods[Math.random() * moods.length | 0];
+  const freqMin = mood === 'happy' ? 1500 : mood === 'playful' ? 2000 : mood === 'curious' ? 800 : 1200;
+  const freqMax = mood === 'happy' ? 5000 : mood === 'playful' ? 5500 : mood === 'curious' ? 3000 : 4500;
+  const spacing = mood === 'playful' ? 40 : mood === 'happy' ? 60 : mood === 'curious' ? 90 : 70;
+  const count = 3 + Math.random() * 5 | 0;
+  playBB8SoundCustom(freqMin, freqMax, spacing, count);
+}
+
+function playBB8SoundCustom(freqMin, freqMax, spacing, count) {
+  let audioCtx;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
+  if (!audioCtx) return;
+  let delay = 0;
+  for (let i = 0; i < count; i++) {
+    delay += spacing + Math.random() * 20;
+    setTimeout(() => {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        const freq = freqMin + Math.random() * (freqMax - freqMin);
+        const dur = spacing / 1000 + 0.03;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(200, freq * (Math.random() > 0.5 ? 1.5 : 0.5)), now + dur);
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.15, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + dur);
+      } catch {}
+    }, delay);
+  }
+}
+
 renderer.domElement.addEventListener('touchend', () => {
   if (isDragging) { isDragging = false; setRoamTarget(); }
-  else triggerEmotion(['happy','curious','celebrate'][Math.random() * 3 | 0]);
+  else { triggerEmotion(['happy','curious','celebrate'][Math.random() * 3 | 0]); tapBB8Sound(); }
 }, { passive: true });
 
 renderer.domElement.addEventListener('mousedown', (e) => { touchPos.x = e.clientX; touchPos.y = e.clientY; });
@@ -582,7 +622,7 @@ renderer.domElement.addEventListener('mousemove', (e) => {
 });
 renderer.domElement.addEventListener('mouseup', () => {
   if (isDragging) { isDragging = false; setRoamTarget(); }
-  else triggerEmotion(['happy','curious','celebrate'][Math.random() * 3 | 0]);
+  else { triggerEmotion(['happy','curious','celebrate'][Math.random() * 3 | 0]); tapBB8Sound(); }
 });
 
 // ═══ WEBSOCKET ═══
