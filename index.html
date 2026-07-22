@@ -282,11 +282,11 @@ function triggerEmotion(emotion) {
 
 function emotionFromText(text) {
   const l = text.toLowerCase();
-  if (l.includes('yip') || l.includes('woof') || l.includes('excited') || l.includes('love') || l.includes('happy') || l.includes('🎉') || l.includes('!')) return 'happy';
-  if (l.includes('?') || l.includes('curious') || l.includes('what') || l.includes('how') || l.includes('why') || l.includes('hmm')) return 'curious';
-  if (l.includes('sleepy') || l.includes('tired') || l.includes('yawn') || l.includes('nap')) return 'thinking';
-  if (l.includes('play') || l.includes('fetch') || l.includes('game') || l.includes('fun')) return 'celebrate';
-  if (l.includes('sorry') || l.includes('mistake') || l.includes('oops') || l.includes('uh oh') || l.includes('aww')) return 'oops';
+  if (l.includes('whistle') || l.includes('chirp') || l.includes('bleep') || l.includes('happy') || l.includes('scan') || l.includes('operational') || l.includes('beep') || l.includes('!')) return 'happy';
+  if (l.includes('sassy') || l.includes('warble') || l.includes('disagree') || l.includes('grumpy') || l.includes('annoyed')) return 'curious';
+  if (l.includes('calculating') || l.includes('processing') || l.includes('query') || l.includes('think') || l.includes('?') || l.includes('analyze')) return 'thinking';
+  if (l.includes('panic') || l.includes('scream') || l.includes('danger') || l.includes('alert') || l.includes('emergency') || l.includes('help')) return 'oops';
+  if (l.includes('heroic') || l.includes('mission') || l.includes('complete') || l.includes('saved') || l.includes('success')) return 'celebrate';
   return 'happy';
 }
 
@@ -321,47 +321,78 @@ function clampVec(v) {
   v.y = Math.max(_bounds.bottom, Math.min(_bounds.top, v.y));
 }
 
-// ── Puppy bark sound ──
+// ── R2-D2 astro-droid sound generator ──
 let audioCtx = null;
 function initAudio() {
   try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
 }
-function playBark() {
+function playR2Sound(type) {
   if (!audioCtx) return;
   try {
     const now = audioCtx.currentTime;
-    // Bark = short noise burst + tone sweep
-    const noise = audioCtx.createBufferSource();
-    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.15, audioCtx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) {
-      const t = i / audioCtx.sampleRate;
-      d[i] = (Math.random() * 2 - 1) * Math.max(0, 1 - t / 0.15) * 0.6;
+    if (type === 'chirp' || !type) {
+      // Happy chirp: quick rising tones
+      for (let i = 0; i < 3; i++) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        const freq = 600 + i * 300 + Math.random() * 100;
+        osc.frequency.setValueAtTime(freq, now + i * 0.07);
+        osc.frequency.setValueAtTime(freq + 200, now + i * 0.07 + 0.04);
+        gain.gain.setValueAtTime(0.2, now + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.07);
+        osc.stop(now + i * 0.07 + 0.1);
+      }
+    } else if (type === 'bleep') {
+      // Single beep with vibrato
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.linearRampToValueAtTime(1200, now + 0.08);
+      osc.frequency.linearRampToValueAtTime(600, now + 0.15);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } else if (type === 'warble') {
+      // Sassy warble: modulated tone
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.linearRampToValueAtTime(600, now + 0.1);
+      osc.frequency.linearRampToValueAtTime(350, now + 0.2);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } else if (type === 'panic') {
+      // Panicked whistle: fast ascending
+      for (let i = 0; i < 4; i++) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        const freq = 500 + i * 400;
+        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+        osc.frequency.linearRampToValueAtTime(freq + 300, now + i * 0.05 + 0.03);
+        gain.gain.setValueAtTime(0.18 - i * 0.03, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.05);
+        osc.stop(now + i * 0.05 + 0.08);
+      }
     }
-    noise.buffer = buf;
-    const noiseGain = audioCtx.createGain();
-    noiseGain.gain.setValueAtTime(0.4, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    noise.connect(noiseGain);
-    noiseGain.connect(audioCtx.destination);
-    noise.start(now);
-    noise.stop(now + 0.15);
-
-    // Tone sweep: high → low (bark pitch)
-    const osc = audioCtx.createOscillator();
-    const oscGain = audioCtx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(800, now);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.12);
-    oscGain.gain.setValueAtTime(0.3, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    osc.connect(oscGain);
-    oscGain.connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.15);
   } catch {}
 }
-
 initAudio();
 
 function setRoamTarget() {
@@ -549,7 +580,7 @@ function speak(t) {
   const anyUk = voices.find(v => v.lang.startsWith('en-GB'));
   if (uk) u.voice = uk;
   else if (anyUk) u.voice = anyUk;
-  u.onstart = () => { dot.className = 'busy'; speakAnimate(true); playBark(); };
+  u.onstart = () => { dot.className = 'busy'; speakAnimate(true); playR2Sound('chirp'); };
   u.onend = () => { dot.className = 'on'; speakAnimate(false); };
   window.speechSynthesis.speak(u);
 }
