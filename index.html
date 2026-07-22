@@ -308,12 +308,12 @@ function updateBounds() {
   const dist = -camera.position.z;
   const height = 2 * Math.tan(vFov / 2) * dist;
   const width = height * camera.aspect;
-  const margin = 0.4;
+  const margin = 1.2;
   _bounds = {
     left: -width / 2 + margin,
     right: width / 2 - margin,
-    top: height / 2 - margin * 0.5,
-    bottom: -height / 2 + margin * 1.2,
+    top: height / 2 - margin * 0.6,
+    bottom: -height / 2 + margin * 0.8,
   };
 }
 
