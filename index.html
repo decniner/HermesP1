@@ -405,8 +405,8 @@ function playBB8Sound(textLength = 10) {
   let delayAcc = 0;
 
   for (let i = 0; i < totalChirps; i++) {
-    // BB-8 uses fast, uneven rhythm bursts rather than robotic fixed intervals
-    const stepDelay = 35 + Math.random() * 55; // 35ms - 90ms spacing
+    // BB-8 uses organic spacing — not too fast
+    const stepDelay = 120 + Math.random() * 120; // 120ms - 240ms spacing
     delayAcc += stepDelay;
 
     setTimeout(() => {
@@ -417,7 +417,7 @@ function playBB8Sound(textLength = 10) {
         // BB-8 is high-pitched: 1200Hz up to 5500Hz
         const baseFreq = 1200 + Math.random() * 3800;
         const now = audioCtx.currentTime;
-        const duration = 0.05 + Math.random() * 0.08; // Short, snappy 50-130ms bursts
+        const duration = 0.1 + Math.random() * 0.12; // 100-220ms bursts
 
         osc.type = 'sine'; // Crisp whistle tone
 
