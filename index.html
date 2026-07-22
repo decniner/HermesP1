@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>📎 Clippy — AI Assistant</title>
+<title>⚪ BB-8 — Astromech Droid</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse at center,#1a1a2e 0%,#0a0a15 100%);font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
@@ -47,7 +47,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
   <div id="bar">
     <button id="cam">📷</button>
     <button id="mic">🎤</button>
-    <input id="input" type="text" placeholder="Ask Clippy..." autocomplete="off">
+    <input id="input" type="text" placeholder="Ask BB-8..." autocomplete="off">
     <button id="send">➤</button>
   </div>
 </div>
@@ -648,7 +648,7 @@ function captureAndSend() {
   hideCam();
   camBtn.textContent = '📷';
   camBtn.style.background = 'rgba(108,99,255,.2)';
-  showBubble('📷 Clippy is looking...');
+  showBubble('📷 BB-8 is looking...');
   dot.className = 'busy';
   ws.send(JSON.stringify({ type: 'camera_image', image: b64 }));
 }
