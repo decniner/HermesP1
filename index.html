@@ -650,7 +650,6 @@ function connect() {
 function send(t) {
   if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
   clearBubble();
-  resetInactivityTimer();
 
   // ── Voice commands ──
   const lower = t.toLowerCase();
