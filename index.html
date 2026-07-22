@@ -116,7 +116,7 @@ const ring = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ color: 0x6c63ff, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
 );
 ring.rotation.x = -Math.PI / 2;
-ring.position.y = -0.25;
+ring.position.y = -0.3;
 scene.add(ring);
 
 // ═══ BUILD CLIPPY (procedural paperclip) ═══
@@ -132,112 +132,163 @@ function buildClippy() {
   const g = new THREE.Group();
 
   // ── Materials ──
-  const white = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.3, roughness: 0.25 });
-  const orange = new THREE.MeshStandardMaterial({ color: 0xff8833, metalness: 0.4, roughness: 0.3 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.3 });
-  const darkMatte = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8, metalness: 0.1 });
-  const silver = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.7, roughness: 0.15 });
-  const eyeWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.2, roughness: 0.3 });
+  const orange = new THREE.MeshStandardMaterial({ color: 0xee7722, metalness: 0.3, roughness: 0.35 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8, metalness: 0.1 });
+  const silver = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 });
+  const darkSilver = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.6, roughness: 0.3 });
+  const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
-  // ── Body: Large sphere (orange & white hemispheres) ──
-  // White half (top-back)
-  const bodyWhite = new THREE.Mesh(new THREE.SphereGeometry(0.5, 28, 28), white);
-  bodyWhite.scale.set(1, 0.95, 1);
-  bodyWhite.position.y = 0.05;
-  g.add(bodyWhite);
+  // ── Body: Large sphere ──
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 30, 30), white);
+  body.scale.set(1, 0.95, 1);
+  body.position.y = 0.02;
+  g.add(body);
 
-  // Orange half (bottom-front wrap) — using a partial sphere approach
-  // Instead of complex geometry, overlay orange panels as flat arcs on the sphere
+  // ── Orange body panels (sweeping bands) ──
+  // Lower front orange band
+  const bandLow = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), orange);
+  bandLow.position.set(0, -0.1, 0.3);
+  bandLow.scale.set(1.5, 0.35, 0.5);
+  g.add(bandLow);
 
-  // Main orange band: Cylinder-shaped slice around the middle
-  const orangeBand = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.25, 28, 1, true, 0, Math.PI * 1.5), orange);
-  orangeBand.position.y = 0.0;
-  orangeBand.rotation.z = 0.2;
-  g.add(orangeBand);
+  // Left orange circle (large)
+  const leftCircle = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), orange);
+  leftCircle.position.set(-0.38, -0.05, 0.05);
+  leftCircle.scale.set(0.8, 1.2, 0.3);
+  g.add(leftCircle);
 
-  // Orange panel on front-lower area
-  const orangePanel = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), orange);
-  orangePanel.position.set(0.15, -0.2, 0.45);
-  orangePanel.scale.set(1.2, 1.0, 0.3);
-  g.add(orangePanel);
+  // Right orange area
+  const rightArea = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), orange);
+  rightArea.position.set(0.4, 0.0, 0.05);
+  rightArea.scale.set(0.6, 1.0, 0.3);
+  g.add(rightArea);
 
-  // ── Panel lines (thin dark rings and arcs) ──
-  const lineMat = new THREE.MeshBasicMaterial({ color: 0x444444 });
+  // Ocean floor orange band (bottom sweep)
+  const bottomBand = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.35, 0.2, 24, 1, true, 0, Math.PI * 1.8), orange);
+  bottomBand.position.set(0, -0.2, 0.1);
+  bottomBand.rotation.x = 0.2;
+  g.add(bottomBand);
 
-  // Equator ring
-  const equator = new THREE.Mesh(new THREE.TorusGeometry(0.49, 0.008, 8, 32), lineMat);
-  equator.position.y = 0.08;
-  equator.rotation.x = Math.PI / 2;
-  equator.rotation.z = 0.1;
-  g.add(equator);
+  // ── Body panel details (silver) ──
+  // Left side — curved silver panel
+  const leftPanel = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 14), silver);
+  leftPanel.position.set(-0.4, -0.05, 0.08);
+  leftPanel.scale.set(0.5, 0.8, 0.15);
+  g.add(leftPanel);
 
-  // Vertical panel line
-  const vLine = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.5, 0.5), lineMat);
-  vLine.position.set(0.25, 0.05, 0);
-  g.add(vLine);
+  // Right side — silver panel with vertical slots
+  const rightPanel = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 14), silver);
+  rightPanel.position.set(0.42, 0.0, 0.08);
+  rightPanel.scale.set(0.4, 0.7, 0.15);
+  g.add(rightPanel);
 
-  // ── Head: White dome on top ──
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 20, 0, Math.PI * 2, 0, Math.PI / 2), white);
-  head.position.set(0, 0.52, 0);
+  // Bottom vent panel (horizontal slats)
+  const vent = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.02), darkSilver);
+  vent.position.set(0, -0.24, 0.42);
+  g.add(vent);
+  const vent2 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.02), darkSilver);
+  vent2.position.set(0, -0.18, 0.42);
+  g.add(vent2);
+
+  // ── Panel lines & bolts ──
+  const lineMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
+  // Equator line
+  const eq = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.006, 6, 32), lineMat);
+  eq.position.y = 0.1;
+  eq.rotation.x = Math.PI / 2;
+  eq.rotation.z = 0.05;
+  g.add(eq);
+  // Vertical seam
+  const vs = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.4, 0.4), lineMat);
+  vs.position.set(0.2, 0.05, 0);
+  g.add(vs);
+
+  // Small bolt dots
+  const boltMat = new THREE.MeshBasicMaterial({ color: 0x888888 });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const bolt = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 6), boltMat);
+    bolt.position.set(Math.cos(a) * 0.4, 0.1 + Math.sin(a) * 0.2, Math.sin(a) * 0.4);
+    g.add(bolt);
+  }
+
+  // ── Head: White dome ──
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 22, 22, 0, Math.PI * 2, 0, Math.PI / 1.9), white);
+  head.position.set(0, 0.45, 0.02);
   g.add(head);
 
-  // Head bottom rim
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.01, 8, 24), silver);
-  rim.position.set(0, 0.35, 0);
+  // Head rim (silver)
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.012, 8, 24), silver);
+  rim.position.set(0, 0.32, 0.02);
   g.add(rim);
 
-  // ── Eye: Single large dark circle with white dot ──
-  const eyeSocket = new THREE.Mesh(new THREE.SphereGeometry(0.1, 14, 14), darkMatte);
-  eyeSocket.position.set(0, 0.55, 0.28);
-  eyeSocket.scale.set(1, 0.85, 0.5);
-  g.add(eyeSocket);
+  // ── Eyes (two, like the reference — left larger, right smaller) ──
+  // Left eye (larger, higher)
+  const eSocketL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), eyeBlack);
+  eSocketL.position.set(-0.13, 0.52, 0.26);
+  eSocketL.scale.set(1, 0.9, 0.5);
+  g.add(eSocketL);
+  // Left eye ring
+  const ringL = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 8, 16), silver);
+  ringL.position.set(-0.13, 0.52, 0.28);
+  g.add(ringL);
 
-  const eyeDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeWhite);
-  eyeDot.position.set(0, 0.55, 0.32);
-  g.add(eyeDot);
+  // Right eye (smaller, lower)
+  const eSocketR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 14), eyeBlack);
+  eSocketR.position.set(0.18, 0.44, 0.26);
+  eSocketR.scale.set(1, 0.9, 0.5);
+  g.add(eSocketR);
+  const ringR = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.012, 8, 16), silver);
+  ringR.position.set(0.18, 0.44, 0.28);
+  g.add(ringR);
 
-  // ── Small indicator lights on head ──
-  const blueLight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0x44aaff }));
-  blueLight.position.set(-0.15, 0.55, 0.25);
-  g.add(blueLight);
-  const greenLight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0x44ff44 }));
-  greenLight.position.set(0.15, 0.55, 0.25);
-  g.add(greenLight);
+  // ── Head orange stripes ──
+  // Horizontal stripe on left side
+  const hStripe = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.15), orange);
+  hStripe.position.set(-0.04, 0.58, 0.1);
+  g.add(hStripe);
 
-  // ── Antenna on top of head (animated + blinking) ──
+  // Three vertical stripes on right side
+  for (let i = 0; i < 3; i++) {
+    const vStripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.12), orange);
+    vStripe.position.set(0.1 + i * 0.04, 0.6, 0.1);
+    g.add(vStripe);
+  }
+
+  // ── Top sensor array (grey semi-circle) ──
+  const sensor = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), darkSilver);
+  sensor.position.set(0, 0.67, -0.05);
+  sensor.scale.set(0.8, 0.3, 0.5);
+  g.add(sensor);
+
+  // ── Antenna (black with white tip) ──
   const antennaGroup = new THREE.Group();
-  antennaGroup.position.set(0, 0.75, -0.05);
+  antennaGroup.position.set(0, 0.68, -0.04);
   antennaGroup.name = 'antenna';
-
-  const antennaBase = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.14, 6), silver);
-  antennaBase.position.y = 0.07;
-  antennaGroup.add(antennaBase);
-
-  // Blinking tip light
-  const tipLightMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
-  const antennaLight = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), tipLightMat);
-  antennaLight.position.y = 0.15;
-  antennaLight.name = 'antennaLight';
-  antennaGroup.add(antennaLight);
+  const antBase = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.012, 0.15, 6), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  antBase.position.y = 0.075;
+  antennaGroup.add(antBase);
+  const antTip = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  antTip.position.y = 0.16;
+  antTip.name = 'antennaLight';
+  antennaGroup.add(antTip);
   g.add(antennaGroup);
 
-  // ── Small panel detail on body ──
-  const rect = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.01), silver);
-  rect.position.set(-0.3, -0.05, 0.45);
-  g.add(rect);
+  // ── Small rectangular silver panel below left eye ──
+  const rectPanel = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.025, 0.01), silver);
+  rectPanel.position.set(-0.13, 0.45, 0.28);
+  g.add(rectPanel);
 
   // Store references
-  const _mouth = null;
-  const _tail = null;
-  const _tailTip = null;
-  const _antennaLight = antennaLight;
+  const _antennaLight = antTip;
   const _antennaGroup = antennaGroup;
 
   clippy = g;
-  clippy.scale.set(0.65, 0.65, 0.65);
-  clippy.position.set(0, -0.1, 0);
+  clippy.scale.set(0.6, 0.6, 0.6);
+  clippy.position.set(0, -0.05, 0);
   scene.add(clippy);
-  clippy.userData = { mouth: _mouth, tail: _tail, tailTip: _tailTip, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup };
+  clippy.userData = { mouth: null, tail: null, tailTip: null, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup };
 
   // ── Speech bubble ──
   const div = document.createElement('div');
@@ -637,7 +688,7 @@ function animate() {
   if (clippy && clippy.userData.antennaLight) {
     const light = clippy.userData.antennaLight;
     // Cycle through colors
-    const colors = [0xff4444, 0x44ff44, 0x44aaff, 0xffdd44, 0xff44ff];
+    const colors = [0xffffff, 0xff4444, 0x44ff44, 0x44aaff, 0xffdd44];
     const idx = Math.floor(movePhase * 4) % colors.length;
     if (light.material.color.getHex() !== colors[idx]) {
       light.material.color.setHex(colors[idx]);
