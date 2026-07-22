@@ -58,13 +58,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
   <div id="hlist"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.168.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.168.0/examples/jsm/"
+  }
+}
+</script>
 
-<script>
+<script type="module">
+import * as THREE from 'three';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
 // ═══ CONFIG ═══
 const CONFIG = {
-  wsUrl: 'wss://engaged-receiver-mode-spin.trycloudflare.com',
+  wsUrl: 'wss://plots-pontiac-breach-sciences.trycloudflare.com',
   roamSpeed: 0.3,
   roamRadius: 2.5,
 };
@@ -84,7 +93,7 @@ renderer.toneMappingExposure = 1.2;
 container.appendChild(renderer.domElement);
 
 // CSS2D overlay for speech bubble
-const labeler = new THREE.CSS2DRenderer();
+const labeler = new CSS2DRenderer();
 labeler.setSize(window.innerWidth, window.innerHeight);
 labeler.domElement.style.position = 'fixed';
 labeler.domElement.style.top = '0';
@@ -125,195 +134,6 @@ function buildClippy() {
   // ── Generate seamless BB-8 body texture ──
   function makeBodyTexture() {
     const c = document.createElement('canvas');
-    c.width = 1024; c.height = 512;
-    const ctx = c.getContext('2d');
-    const W = c.width, H = c.height;
-
-    // ── Base: white ──
-    ctx.fillStyle = '#ececec';
-    ctx.fillRect(0, 0, W, H);
-
-    // Subtle surface texture (noise dots for realism)
-    for (let i = 0; i < 800; i++) {
-      const x = Math.random() * W, y = Math.random() * H;
-      ctx.fillStyle = `rgba(200,200,200,${Math.random() * 0.15})`;
-      ctx.beginPath(); ctx.arc(x, y, Math.random() * 1.5, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // ── Central panel lines (equator ring) ──
-    ctx.strokeStyle = '#555';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(0, H/2);
-    ctx.lineTo(W, H/2);
-    ctx.stroke();
-
-    // Thinner secondary line above equator
-    ctx.strokeStyle = '#777';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, H/2 - 12);
-    ctx.lineTo(W, H/2 - 12);
-    ctx.stroke();
-
-    // ── Orange bands ──
-
-    // Lower front sweeping band (wraps from front-left to front-right)
-    ctx.fillStyle = '#e07020';
-    ctx.beginPath();
-    ctx.ellipse(W/2, H * 0.68, W * 0.28, H * 0.18, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Darker orange accent inside
-    ctx.fillStyle = '#cc6618';
-    ctx.beginPath();
-    ctx.ellipse(W/2, H * 0.70, W * 0.22, H * 0.10, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Left orange circle (large patch)
-    ctx.fillStyle = '#e07020';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.18, H * 0.48, W * 0.10, H * 0.22, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Darker inner ring
-    ctx.fillStyle = '#cc6618';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.18, H * 0.48, W * 0.07, H * 0.17, 0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Right orange area
-    ctx.fillStyle = '#e07020';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.82, H * 0.48, W * 0.08, H * 0.18, -0.1, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#cc6618';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.82, H * 0.48, W * 0.055, H * 0.14, -0.1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Bottom sweep band
-    ctx.fillStyle = '#e07020';
-    ctx.beginPath();
-    ctx.ellipse(W/2, H * 0.80, W * 0.32, H * 0.12, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // ── Silver panel on left (inside orange circle) ──
-    // Curved D-shape panel with cutout
-    ctx.fillStyle = '#c8c8c8';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.18, H * 0.49, W * 0.045, H * 0.12, 0.3, 0, Math.PI * 2);
-    ctx.fill();
-    // Panel rim
-    ctx.strokeStyle = '#999';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.ellipse(W * 0.18, H * 0.49, W * 0.047, H * 0.125, 0.3, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Small screw dots on left panel
-    ctx.fillStyle = '#888';
-    [[-0.032, -0.08], [0.035, -0.08], [-0.03, 0.08], [0.03, 0.08]].forEach(([dx, dy]) => {
-      ctx.beginPath();
-      ctx.arc(W * 0.18 + dx * W, H * 0.49 + dy * H, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // ── Silver panel on right ──
-    ctx.fillStyle = '#c8c8c8';
-    ctx.beginPath();
-    ctx.ellipse(W * 0.82, H * 0.48, W * 0.035, H * 0.10, -0.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Vertical slots on right panel
-    ctx.fillStyle = '#888';
-    for (let i = -2; i <= 2; i++) {
-      ctx.fillRect(W * 0.82 - 3 + i * 5, H * 0.42, 2, H * 0.12);
-    }
-
-    // Panel rim
-    ctx.strokeStyle = '#999';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.ellipse(W * 0.82, H * 0.48, W * 0.037, H * 0.105, -0.2, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // ── Bottom vents (horizontal slats) ──
-    const ventX = W * 0.46, ventY = H * 0.78;
-    ctx.fillStyle = '#777';
-    for (let i = 0; i < 4; i++) {
-      ctx.fillRect(ventX, ventY + i * 6, 50, 2.5);
-    }
-
-    // Vent border box
-    ctx.strokeStyle = '#888';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(ventX - 2, ventY - 2, 54, 22);
-
-    // ── Vertical seam lines ──
-    ctx.strokeStyle = '#555';
-    ctx.lineWidth = 2;
-    // Front seam (near center-right)
-    ctx.beginPath();
-    ctx.moveTo(W * 0.65, 0);
-    ctx.lineTo(W * 0.65, H);
-    ctx.stroke();
-
-    // Back seam (near center-left)
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(W * 0.15, 0);
-    ctx.lineTo(W * 0.15, H);
-    ctx.stroke();
-
-    // ── Horizontal panel lines (arcs) ──
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 1.2;
-
-    // Arc above equator
-    ctx.beginPath();
-    ctx.ellipse(W * 0.5, H * 0.42, W * 0.28, H * 0.06, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Lower arc
-    ctx.beginPath();
-    ctx.ellipse(W * 0.5, H * 0.60, W * 0.22, H * 0.05, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // ── Bolt/screw dots around body ──
-    ctx.fillStyle = '#888';
-    const boltPositions = [
-      [W * 0.05, H * 0.35], [W * 0.10, H * 0.30],
-      [W * 0.30, H * 0.28], [W * 0.50, H * 0.25],
-      [W * 0.70, H * 0.28], [W * 0.85, H * 0.30],
-      [W * 0.92, H * 0.35], [W * 0.08, H * 0.65],
-      [W * 0.25, H * 0.70], [W * 0.75, H * 0.70],
-      [W * 0.92, H * 0.65]
-    ];
-    boltPositions.forEach(([bx, by]) => {
-      ctx.beginPath();
-      ctx.arc(bx, by, 4, 0, Math.PI * 2);
-      ctx.fill();
-      // Dark outline
-      ctx.strokeStyle = '#555';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    });
-
-    // ── Subtle shadow gradient at bottom ──
-    const grad = ctx.createRadialGradient(W/2, H * 0.7, 10, W/2, H * 0.85, W * 0.4);
-    grad.addColorStop(0, 'rgba(0,0,0,0)');
-    grad.addColorStop(1, 'rgba(0,0,0,0.08)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, H * 0.6, W, H * 0.4);
-
-    return new THREE.CanvasTexture(c);
-  }
-
-  // ── Generate seamless head dome texture ──
-  function makeHeadTexture() {
-    const c = document.createElement('canvas');
     c.width = 512; c.height = 256;
     const ctx = c.getContext('2d');
 
@@ -321,34 +141,100 @@ function buildClippy() {
     ctx.fillStyle = '#f0f0f0';
     ctx.fillRect(0, 0, 512, 256);
 
-    // Horizontal orange stripe (left side of dome)
-    ctx.fillStyle = '#e07020';
-    ctx.fillRect(90, 75, 70, 8);
-
-    // Three vertical orange stripes (right side)
-    for (let i = 0; i < 3; i++) {
-      ctx.fillRect(310 + i * 12, 40, 6, 40);
-    }
-
-    // Top sensor area (grey semi-circle)
-    ctx.fillStyle = '#888';
+    // Orange sweeping band (bottom front) — UV v = 0.5 to 0.85, u = 0.3 to 0.7
+    ctx.fillStyle = '#ee7722';
     ctx.beginPath();
-    ctx.ellipse(256, 18, 80, 14, 0, 0, Math.PI * 2);
+    ctx.ellipse(256, 180, 130, 50, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Sensor detail line
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 1;
+    // Left orange circle (UV: u ~ 0.2, v ~ 0.5)
     ctx.beginPath();
-    ctx.ellipse(256, 18, 70, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(90, 130, 45, 55, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Right orange area (UV: u ~ 0.8, v ~ 0.5)
+    ctx.beginPath();
+    ctx.ellipse(420, 130, 35, 45, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bottom orange sweep
+    ctx.beginPath();
+    ctx.ellipse(256, 200, 150, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Silver panel on left (inside left orange circle)
+    ctx.fillStyle = '#bbbbbb';
+    ctx.beginPath();
+    ctx.ellipse(90, 132, 22, 32, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Subtle panel lines on dome
-    ctx.strokeStyle = '#ccc';
-    ctx.lineWidth = 1;
+    // Silver panel on right
     ctx.beginPath();
-    ctx.ellipse(256, 128, 200, 30, 0, Math.PI, Math.PI * 2);
+    ctx.ellipse(422, 130, 18, 28, -0.2, 0, Math.PI * 2);
+    ctx.fill();
     ctx.stroke();
+
+    // Bottom vents (horizontal slats)
+    ctx.fillStyle = '#888';
+    ctx.fillRect(200, 200, 60, 6);
+    ctx.fillRect(200, 210, 55, 4);
+
+    // Equator line
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 128);
+    ctx.lineTo(512, 128);
+    ctx.stroke();
+
+    // Vertical seam line
+    ctx.beginPath();
+    ctx.moveTo(80, 0);
+    ctx.lineTo(80, 256);
+    ctx.stroke();
+
+    // Bolt dots
+    ctx.fillStyle = '#888';
+    const boltPositions = [
+      [50, 100], [150, 90], [300, 85], [400, 95], [470, 110], [30, 150]
+    ];
+    boltPositions.forEach(([bx, by]) => {
+      ctx.beginPath();
+      ctx.arc(bx, by, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Orange head stripes area (will be on separate head texture but paint faint guides)
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Generate seamless head dome texture ──
+  function makeHeadTexture() {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 128;
+    const ctx = c.getContext('2d');
+
+    // Base: white
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, 256, 128);
+
+    // Horizontal orange stripe (left side of dome)
+    ctx.fillStyle = '#ee7722';
+    ctx.fillRect(50, 38, 50, 6);
+
+    // Three vertical orange stripes (right side)
+    ctx.fillRect(160, 20, 5, 25);
+    ctx.fillRect(172, 20, 5, 25);
+    ctx.fillRect(184, 20, 5, 25);
+
+    // Top sensor area (grey)
+    ctx.fillStyle = '#888';
+    ctx.beginPath();
+    ctx.ellipse(128, 10, 40, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     return new THREE.CanvasTexture(c);
   }
@@ -431,7 +317,7 @@ function buildClippy() {
   div.id = 'bb';
   div.textContent = 'Hi!';
   div.style.cssText = 'background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;color:#fff;font-size:13px;line-height:1.4;max-width:220px;text-align:center;pointer-events:none;transition:opacity 0.3s;opacity:0;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
-  bubbleObj = new THREE.CSS2DObject(div);
+  bubbleObj = new CSS2DObject(div);
   bubbleObj.position.set(0, 1.7, 0);
   clippy.add(bubbleObj);
 
@@ -508,101 +394,70 @@ function clampVec(v) {
 }
 
 // ── BB-8 Astromech Chirp & Whistle Sound Generator ──
-// ── Emotional BB-8 Sound Synthesizer ──
-let idleTimer = null;
-let currentEmotion = 'happy';
-
-function playEmotionalBB8Sound(emotion = 'happy', textLength = 8) {
+function playBB8Sound(textLength = 10) {
   let audioCtx;
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
+  try { 
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+  } catch { return; }
   if (!audioCtx) return;
 
-  // Emotion Profiles: [Pitch Range Min, Pitch Range Max, Speed Interval (ms), Sweep Style]
-  const profiles = {
-    happy:   [1500, 5000, 45, 'bouncy'],
-    playful: [2000, 5500, 35, 'chirp'],
-    sad:     [400,  1200, 110, 'downward'],
-    lonely:  [500,  1400, 130, 'whimper'],
-    angry:   [800,  2800, 30, 'sawtooth_harsh']
-  };
-
-  const [minFreq, maxFreq, stepDelay, style] = profiles[emotion] || profiles.happy;
-  const count = Math.min(Math.max(textLength, 4), 16);
+  const totalChirps = Math.min(Math.max(textLength, 4), 18); // Dynamic chirp count
   let delayAcc = 0;
 
-  for (let i = 0; i < count; i++) {
-    delayAcc += stepDelay + (Math.random() * 20);
+  for (let i = 0; i < totalChirps; i++) {
+    // BB-8 uses organic spacing — not too fast
+    const stepDelay = 120 + Math.random() * 120; // 120ms - 240ms spacing
+    delayAcc += stepDelay;
 
     setTimeout(() => {
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
+
+        // BB-8 is high-pitched: 1200Hz up to 5500Hz
+        const baseFreq = 1200 + Math.random() * 3800;
         const now = audioCtx.currentTime;
-        const duration = stepDelay / 1000 + 0.03;
+        const duration = 0.1 + Math.random() * 0.12; // 100-220ms bursts
 
-        osc.type = style === 'sawtooth_harsh' ? 'sawtooth' : 'sine';
-        const startFreq = minFreq + Math.random() * (maxFreq - minFreq);
-        osc.frequency.setValueAtTime(startFreq, now);
+        osc.type = 'sine'; // Crisp whistle tone
 
-        if (style === 'downward' || style === 'whimper') {
-          osc.frequency.exponentialRampToValueAtTime(Math.max(150, startFreq * 0.4), now + duration);
-        } else if (style === 'bouncy' || style === 'chirp') {
-          osc.frequency.exponentialRampToValueAtTime(Math.min(6000, startFreq * 1.6), now + duration);
+        // BB-8 Pitch Sweeps: Rapid bends and double-ramps
+        const sweepType = Math.floor(Math.random() * 4);
+        osc.frequency.setValueAtTime(baseFreq, now);
+
+        if (sweepType === 0) {
+          // Rapid upward chirp
+          osc.frequency.exponentialRampToValueAtTime(Math.min(baseFreq * 1.8, 6000), now + duration);
+        } else if (sweepType === 1) {
+          // Rapid downward bleep
+          osc.frequency.exponentialRampToValueAtTime(Math.max(baseFreq * 0.4, 600), now + duration);
+        } else if (sweepType === 2) {
+          // Bouncy warble (Up then down)
+          osc.frequency.linearRampToValueAtTime(Math.min(baseFreq * 1.5, 5500), now + (duration * 0.5));
+          osc.frequency.linearRampToValueAtTime(Math.max(baseFreq * 0.6, 800), now + duration);
+        } else {
+          // Rapid vibrato frequency wobble
+          const vibratoSpeed = 25;
+          for (let v = 0; v < duration; v += 0.015) {
+            const freqOffset = (v % 0.03 < 0.015 ? 300 : -300);
+            osc.frequency.setValueAtTime(Math.min(Math.max(baseFreq + freqOffset, 800), 5500), now + v);
+          }
         }
 
+        // Fast attack & soft fade volume envelope
         gain.gain.setValueAtTime(0.01, now);
-        gain.gain.linearRampToValueAtTime(0.15, now + 0.01);
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
         osc.connect(gain);
         gain.connect(audioCtx.destination);
+
         osc.start(now);
         osc.stop(now + duration);
       } catch {}
     }, delayAcc);
   }
 }
-
-// ── Inactivity timer ──
-function resetInactivityTimer() {
-  clearTimeout(idleTimer);
-  if (currentEmotion === 'lonely' || currentEmotion === 'sad') {
-    setBB8State('happy');
-  }
-  idleTimer = setTimeout(triggerInactivityEmotion, 30000);
-}
-
-function triggerInactivityEmotion() {
-  setBB8State('lonely');
-  showBubble('😔 ... *sad low whimper*');
-  playEmotionalBB8Sound('lonely', 10);
-}
-
-function setBB8State(emotion) {
-  currentEmotion = emotion;
-  triggerEmotion(emotion === 'sad' || emotion === 'lonely' ? 'oops' : emotion === 'angry' ? 'curious' : 'happy');
-}
-
-// ── Emotion parser for incoming Hermes messages ──
-function handleIncomingHermesMessage(text) {
-  resetInactivityTimer();
-  let emotion = 'happy';
-  const lower = text.toLowerCase();
-  if (lower.includes('sad') || lower.includes('whimper') || lower.includes('sorry') || lower.includes('droop')) {
-    emotion = 'sad';
-  } else if (lower.includes('angry') || lower.includes('mad') || lower.includes('no!') || lower.includes('watch out')) {
-    emotion = 'angry';
-  } else if (lower.includes('play') || lower.includes('game') || lower.includes('wheee') || lower.includes('spin')) {
-    emotion = 'playful';
-  } else if (lower.includes('lonely') || lower.includes('miss')) {
-    emotion = 'lonely';
-  }
-  setBB8State(emotion);
-  playEmotionalBB8Sound(emotion, text.length);
-}
-
-document.addEventListener('touchstart', resetInactivityTimer);
-document.addEventListener('click', resetInactivityTimer);
 
 function setRoamTarget() {
   if (!roaming) return;
@@ -741,8 +596,8 @@ function connect() {
     try {
       const d = JSON.parse(e.data);
       if (d.type === 'clippy_message' && d.text) {
-        handleIncomingHermesMessage(d.text);
         speak(d.text);
+        emotionFromText(d.text);
         showBubble(stripEmoji(d.text));
         save('ai', d.text);
       }
@@ -755,7 +610,6 @@ function connect() {
 function send(t) {
   if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
   clearBubble();
-  resetInactivityTimer();
   ws.send(JSON.stringify({ type: 'user_message', text: t }));
   dot.className = 'busy';
   save('me', t);
@@ -781,8 +635,8 @@ mic.addEventListener('click', () => {
 
 function speak(t) {
   const clean = t.replace(/[^\w\s.,!?'"@#$%^&*()\-=+\[\]{}|;:<>\/~`]/g,'').trim();
-  // Use emotional sound based on current emotion
-  playEmotionalBB8Sound(currentEmotion, clean.length);
+  // Play R2-D2 beeps based on text length
+  playBB8Sound(clean.length);
   // Show text in bubble instead
   showBubble(clean);
   speakAnimate(true);
@@ -836,7 +690,6 @@ function captureAndSend() {
   camBtn.style.background = 'rgba(108,99,255,.2)';
   showBubble('📷 BB-8 is looking...');
   dot.className = 'busy';
-  resetInactivityTimer();
   ws.send(JSON.stringify({ type: 'camera_image', image: b64 }));
 }
 
