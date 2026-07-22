@@ -131,138 +131,161 @@ let bubbleObj = null; // CSS2D bubble element
 function buildClippy() {
   const g = new THREE.Group();
 
-  // ── Materials ──
-  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.2, roughness: 0.3 });
-  const orange = new THREE.MeshStandardMaterial({ color: 0xee7722, metalness: 0.3, roughness: 0.35 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8, metalness: 0.1 });
-  const silver = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 });
-  const darkSilver = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.6, roughness: 0.3 });
-  const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  // ── Generate seamless BB-8 body texture ──
+  function makeBodyTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 256;
+    const ctx = c.getContext('2d');
 
-  // ── Body: Large sphere ──
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 30, 30), white);
-  body.scale.set(1, 0.95, 1);
+    // Base: white
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, 512, 256);
+
+    // Orange sweeping band (bottom front) — UV v = 0.5 to 0.85, u = 0.3 to 0.7
+    ctx.fillStyle = '#ee7722';
+    ctx.beginPath();
+    ctx.ellipse(256, 180, 130, 50, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Left orange circle (UV: u ~ 0.2, v ~ 0.5)
+    ctx.beginPath();
+    ctx.ellipse(90, 130, 45, 55, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Right orange area (UV: u ~ 0.8, v ~ 0.5)
+    ctx.beginPath();
+    ctx.ellipse(420, 130, 35, 45, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bottom orange sweep
+    ctx.beginPath();
+    ctx.ellipse(256, 200, 150, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Silver panel on left (inside left orange circle)
+    ctx.fillStyle = '#bbbbbb';
+    ctx.beginPath();
+    ctx.ellipse(90, 132, 22, 32, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Silver panel on right
+    ctx.beginPath();
+    ctx.ellipse(422, 130, 18, 28, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Bottom vents (horizontal slats)
+    ctx.fillStyle = '#888';
+    ctx.fillRect(200, 200, 60, 6);
+    ctx.fillRect(200, 210, 55, 4);
+
+    // Equator line
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 128);
+    ctx.lineTo(512, 128);
+    ctx.stroke();
+
+    // Vertical seam line
+    ctx.beginPath();
+    ctx.moveTo(80, 0);
+    ctx.lineTo(80, 256);
+    ctx.stroke();
+
+    // Bolt dots
+    ctx.fillStyle = '#888';
+    const boltPositions = [
+      [50, 100], [150, 90], [300, 85], [400, 95], [470, 110], [30, 150]
+    ];
+    boltPositions.forEach(([bx, by]) => {
+      ctx.beginPath();
+      ctx.arc(bx, by, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Orange head stripes area (will be on separate head texture but paint faint guides)
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Generate seamless head dome texture ──
+  function makeHeadTexture() {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 128;
+    const ctx = c.getContext('2d');
+
+    // Base: white
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, 256, 128);
+
+    // Horizontal orange stripe (left side of dome)
+    ctx.fillStyle = '#ee7722';
+    ctx.fillRect(50, 38, 50, 6);
+
+    // Three vertical orange stripes (right side)
+    ctx.fillRect(160, 20, 5, 25);
+    ctx.fillRect(172, 20, 5, 25);
+    ctx.fillRect(184, 20, 5, 25);
+
+    // Top sensor area (grey)
+    ctx.fillStyle = '#888';
+    ctx.beginPath();
+    ctx.ellipse(128, 10, 40, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Body sphere with seamless texture ──
+  const bodyTex = makeBodyTexture();
+  const bodyMat = new THREE.MeshStandardMaterial({ map: bodyTex, roughness: 0.3, metalness: 0.1 });
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 36, 36), bodyMat);
   body.position.y = 0.02;
   g.add(body);
 
-  // ── Orange body panels (sweeping bands) ──
-  // Lower front orange band
-  const bandLow = new THREE.Mesh(new THREE.SphereGeometry(0.38, 20, 20), orange);
-  bandLow.position.set(0, -0.1, 0.3);
-  bandLow.scale.set(1.5, 0.35, 0.5);
-  g.add(bandLow);
-
-  // Left orange circle (large)
-  const leftCircle = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), orange);
-  leftCircle.position.set(-0.38, -0.05, 0.05);
-  leftCircle.scale.set(0.8, 1.2, 0.3);
-  g.add(leftCircle);
-
-  // Right orange area
-  const rightArea = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), orange);
-  rightArea.position.set(0.4, 0.0, 0.05);
-  rightArea.scale.set(0.6, 1.0, 0.3);
-  g.add(rightArea);
-
-  // Ocean floor orange band (bottom sweep)
-  const bottomBand = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.35, 0.2, 24, 1, true, 0, Math.PI * 1.8), orange);
-  bottomBand.position.set(0, -0.2, 0.1);
-  bottomBand.rotation.x = 0.2;
-  g.add(bottomBand);
-
-  // ── Body panel details (silver) ──
-  // Left side — curved silver panel
-  const leftPanel = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 14), silver);
-  leftPanel.position.set(-0.4, -0.05, 0.08);
-  leftPanel.scale.set(0.5, 0.8, 0.15);
-  g.add(leftPanel);
-
-  // Right side — silver panel with vertical slots
-  const rightPanel = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 14), silver);
-  rightPanel.position.set(0.42, 0.0, 0.08);
-  rightPanel.scale.set(0.4, 0.7, 0.15);
-  g.add(rightPanel);
-
-  // Bottom vent panel (horizontal slats)
-  const vent = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.02), darkSilver);
-  vent.position.set(0, -0.24, 0.42);
-  g.add(vent);
-  const vent2 = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.02), darkSilver);
-  vent2.position.set(0, -0.18, 0.42);
-  g.add(vent2);
-
-  // ── Panel lines & bolts ──
-  const lineMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
-  // Equator line
-  const eq = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.006, 6, 32), lineMat);
-  eq.position.y = 0.1;
-  eq.rotation.x = Math.PI / 2;
-  eq.rotation.z = 0.05;
-  g.add(eq);
-  // Vertical seam
-  const vs = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.4, 0.4), lineMat);
-  vs.position.set(0.2, 0.05, 0);
-  g.add(vs);
-
-  // Small bolt dots
-  const boltMat = new THREE.MeshBasicMaterial({ color: 0x888888 });
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2;
-    const bolt = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 6), boltMat);
-    bolt.position.set(Math.cos(a) * 0.4, 0.1 + Math.sin(a) * 0.2, Math.sin(a) * 0.4);
-    g.add(bolt);
-  }
-
-  // ── Head: White dome ──
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 22, 22, 0, Math.PI * 2, 0, Math.PI / 1.9), white);
+  // ── Head dome with seamless texture ──
+  const headTex = makeHeadTexture();
+  const headMat = new THREE.MeshStandardMaterial({ map: headTex, roughness: 0.3, metalness: 0.1 });
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 28, 0, Math.PI * 2, 0, Math.PI / 1.9), headMat);
   head.position.set(0, 0.45, 0.02);
   g.add(head);
 
-  // Head rim (silver)
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.012, 8, 24), silver);
+  // Head rim (silver ring, flush)
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.01, 8, 32), new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 }));
   rim.position.set(0, 0.32, 0.02);
   g.add(rim);
 
-  // ── Eyes (two, like the reference — left larger, right smaller) ──
-  // Left eye (larger, higher)
-  const eSocketL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), eyeBlack);
-  eSocketL.position.set(-0.13, 0.52, 0.26);
-  eSocketL.scale.set(1, 0.9, 0.5);
-  g.add(eSocketL);
-  // Left eye ring
-  const ringL = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 8, 16), silver);
-  ringL.position.set(-0.13, 0.52, 0.28);
-  g.add(ringL);
+  // ── Eyes (black spheres, flush on surface) ──
+  const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  const silver = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 });
+
+  // Left eye (slightly larger, higher)
+  const eL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), eyeBlack);
+  eL.position.set(-0.13, 0.52, 0.26);
+  eL.scale.set(1, 0.85, 0.4);
+  g.add(eL);
+  const rL = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.012, 8, 16), silver);
+  rL.position.set(-0.13, 0.52, 0.28);
+  g.add(rL);
 
   // Right eye (smaller, lower)
-  const eSocketR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 14, 14), eyeBlack);
-  eSocketR.position.set(0.18, 0.44, 0.26);
-  eSocketR.scale.set(1, 0.9, 0.5);
-  g.add(eSocketR);
-  const ringR = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.012, 8, 16), silver);
-  ringR.position.set(0.18, 0.44, 0.28);
-  g.add(ringR);
+  const eR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), eyeBlack);
+  eR.position.set(0.18, 0.44, 0.26);
+  eR.scale.set(1, 0.85, 0.4);
+  g.add(eR);
+  const rR = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 8, 16), silver);
+  rR.position.set(0.18, 0.44, 0.28);
+  g.add(rR);
 
-  // ── Head orange stripes ──
-  // Horizontal stripe on left side
-  const hStripe = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.15), orange);
-  hStripe.position.set(-0.04, 0.58, 0.1);
-  g.add(hStripe);
+  // Small rectangle below left eye
+  const rect = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.02, 0.005), silver);
+  rect.position.set(-0.13, 0.45, 0.28);
+  g.add(rect);
 
-  // Three vertical stripes on right side
-  for (let i = 0; i < 3; i++) {
-    const vStripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.08, 0.12), orange);
-    vStripe.position.set(0.1 + i * 0.04, 0.6, 0.1);
-    g.add(vStripe);
-  }
-
-  // ── Top sensor array (grey semi-circle) ──
-  const sensor = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), darkSilver);
-  sensor.position.set(0, 0.67, -0.05);
-  sensor.scale.set(0.8, 0.3, 0.5);
-  g.add(sensor);
-
-  // ── Antenna (black with white tip) ──
+  // ── Antenna on top ──
   const antennaGroup = new THREE.Group();
   antennaGroup.position.set(0, 0.68, -0.04);
   antennaGroup.name = 'antenna';
@@ -274,11 +297,6 @@ function buildClippy() {
   antTip.name = 'antennaLight';
   antennaGroup.add(antTip);
   g.add(antennaGroup);
-
-  // ── Small rectangular silver panel below left eye ──
-  const rectPanel = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.025, 0.01), silver);
-  rectPanel.position.set(-0.13, 0.45, 0.28);
-  g.add(rectPanel);
 
   // Store references
   const _antennaLight = antTip;
