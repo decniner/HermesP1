@@ -300,20 +300,19 @@ let pauseTimer = 0;
 let isSpeaking = false;
 let speakPhase = 0;
 let lastStep = 0;
-let _bounds = { left: -1.8, right: 1.8, top: 1.2, bottom: -1.0 };
+let _bounds = { left: -1.5, right: 1.5, top: 1.0, bottom: -0.8 };
 
 // Recalculate visible bounds when screen resizes
 function updateBounds() {
   const vFov = camera.fov * Math.PI / 180;
-  const dist = -camera.position.z;
+  const dist = Math.abs(camera.position.z);
   const height = 2 * Math.tan(vFov / 2) * dist;
   const width = height * camera.aspect;
-  const margin = 1.2;
   _bounds = {
-    left: -width / 2 + margin,
-    right: width / 2 - margin,
-    top: height / 2 - margin * 0.6,
-    bottom: -height / 2 + margin * 0.8,
+    left: -width * 0.35,
+    right: width * 0.35,
+    top: height * 0.35,
+    bottom: -height * 0.25,
   };
 }
 
