@@ -322,78 +322,30 @@ function clampVec(v) {
 }
 
 // ── R2-D2 astro-droid sound generator ──
-let audioCtx = null;
-function initAudio() {
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
-}
-function playR2Sound(type) {
+function playR2D2Sound(textLength = 10) {
+  let audioCtx;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
   if (!audioCtx) return;
-  try {
-    const now = audioCtx.currentTime;
-    if (type === 'chirp' || !type) {
-      // Happy chirp: quick rising tones
-      for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < Math.min(textLength, 15); i++) {
+    setTimeout(() => {
+      try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        const freq = 600 + i * 300 + Math.random() * 100;
-        osc.frequency.setValueAtTime(freq, now + i * 0.07);
-        osc.frequency.setValueAtTime(freq + 200, now + i * 0.07 + 0.04);
-        gain.gain.setValueAtTime(0.2, now + i * 0.07);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.1);
+        const startFreq = 600 + Math.random() * 2400;
+        const endFreq = startFreq + (Math.random() * 1000 - 500);
+        osc.type = Math.random() > 0.5 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(100, endFreq), audioCtx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start(now + i * 0.07);
-        osc.stop(now + i * 0.07 + 0.1);
-      }
-    } else if (type === 'bleep') {
-      // Single beep with vibrato
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.linearRampToValueAtTime(1200, now + 0.08);
-      osc.frequency.linearRampToValueAtTime(600, now + 0.15);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.18);
-    } else if (type === 'warble') {
-      // Sassy warble: modulated tone
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(400, now);
-      osc.frequency.linearRampToValueAtTime(600, now + 0.1);
-      osc.frequency.linearRampToValueAtTime(350, now + 0.2);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.25);
-    } else if (type === 'panic') {
-      // Panicked whistle: fast ascending
-      for (let i = 0; i < 4; i++) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        const freq = 500 + i * 400;
-        osc.frequency.setValueAtTime(freq, now + i * 0.05);
-        osc.frequency.linearRampToValueAtTime(freq + 300, now + i * 0.05 + 0.03);
-        gain.gain.setValueAtTime(0.18 - i * 0.03, now + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.08);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now + i * 0.05);
-        osc.stop(now + i * 0.05 + 0.08);
-      }
-    }
-  } catch {}
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch {}
+    }, i * 140);
+  }
 }
-initAudio();
 
 function setRoamTarget() {
   if (!roaming) return;
@@ -570,19 +522,13 @@ mic.addEventListener('click', () => {
 });
 
 function speak(t) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(t.replace(/[^\w\s.,!?'"@#$%^&*()\-=+\[\]{}|;:<>\/~`]/g,'').trim());
-  u.rate = 1.0; u.pitch = 1.1; u.volume = 1;
-  // Find British voice for C-3PO style
-  const voices = window.speechSynthesis.getVoices();
-  const uk = voices.find(v => v.lang === 'en-GB' && !v.name.includes('Female'));
-  const anyUk = voices.find(v => v.lang.startsWith('en-GB'));
-  if (uk) u.voice = uk;
-  else if (anyUk) u.voice = anyUk;
-  u.onstart = () => { dot.className = 'busy'; speakAnimate(true); playR2Sound('chirp'); };
-  u.onend = () => { dot.className = 'on'; speakAnimate(false); };
-  window.speechSynthesis.speak(u);
+  const clean = t.replace(/[^\w\s.,!?'"@#$%^&*()\-=+\[\]{}|;:<>\/~`]/g,'').trim();
+  // Play R2-D2 beeps based on text length
+  playR2D2Sound(clean.length);
+  // Show text in bubble instead
+  showBubble(clean, Math.max(3000, clean.length * 150));
+  speakAnimate(true);
+  setTimeout(() => speakAnimate(false), Math.min(clean.length * 80, 4000));
 }
 
 // ═══ CAMERA ═══
