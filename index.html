@@ -259,13 +259,18 @@ function buildClippy() {
 }
 
 // ── Bubble helper ──
-function showBubble(text, duration = 4000) {
+function showBubble(text) {
   if (!bubbleObj) return;
   const el = bubbleObj.element;
   el.textContent = text;
   el.style.opacity = '1';
   clearTimeout(el._hide);
-  el._hide = setTimeout(() => { el.style.opacity = '0'; }, duration);
+}
+
+function clearBubble() {
+  if (!bubbleObj) return;
+  const el = bubbleObj.element;
+  el.style.opacity = '0';
 }
 
 // ── Emotion ──
@@ -480,14 +485,14 @@ const dot = document.getElementById('dot');
 
 function connect() {
   ws = new WebSocket(CONFIG.wsUrl);
-  ws.onopen = () => { dot.className = 'on'; showBubble('✨ Hi! I\'m Clippy!', 2000); };
+  ws.onopen = () => { dot.className = 'on'; showBubble('✨ Beep boop! R2-D2 unit online!'); };
   ws.onmessage = (e) => {
     try {
       const d = JSON.parse(e.data);
       if (d.type === 'clippy_message' && d.text) {
         speak(d.text);
         emotionFromText(d.text);
-        showBubble(stripEmoji(d.text), 6000);
+        showBubble(stripEmoji(d.text));
         save('ai', d.text);
       }
     } catch {}
@@ -497,7 +502,8 @@ function connect() {
 }
 
 function send(t) {
-  if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...', 2000); return; }
+  if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
+  clearBubble();
   ws.send(JSON.stringify({ type: 'user_message', text: t }));
   dot.className = 'busy';
   save('me', t);
@@ -526,7 +532,7 @@ function speak(t) {
   // Play R2-D2 beeps based on text length
   playR2D2Sound(clean.length);
   // Show text in bubble instead
-  showBubble(clean, Math.max(3000, clean.length * 150));
+  showBubble(clean);
   speakAnimate(true);
   setTimeout(() => speakAnimate(false), Math.min(clean.length * 80, 4000));
 }
@@ -549,12 +555,12 @@ camBtn.addEventListener('click', async () => {
     camVideo.srcObject = camStream;
     camVideo.style.opacity = '0.3';
     await camVideo.play();
-    showBubble('📷 Say cheese! Tap 📷 again to capture what I see.', 3000);
+    showBubble('📷 Say cheese! Tap 📷 again to capture what I see.');
     camBtn.style.background = 'rgba(255,68,68,.4)';
     camBtn.textContent = '📸';
     camActive = true;
   } catch (e) {
-    showBubble('📷 Camera access denied! Check permissions.', 2500);
+    showBubble('📷 Camera access denied! Check permissions.');
     camBtn.textContent = '📷';
   }
 });
@@ -566,7 +572,7 @@ function hideCam() {
 }
 
 function captureAndSend() {
-  if (!camStream) { showBubble('📷 Tap 📷 first to open camera!', 2000); return; }
+  if (!camStream) { showBubble('📷 Tap 📷 first to open camera!'); return; }
   const c = document.createElement('canvas');
   c.width = camVideo.videoWidth || 640;
   c.height = camVideo.videoHeight || 480;
@@ -576,7 +582,7 @@ function captureAndSend() {
   hideCam();
   camBtn.textContent = '📷';
   camBtn.style.background = 'rgba(108,99,255,.2)';
-  showBubble('📷 Clippy is looking...', 3000);
+  showBubble('📷 Clippy is looking...');
   dot.className = 'busy';
   ws.send(JSON.stringify({ type: 'camera_image', image: b64 }));
 }
