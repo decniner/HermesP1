@@ -242,16 +242,18 @@ function buildClippy() {
   // ── Body sphere with seamless texture ──
   const bodyTex = makeBodyTexture();
   const bodyMat = new THREE.MeshStandardMaterial({ map: bodyTex, roughness: 0.3, metalness: 0.1 });
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 36, 36), bodyMat);
-  body.position.y = 0.02;
-  g.add(body);
+  const bodySphere = new THREE.Mesh(new THREE.SphereGeometry(0.48, 36, 36), bodyMat);
+  bodySphere.position.y = 0.02;
+  bodySphere.name = 'bodySphere';
+  g.add(bodySphere);
 
   // ── Head dome with seamless texture ──
   const headTex = makeHeadTexture();
   const headMat = new THREE.MeshStandardMaterial({ map: headTex, roughness: 0.3, metalness: 0.1 });
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 28, 0, Math.PI * 2, 0, Math.PI / 1.9), headMat);
-  head.position.set(0, 0.45, 0.02);
-  g.add(head);
+  const headDome = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 28, 0, Math.PI * 2, 0, Math.PI / 1.9), headMat);
+  headDome.position.set(0, 0.45, 0.02);
+  headDome.name = 'headDome';
+  g.add(headDome);
 
   // Head rim (silver ring, flush)
   const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.01, 8, 32), new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 }));
@@ -301,12 +303,14 @@ function buildClippy() {
   // Store references
   const _antennaLight = antTip;
   const _antennaGroup = antennaGroup;
+  const _bodySphere = bodySphere;
+  const _headDome = headDome;
 
   clippy = g;
   clippy.scale.set(0.6, 0.6, 0.6);
   clippy.position.set(0, -0.05, 0);
   scene.add(clippy);
-  clippy.userData = { mouth: null, tail: null, tailTip: null, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup };
+  clippy.userData = { mouth: null, tail: null, tailTip: null, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup, bodySphere: _bodySphere, headDome: _headDome };
 
   // ── Speech bubble ──
   const div = document.createElement('div');
@@ -473,16 +477,18 @@ function updateRoaming() {
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
   clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
 
-  // ── BB-8 wobble/roll animation ──
-  clippy.position.y += Math.sin(movePhase * 1.8) * 0.004;
-
-  // BB-8 body roll: slight rotation on Z and X axes (like a ball wobbling)
-  clippy.rotation.z = Math.sin(movePhase * 0.7) * 0.025;
-  clippy.rotation.x = Math.cos(movePhase * 0.5) * 0.02;
-
-  // Head independent subtle wobble (head is a child group, so we use local rotation approximation)
-  // BB-8's head stays upright while body rolls — we simulate by counter-rotation on the whole group
-  // Since head isn't a separate group, we use a gentle overall bob
+  // ── BB-8 body roll (sphere rolls, head stays upright) ──
+  if (clippy.userData.bodySphere && clippy.userData.headDome) {
+    const body = clippy.userData.bodySphere;
+    const head = clippy.userData.headDome;
+    // Body rolls in direction of travel on Z axis
+    const rollSpeed = movePhase * 2.5;
+    body.rotation.z = Math.sin(rollSpeed) * 0.3;
+    body.rotation.x = Math.cos(rollSpeed) * 0.25;
+    // Head counter-rolls slightly to stay upright (BB-8 effect)
+    head.rotation.z = -body.rotation.z * 0.6;
+    head.rotation.x = -body.rotation.x * 0.5;
+  }
 
   // ── Face direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
