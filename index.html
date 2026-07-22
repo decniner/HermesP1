@@ -551,7 +551,7 @@ const dot = document.getElementById('dot');
 
 function connect() {
   ws = new WebSocket(CONFIG.wsUrl);
-  ws.onopen = () => { dot.className = 'on'; showBubble('✨ Beep boop! R2-D2 unit online!'); };
+  ws.onopen = () => { dot.className = 'on'; showBubble('✨ Beep boop! BB-8 unit online!'); };
   ws.onmessage = (e) => {
     try {
       const d = JSON.parse(e.data);
