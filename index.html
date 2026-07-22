@@ -300,6 +300,27 @@ let pauseTimer = 0;
 let isSpeaking = false;
 let speakPhase = 0;
 let lastStep = 0;
+let _bounds = { left: -1.8, right: 1.8, top: 1.2, bottom: -1.0 };
+
+// Recalculate visible bounds when screen resizes
+function updateBounds() {
+  const vFov = camera.fov * Math.PI / 180;
+  const dist = -camera.position.z;
+  const height = 2 * Math.tan(vFov / 2) * dist;
+  const width = height * camera.aspect;
+  const margin = 0.4;
+  _bounds = {
+    left: -width / 2 + margin,
+    right: width / 2 - margin,
+    top: height / 2 - margin * 0.5,
+    bottom: -height / 2 + margin * 1.2,
+  };
+}
+
+function clampVec(v) {
+  v.x = Math.max(_bounds.left, Math.min(_bounds.right, v.x));
+  v.y = Math.max(_bounds.bottom, Math.min(_bounds.top, v.y));
+}
 
 // ── Footstep sound ──
 let audioCtx = null;
@@ -330,7 +351,8 @@ function setRoamTarget() {
   if (!roaming) return;
   const a = Math.random() * Math.PI * 2;
   const d = 0.3 + Math.random() * (CONFIG.roamRadius * 0.7);
-  roamTarget.set(Math.cos(a) * d, -0.1 + Math.random() * 0.3, Math.sin(a) * d * 0.6);
+  roamTarget.set(Math.cos(a) * d * 0.8, -0.1 + Math.random() * 0.3, Math.sin(a) * d * 0.6);
+  clampVec(roamTarget);
   isPausing = false;
 }
 
@@ -355,6 +377,7 @@ function updateRoaming() {
     clippy.position.y = -0.2 + Math.sin(speakPhase * 2.5) * 0.015;
     const mouthOpen = 0.5 + Math.sin(speakPhase * 14) * 0.3 + Math.sin(speakPhase * 22) * 0.15;
     if (clippy.userData.mouth) clippy.userData.mouth.scale.y = Math.max(0.3, mouthOpen);
+    clampVec(clippy.position);
     ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
@@ -410,6 +433,9 @@ function updateRoaming() {
   // ── Reset mouth ──
   if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
 
+  // ── Clamp to screen bounds ──
+  clampVec(clippy.position);
+
   // ── Glow ring follows ──
   ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
 }
@@ -423,7 +449,8 @@ renderer.domElement.addEventListener('touchmove', (e) => {
   isDragging = true;
   const dx = (e.touches[0].clientX - touchPos.x) / window.innerWidth * 4;
   const dy = -(e.touches[0].clientY - touchPos.y) / window.innerHeight * 3;
-  clippy.position.x += dx; clippy.position.y = Math.max(-0.4, clippy.position.y + dy); clippy.position.z += dx * 0.5;
+  clippy.position.x += dx; clippy.position.y = Math.max(-0.2, clippy.position.y + dy); clippy.position.z += dx * 0.5;
+  clampVec(clippy.position);
   ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
   touchPos.x = e.touches[0].clientX; touchPos.y = e.touches[0].clientY;
 }, { passive: true });
@@ -595,6 +622,7 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   labeler.setSize(window.innerWidth, window.innerHeight);
+  updateBounds();
 });
 
 // ═══ ANIMATE ═══
@@ -607,6 +635,7 @@ function animate() {
 }
 
 // ═══ INIT ═══
+updateBounds();
 buildClippy();
 connect();
 animate();
