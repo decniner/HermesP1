@@ -261,18 +261,76 @@ function emotionFromText(text) {
   return 'happy';
 }
 
-// ═══ ROAM ═══
+// ═══ CLIPPY GRACEFUL MOVEMENT ═══
+// Smooth float, sway, and wander like the original Clippy
+
+let idleTime = 0;
+let movePhase = 0;
+let isPausing = false;
+let pauseTimer = 0;
+
 function setRoamTarget() {
   if (!roaming) return;
   const a = Math.random() * Math.PI * 2;
-  const d = 0.3 + Math.random() * CONFIG.roamRadius;
-  roamTarget.set(Math.cos(a) * d, -0.3 + Math.random() * 0.6, Math.sin(a) * d * 0.5);
+  const d = 0.5 + Math.random() * CONFIG.roamRadius;
+  roamTarget.set(Math.cos(a) * d, -0.3 + Math.random() * 0.5, Math.sin(a) * d * 0.6);
+  isPausing = false;
 }
+
 function updateRoaming() {
   if (!clippy || !roaming || isDragging) return;
-  clippy.position.lerp(roamTarget, 0.015);
-  clippy.lookAt(0, 0.5, 0);
-  if (clippy.position.distanceTo(roamTarget) < 0.2) setRoamTarget();
+  movePhase += 0.02;
+  idleTime += 0.016;
+
+  const dist = clippy.position.distanceTo(roamTarget);
+
+  // ── Pause briefly at each destination ──
+  if (dist < 0.15 && !isPausing) {
+    isPausing = true;
+    pauseTimer = 0;
+  }
+  if (isPausing) {
+    pauseTimer += 0.016;
+    // Gentle idle bob while paused
+    clippy.position.y = -0.5 + Math.sin(idleTime * 1.6) * 0.04;
+    clippy.rotation.z = Math.sin(idleTime * 0.8) * 0.01;
+    if (pauseTimer > 1.5 + Math.random() * 2) setRoamTarget();
+    ring.position.x = clippy.position.x;
+    ring.position.z = clippy.position.z;
+    return;
+  }
+
+  // ── Smooth ease-in-out movement ──
+  const speed = 0.02 + Math.min(dist * 0.01, 0.025);
+  const t = speed;
+  // Ease-out quad for natural deceleration
+  const ease = dist < 0.5 ? t * (2 - t) : t;
+  clippy.position.x += (roamTarget.x - clippy.position.x) * ease;
+  clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
+  clippy.position.y += (roamTarget.y - clippy.position.y) * ease * 0.3;
+
+  // ── Gentle up/down float ──
+  clippy.position.y += Math.sin(movePhase * 1.8) * 0.006;
+
+  // ── Body sway ──
+  clippy.rotation.z = Math.sin(movePhase * 0.6) * 0.04;
+
+  // ── Follow direction of travel ──
+  const dirX = roamTarget.x - clippy.position.x;
+  const dirZ = roamTarget.z - clippy.position.z;
+  if (Math.abs(dirX) > 0.01 || Math.abs(dirZ) > 0.01) {
+    const targetAngle = Math.atan2(dirX, dirZ);
+    let diff = targetAngle - clippy.rotation.y;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    // Smoothly face movement direction, but keep facing forward mostly
+    clippy.rotation.y += diff * 0.02;
+  }
+
+  // ── Subtle head tilt wobble ──
+  clippy.rotation.x = Math.sin(movePhase * 1.2) * 0.01;
+
+  // ── Glow ring follows ──
   ring.position.x = clippy.position.x;
   ring.position.z = clippy.position.z;
 }
