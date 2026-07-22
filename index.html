@@ -58,19 +58,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
   <div id="hlist"></div>
 </div>
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.168.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.168.0/examples/jsm/"
-  }
-}
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
 
-<script type="module">
-import * as THREE from 'three';
-import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-
+<script>
 // ═══ CONFIG ═══
 const CONFIG = {
   wsUrl: 'wss://engaged-receiver-mode-spin.trycloudflare.com',
@@ -93,7 +84,7 @@ renderer.toneMappingExposure = 1.2;
 container.appendChild(renderer.domElement);
 
 // CSS2D overlay for speech bubble
-const labeler = new CSS2DRenderer();
+const labeler = new THREE.CSS2DRenderer();
 labeler.setSize(window.innerWidth, window.innerHeight);
 labeler.domElement.style.position = 'fixed';
 labeler.domElement.style.top = '0';
@@ -440,7 +431,7 @@ function buildClippy() {
   div.id = 'bb';
   div.textContent = 'Hi!';
   div.style.cssText = 'background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;color:#fff;font-size:13px;line-height:1.4;max-width:220px;text-align:center;pointer-events:none;transition:opacity 0.3s;opacity:0;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
-  bubbleObj = new CSS2DObject(div);
+  bubbleObj = new THREE.CSS2DObject(div);
   bubbleObj.position.set(0, 1.7, 0);
   clippy.add(bubbleObj);
 
