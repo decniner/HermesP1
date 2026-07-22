@@ -517,70 +517,101 @@ function clampVec(v) {
 }
 
 // ── BB-8 Astromech Chirp & Whistle Sound Generator ──
-function playBB8Sound(textLength = 10) {
+// ── Emotional BB-8 Sound Synthesizer ──
+let idleTimer = null;
+let currentEmotion = 'happy';
+
+function playEmotionalBB8Sound(emotion = 'happy', textLength = 8) {
   let audioCtx;
-  try { 
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-  } catch { return; }
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
   if (!audioCtx) return;
 
-  const totalChirps = Math.min(Math.max(textLength, 4), 18); // Dynamic chirp count
+  // Emotion Profiles: [Pitch Range Min, Pitch Range Max, Speed Interval (ms), Sweep Style]
+  const profiles = {
+    happy:   [1500, 5000, 45, 'bouncy'],
+    playful: [2000, 5500, 35, 'chirp'],
+    sad:     [400,  1200, 110, 'downward'],
+    lonely:  [500,  1400, 130, 'whimper'],
+    angry:   [800,  2800, 30, 'sawtooth_harsh']
+  };
+
+  const [minFreq, maxFreq, stepDelay, style] = profiles[emotion] || profiles.happy;
+  const count = Math.min(Math.max(textLength, 4), 16);
   let delayAcc = 0;
 
-  for (let i = 0; i < totalChirps; i++) {
-    // BB-8 uses organic spacing — not too fast
-    const stepDelay = 120 + Math.random() * 120; // 120ms - 240ms spacing
-    delayAcc += stepDelay;
+  for (let i = 0; i < count; i++) {
+    delayAcc += stepDelay + (Math.random() * 20);
 
     setTimeout(() => {
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-
-        // BB-8 is high-pitched: 1200Hz up to 5500Hz
-        const baseFreq = 1200 + Math.random() * 3800;
         const now = audioCtx.currentTime;
-        const duration = 0.1 + Math.random() * 0.12; // 100-220ms bursts
+        const duration = stepDelay / 1000 + 0.03;
 
-        osc.type = 'sine'; // Crisp whistle tone
+        osc.type = style === 'sawtooth_harsh' ? 'sawtooth' : 'sine';
+        const startFreq = minFreq + Math.random() * (maxFreq - minFreq);
+        osc.frequency.setValueAtTime(startFreq, now);
 
-        // BB-8 Pitch Sweeps: Rapid bends and double-ramps
-        const sweepType = Math.floor(Math.random() * 4);
-        osc.frequency.setValueAtTime(baseFreq, now);
-
-        if (sweepType === 0) {
-          // Rapid upward chirp
-          osc.frequency.exponentialRampToValueAtTime(Math.min(baseFreq * 1.8, 6000), now + duration);
-        } else if (sweepType === 1) {
-          // Rapid downward bleep
-          osc.frequency.exponentialRampToValueAtTime(Math.max(baseFreq * 0.4, 600), now + duration);
-        } else if (sweepType === 2) {
-          // Bouncy warble (Up then down)
-          osc.frequency.linearRampToValueAtTime(Math.min(baseFreq * 1.5, 5500), now + (duration * 0.5));
-          osc.frequency.linearRampToValueAtTime(Math.max(baseFreq * 0.6, 800), now + duration);
-        } else {
-          // Rapid vibrato frequency wobble
-          const vibratoSpeed = 25;
-          for (let v = 0; v < duration; v += 0.015) {
-            const freqOffset = (v % 0.03 < 0.015 ? 300 : -300);
-            osc.frequency.setValueAtTime(Math.min(Math.max(baseFreq + freqOffset, 800), 5500), now + v);
-          }
+        if (style === 'downward' || style === 'whimper') {
+          osc.frequency.exponentialRampToValueAtTime(Math.max(150, startFreq * 0.4), now + duration);
+        } else if (style === 'bouncy' || style === 'chirp') {
+          osc.frequency.exponentialRampToValueAtTime(Math.min(6000, startFreq * 1.6), now + duration);
         }
 
-        // Fast attack & soft fade volume envelope
         gain.gain.setValueAtTime(0.01, now);
-        gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
+        gain.gain.linearRampToValueAtTime(0.15, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-
         osc.start(now);
         osc.stop(now + duration);
       } catch {}
     }, delayAcc);
   }
 }
+
+// ── Inactivity timer ──
+function resetInactivityTimer() {
+  clearTimeout(idleTimer);
+  if (currentEmotion === 'lonely' || currentEmotion === 'sad') {
+    setBB8State('happy');
+  }
+  idleTimer = setTimeout(triggerInactivityEmotion, 30000);
+}
+
+function triggerInactivityEmotion() {
+  setBB8State('lonely');
+  showBubble('😔 ... *sad low whimper*');
+  playEmotionalBB8Sound('lonely', 10);
+}
+
+function setBB8State(emotion) {
+  currentEmotion = emotion;
+  triggerEmotion(emotion === 'sad' || emotion === 'lonely' ? 'oops' : emotion === 'angry' ? 'curious' : 'happy');
+}
+
+// ── Emotion parser for incoming Hermes messages ──
+function handleIncomingHermesMessage(text) {
+  resetInactivityTimer();
+  let emotion = 'happy';
+  const lower = text.toLowerCase();
+  if (lower.includes('sad') || lower.includes('whimper') || lower.includes('sorry') || lower.includes('droop')) {
+    emotion = 'sad';
+  } else if (lower.includes('angry') || lower.includes('mad') || lower.includes('no!') || lower.includes('watch out')) {
+    emotion = 'angry';
+  } else if (lower.includes('play') || lower.includes('game') || lower.includes('wheee') || lower.includes('spin')) {
+    emotion = 'playful';
+  } else if (lower.includes('lonely') || lower.includes('miss')) {
+    emotion = 'lonely';
+  }
+  setBB8State(emotion);
+  playEmotionalBB8Sound(emotion, text.length);
+}
+
+document.addEventListener('touchstart', resetInactivityTimer);
+document.addEventListener('click', resetInactivityTimer);
 
 function setRoamTarget() {
   if (!roaming) return;
@@ -719,8 +750,8 @@ function connect() {
     try {
       const d = JSON.parse(e.data);
       if (d.type === 'clippy_message' && d.text) {
+        handleIncomingHermesMessage(d.text);
         speak(d.text);
-        emotionFromText(d.text);
         showBubble(stripEmoji(d.text));
         save('ai', d.text);
       }
@@ -733,6 +764,7 @@ function connect() {
 function send(t) {
   if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
   clearBubble();
+  resetInactivityTimer();
   ws.send(JSON.stringify({ type: 'user_message', text: t }));
   dot.className = 'busy';
   save('me', t);
@@ -758,8 +790,8 @@ mic.addEventListener('click', () => {
 
 function speak(t) {
   const clean = t.replace(/[^\w\s.,!?'"@#$%^&*()\-=+\[\]{}|;:<>\/~`]/g,'').trim();
-  // Play R2-D2 beeps based on text length
-  playBB8Sound(clean.length);
+  // Use emotional sound based on current emotion
+  playEmotionalBB8Sound(currentEmotion, clean.length);
   // Show text in bubble instead
   showBubble(clean);
   speakAnimate(true);
@@ -813,6 +845,7 @@ function captureAndSend() {
   camBtn.style.background = 'rgba(108,99,255,.2)';
   showBubble('📷 BB-8 is looking...');
   dot.className = 'busy';
+  resetInactivityTimer();
   ws.send(JSON.stringify({ type: 'camera_image', image: b64 }));
 }
 
