@@ -137,27 +137,27 @@ function buildClippy() {
     c.width = 512; c.height = 256;
     const ctx = c.getContext('2d');
 
-    // Base: dark red
-    ctx.fillStyle = '#2a0a0a';
+    // Base: deep crimson (Ferrari red undertone)
+    ctx.fillStyle = '#1a0505';
     ctx.fillRect(0, 0, 512, 256);
 
-    // Red sweeping band (bottom front) — UV v = 0.5 to 0.85, u = 0.3 to 0.7
-    ctx.fillStyle = '#cc2222';
+    // Ferrari red sweeping band
+    ctx.fillStyle = '#dc0000';
     ctx.beginPath();
     ctx.ellipse(256, 180, 130, 50, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Left red circle (UV: u ~ 0.2, v ~ 0.5)
+    // Left Ferrari red circle
     ctx.beginPath();
     ctx.ellipse(90, 130, 45, 55, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Right red area (UV: u ~ 0.8, v ~ 0.5)
+    // Right Ferrari red area
     ctx.beginPath();
     ctx.ellipse(420, 130, 35, 45, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bottom red sweep
+    // Bottom Ferrari red sweep
     ctx.beginPath();
     ctx.ellipse(256, 200, 150, 30, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -217,21 +217,21 @@ function buildClippy() {
     c.width = 256; c.height = 128;
     const ctx = c.getContext('2d');
 
-    // Base: dark red
-    ctx.fillStyle = '#2a0a0a';
+    // Base: deep Ferrari crimson
+    ctx.fillStyle = '#1a0505';
     ctx.fillRect(0, 0, 256, 128);
 
-    // Horizontal red stripe (left side of dome)
-    ctx.fillStyle = '#cc2222';
+    // Horizontal Ferrari red stripe
+    ctx.fillStyle = '#dc0000';
     ctx.fillRect(50, 38, 50, 6);
 
-    // Three vertical red stripes (right side)
+    // Three vertical Ferrari red stripes
     ctx.fillRect(160, 20, 5, 25);
     ctx.fillRect(172, 20, 5, 25);
     ctx.fillRect(184, 20, 5, 25);
 
-    // Top sensor area (darker red)
-    ctx.fillStyle = '#881111';
+    // Top sensor area
+    ctx.fillStyle = '#990000';
     ctx.beginPath();
     ctx.ellipse(128, 10, 40, 8, 0, 0, Math.PI * 2);
     ctx.fill();
