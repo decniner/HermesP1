@@ -209,14 +209,14 @@ function buildClippy() {
   antennaGroup.position.set(0, 0.75, -0.05);
   antennaGroup.name = 'antenna';
 
-  const antennaBase = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.08, 6), silver);
-  antennaBase.position.y = 0.04;
+  const antennaBase = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.015, 0.14, 6), silver);
+  antennaBase.position.y = 0.07;
   antennaGroup.add(antennaBase);
 
   // Blinking tip light
   const tipLightMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
-  const antennaLight = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), tipLightMat);
-  antennaLight.position.y = 0.09;
+  const antennaLight = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), tipLightMat);
+  antennaLight.position.y = 0.15;
   antennaLight.name = 'antennaLight';
   antennaGroup.add(antennaLight);
   g.add(antennaGroup);
