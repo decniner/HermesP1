@@ -650,6 +650,32 @@ function connect() {
 function send(t) {
   if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
   clearBubble();
+  resetInactivityTimer();
+
+  // ── Voice commands ──
+  const lower = t.toLowerCase();
+  if (lower.includes('roll buddy') || lower.includes('roll') && lower.includes('buddy')) {
+    showBubble('🎉 *rolling happily!*');
+    triggerEmotion('celebrate');
+    tapBB8Sound();
+    dot.className = 'busy';
+    ws.send(JSON.stringify({ type: 'user_message', text: t }));
+    save('me', t);
+    return;
+  }
+  if (lower.includes('happy beep') || lower.includes('beep buddy') || lower.includes('beeps buddy')) {
+    showBubble('🎵 *happy beeping!*');
+    triggerEmotion('happy');
+    // Play extra happy sounds
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => tapBB8Sound(), i * 600);
+    }
+    dot.className = 'busy';
+    ws.send(JSON.stringify({ type: 'user_message', text: t }));
+    save('me', t);
+    return;
+  }
+
   ws.send(JSON.stringify({ type: 'user_message', text: t }));
   dot.className = 'busy';
   save('me', t);
