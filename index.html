@@ -187,27 +187,34 @@ function buildClippy() {
   addArm(-1);
   addArm(1);
 
-  // ── Smile ──
+  // ── Eyebrows + Mouth (references for animation) ──
+  let _browL, _browR, _mouth;
+
+  // ── Smile (mouth that can animate) ──
   const smileMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
-  for (let a = -0.55; a <= 0.55; a += 0.18) {
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), smileMat);
-    dot.position.set(a, 0.76 - Math.abs(a) * 0.18, 0.36);
-    g.add(dot);
-  }
+  _mouth = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.025, 0.03), smileMat);
+  _mouth.position.set(0, 0.76, 0.36);
+  _mouth.name = 'mouth';
+  g.add(_mouth);
 
   // ── Eyebrows (animated) ──
   const browMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
-  const browL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
-  browL.position.set(-0.14, 1.02, 0.32);
-  g.add(browL);
-  const browR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
-  browR.position.set(0.14, 1.02, 0.32);
-  g.add(browR);
+  _browL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
+  _browL.position.set(-0.14, 1.02, 0.32);
+  _browL.name = 'browL';
+  g.add(_browL);
+  _browR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.025), browMat);
+  _browR.position.set(0.14, 1.02, 0.32);
+  _browR.name = 'browR';
+  g.add(_browR);
 
   clippy = g;
-  clippy.scale.set(0.75, 0.75, 0.75);
-  clippy.position.set(0, -0.3, 0);
+  clippy.scale.set(0.6, 0.6, 0.6);
+  clippy.position.set(0, -0.2, 0);
   scene.add(clippy);
+
+  // Store brow/mouth refs on clippy for animation
+  clippy.userData = { browL: _browL, browR: _browR, mouth: _mouth };
 
   // ── Speech bubble (CSS2D) ──
   const div = document.createElement('div');
@@ -263,26 +270,64 @@ function emotionFromText(text) {
   return 'happy';
 }
 
-// ═══ CLIPPY GRACEFUL MOVEMENT ═══
-// Smooth float, sway, and wander like the original Clippy
+// ═══ CLIPPY GRACEFUL MOVEMENT + FACING ═══
 
 let idleTime = 0;
 let movePhase = 0;
 let isPausing = false;
 let pauseTimer = 0;
+let isSpeaking = false;
+let speakPhase = 0;
 
 function setRoamTarget() {
   if (!roaming) return;
   const a = Math.random() * Math.PI * 2;
   const d = 0.3 + Math.random() * (CONFIG.roamRadius * 0.7);
-  roamTarget.set(Math.cos(a) * d, -0.3 + Math.random() * 0.5, Math.sin(a) * d * 0.6);
+  roamTarget.set(Math.cos(a) * d, -0.2 + Math.random() * 0.4, Math.sin(a) * d * 0.6);
   isPausing = false;
 }
 
+function speakAnimate(on) {
+  isSpeaking = on;
+  if (on) speakPhase = 0;
+  // When speaking, face camera (rotation.y = 0)
+  if (on && clippy) {
+    clippy.rotation.y = 0;
+  }
+}
+
 function updateRoaming() {
-  if (!clippy || !roaming || isDragging) return;
+  if (!clippy || isDragging) return;
   movePhase += 0.02;
   idleTime += 0.016;
+
+  // ── Speaking animation overrides movement ──
+  if (isSpeaking) {
+    speakPhase += 0.016;
+
+    // Face camera
+    clippy.rotation.y = 0;
+
+    // Gentle bob while speaking
+    clippy.position.y = -0.2 + Math.sin(speakPhase * 2.5) * 0.015;
+
+    // Mouth opens/closes rhythmically (scale Y)
+    const mouthOpen = 0.5 + Math.sin(speakPhase * 14) * 0.3 + Math.sin(speakPhase * 22) * 0.15;
+    if (clippy.userData.mouth) {
+      clippy.userData.mouth.scale.y = Math.max(0.3, mouthOpen);
+    }
+
+    // Eyebrows wiggle
+    const browWiggle = Math.sin(speakPhase * 3) * 0.04;
+    if (clippy.userData.browL) {
+      clippy.userData.browL.position.y = 1.02 + browWiggle;
+      clippy.userData.browR.position.y = 1.02 + Math.sin(speakPhase * 3 + 0.5) * 0.04;
+    }
+
+    ring.position.x = clippy.position.x;
+    ring.position.z = clippy.position.z;
+    return;
+  }
 
   const dist = clippy.position.distanceTo(roamTarget);
 
@@ -294,8 +339,13 @@ function updateRoaming() {
   if (isPausing) {
     pauseTimer += 0.016;
     // Gentle idle bob while paused
-    clippy.position.y = -0.3 + Math.sin(idleTime * 1.6) * 0.03;
-    clippy.rotation.z = Math.sin(idleTime * 0.8) * 0.01;
+    clippy.position.y = -0.2 + Math.sin(idleTime * 1.6) * 0.025;
+    // Reset mouth when idle
+    if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
+    if (clippy.userData.browL) {
+      clippy.userData.browL.position.y = 1.02;
+      clippy.userData.browR.position.y = 1.02;
+    }
     if (pauseTimer > 1.5 + Math.random() * 2) setRoamTarget();
     ring.position.x = clippy.position.x;
     ring.position.z = clippy.position.z;
@@ -305,7 +355,6 @@ function updateRoaming() {
   // ── Smooth ease-in-out movement ──
   const speed = 0.02 + Math.min(dist * 0.01, 0.025);
   const t = speed;
-  // Ease-out quad for natural deceleration
   const ease = dist < 0.5 ? t * (2 - t) : t;
   clippy.position.x += (roamTarget.x - clippy.position.x) * ease;
   clippy.position.z += (roamTarget.z - clippy.position.z) * ease;
@@ -315,7 +364,7 @@ function updateRoaming() {
   clippy.position.y += Math.sin(movePhase * 1.8) * 0.004;
 
   // ── Body sway ──
-  clippy.rotation.z = Math.sin(movePhase * 0.6) * 0.03;
+  clippy.rotation.z = Math.sin(movePhase * 0.6) * 0.025;
 
   // ── Follow direction of travel ──
   const dirX = roamTarget.x - clippy.position.x;
@@ -325,12 +374,18 @@ function updateRoaming() {
     let diff = targetAngle - clippy.rotation.y;
     while (diff > Math.PI) diff -= Math.PI * 2;
     while (diff < -Math.PI) diff += Math.PI * 2;
-    // Smoothly face movement direction, but keep facing forward mostly
     clippy.rotation.y += diff * 0.02;
   }
 
   // ── Subtle head tilt wobble ──
   clippy.rotation.x = Math.sin(movePhase * 1.2) * 0.01;
+
+  // ── Reset mouth when idle ──
+  if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
+  if (clippy.userData.browL) {
+    clippy.userData.browL.position.y = 1.02;
+    clippy.userData.browR.position.y = 1.02;
+  }
 
   // ── Glow ring follows ──
   ring.position.x = clippy.position.x;
@@ -422,8 +477,8 @@ function speak(t) {
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(t.replace(/[📎✨😊🎉🤔😅🤨⚠️📷]/g,'').trim());
   u.rate = 1.0; u.pitch = 1.3; u.volume = 1;
-  u.onstart = () => dot.className = 'busy';
-  u.onend = () => dot.className = 'on';
+  u.onstart = () => { dot.className = 'busy'; speakAnimate(true); };
+  u.onend = () => { dot.className = 'on'; speakAnimate(false); };
   window.speechSynthesis.speak(u);
 }
 
