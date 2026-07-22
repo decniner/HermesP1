@@ -306,6 +306,7 @@ let isSpeaking = false;
 let speakPhase = 0;
 let lastStep = 0;
 let _bounds = { left: -1.5, right: 1.5, top: 1.0, bottom: -0.8 };
+let roamCooldown = 0;
 
 // Recalculate visible bounds when screen resizes
 function updateBounds() {
@@ -354,9 +355,10 @@ function playR2D2Sound(textLength = 10) {
 
 function setRoamTarget() {
   if (!roaming) return;
+  // Very subtle movement — barely budge from center
   const a = Math.random() * Math.PI * 2;
-  const d = 0.3 + Math.random() * (CONFIG.roamRadius * 0.7);
-  roamTarget.set(Math.cos(a) * d * 0.8, -0.1 + Math.random() * 0.3, Math.sin(a) * d * 0.6);
+  const d = 0.05 + Math.random() * 0.2; // Tiny distance: 0.05 to 0.25
+  roamTarget.set(Math.cos(a) * d, -0.05 + Math.random() * 0.1, Math.sin(a) * d * 0.3);
   clampVec(roamTarget);
   isPausing = false;
 }
@@ -397,7 +399,7 @@ function updateRoaming() {
     pauseTimer += 0.016;
     clippy.position.y = -0.2 + Math.sin(idleTime * 1.6) * 0.025;
     if (clippy.userData.mouth) clippy.userData.mouth.scale.y = 1;
-    if (pauseTimer > 1.2 + Math.random() * 2) setRoamTarget();
+    if (pauseTimer > 5 + Math.random() * 4) setRoamTarget();
     ring.position.x = clippy.position.x; ring.position.z = clippy.position.z;
     return;
   }
