@@ -807,28 +807,142 @@ let idleTrickTimer = 0;
 let trickCooldown = 10;
 
 const tricks = [
-  { text: '*lights up a tiny lighter* 🔥', sound: 'happy', anim: 'celebrate' },
-  { text: '*shoots birds with a pea shooter* 🐦💨', sound: 'playful', anim: 'happy' },
-  { text: '*waters a small plant* 🌱💧', sound: 'curious', anim: 'curious' },
-  { text: '*tries to juggle* 🎪🤹', sound: 'playful', anim: 'celebrate' },
-  { text: '*plays an invisible piano* 🎹🎶', sound: 'happy', anim: 'curious' },
-  { text: '*takes a selfie* 🤳📸', sound: 'celebrate', anim: 'celebrate' },
-  { text: '*reads a tiny newspaper* 📰🧐', sound: 'curious', anim: 'curious' },
-  { text: '*does a little dance* 💃🕺', sound: 'happy', anim: 'celebrate' },
-  { text: '*cooks a tiny pancake* 🥞👨‍🍳', sound: 'happy', anim: 'celebrate' },
-  { text: '*adjusts its antenna like a radio* 📻', sound: 'curious', anim: 'curious' },
-  { text: '*tries to whistle but just beeps* 🎵', sound: 'playful', anim: 'happy' },
-  { text: '*chases its own tail* 🔄', sound: 'playful', anim: 'celebrate' },
-  { text: '*pretends to be a top* 🌀', sound: 'playful', anim: 'celebrate' },
-  { text: '*draws a tiny doodle* ✏️🎨', sound: 'curious', anim: 'curious' },
-  { text: '*gives itself a pep talk* 💪😤', sound: 'celebrate', anim: 'celebrate' },
+  { text: '*lights up a tiny lighter* 🔥', sound: 'happy', anim: 'celebrate', prop: 'fire' },
+  { text: '*shoots birds with a pea shooter* 🐦💨', sound: 'playful', anim: 'happy', prop: 'bird' },
+  { text: '*waters a small plant* 🌱💧', sound: 'curious', anim: 'curious', prop: 'plant' },
+  { text: '*tries to juggle* 🎪🤹', sound: 'playful', anim: 'celebrate', prop: 'juggle' },
+  { text: '*plays an invisible piano* 🎹🎶', sound: 'happy', anim: 'curious', prop: 'notes' },
+  { text: '*takes a selfie* 🤳📸', sound: 'celebrate', anim: 'celebrate', prop: 'flash' },
+  { text: '*reads a tiny newspaper* 📰🧐', sound: 'curious', anim: 'curious', prop: 'paper' },
+  { text: '*does a little dance* 💃🕺', sound: 'happy', anim: 'celebrate', prop: 'stars' },
+  { text: '*cooks a tiny pancake* 🥞👨‍🍳', sound: 'happy', anim: 'celebrate', prop: 'pancake' },
+  { text: '*adjusts its antenna like a radio* 📻', sound: 'curious', anim: 'curious', prop: 'radio' },
+  { text: '*tries to whistle but just beeps* 🎵', sound: 'playful', anim: 'happy', prop: 'notes' },
+  { text: '*chases its own tail* 🔄', sound: 'playful', anim: 'celebrate', prop: 'trail' },
+  { text: '*pretends to be a top* 🌀', sound: 'playful', anim: 'celebrate', prop: 'spin' },
+  { text: '*draws a tiny doodle* ✏️🎨', sound: 'curious', anim: 'curious', prop: 'doodle' },
+  { text: '*gives itself a pep talk* 💪😤', sound: 'celebrate', anim: 'celebrate', prop: 'flex' },
 ];
+
+// ── Temporary 3D props for tricks ──
+let activeProps = [];
+
+function spawnProp(type) {
+  if (!clippy) return;
+  const cp = clippy.position.clone();
+  cp.y += 0.5;
+  const mat = (c) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.9 });
+
+  let meshes = [];
+  const add = (geo, color, x, y, z, sc) => {
+    const m = new THREE.Mesh(geo, mat(color));
+    m.position.set(cp.x + x, cp.y + y, cp.z + z);
+    if (sc) m.scale.set(sc, sc, sc);
+    scene.add(m);
+    meshes.push(m);
+  };
+
+  if (type === 'fire') {
+    // Small flame: orange/yellow spheres
+    add(new THREE.SphereGeometry(0.04, 6, 6), 0xff6600, 0.2, 0.4, 0);
+    add(new THREE.SphereGeometry(0.03, 6, 6), 0xffcc00, 0.2, 0.5, 0);
+    add(new THREE.SphereGeometry(0.02, 6, 6), 0xffffff, 0.2, 0.55, 0);
+  } else if (type === 'bird') {
+    // Tiny birds flying away: small dark V shapes
+    for (let i = 0; i < 3; i++) {
+      const a = i * 0.5 + Math.random() * 0.3;
+      add(new THREE.SphereGeometry(0.015, 4, 4), 0x444444, a, 0.3 + i * 0.15, -i * 0.2);
+    }
+  } else if (type === 'plant') {
+    // Plant pot + green leaves
+    add(new THREE.CylinderGeometry(0.03, 0.04, 0.05, 6), 0x886644, 0, -0.05, 0);
+    add(new THREE.SphereGeometry(0.025, 6, 6), 0x44cc44, 0, 0.05, 0);
+    add(new THREE.SphereGeometry(0.02, 6, 6), 0x66ee66, 0.03, 0.08, 0);
+  } else if (type === 'juggle') {
+    // Colored juggling balls
+    const colors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44, 0xff44ff];
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.025, 6, 6), colors[i], Math.cos(a) * 0.15, 0.2 + Math.sin(a) * 0.15, 0);
+    }
+  } else if (type === 'notes') {
+    // Music note shapes: small colored dots floating up
+    for (let i = 0; i < 5; i++) {
+      add(new THREE.SphereGeometry(0.015, 4, 4), 0xffdd44, (Math.random() - 0.5) * 0.3, 0.2 + i * 0.08, (Math.random() - 0.5) * 0.2);
+    }
+  } else if (type === 'flash') {
+    // Camera flash: bright white expanding ring
+    add(new THREE.RingGeometry(0.01, 0.2, 16), 0xffffff, 0, 0.3, 0);
+  } else if (type === 'paper') {
+    // Small newspaper: flat rectangle
+    add(new THREE.BoxGeometry(0.1, 0.001, 0.07), 0xf5f0e0, 0.15, 0.15, 0);
+  } else if (type === 'stars') {
+    // Sparkle stars
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.015, 4, 4), 0xffee44, Math.cos(a) * 0.2, 0.15 + Math.sin(a) * 0.15, 0);
+    }
+  } else if (type === 'pancake') {
+    // Pancake with butter
+    add(new THREE.CylinderGeometry(0.05, 0.06, 0.01, 8), 0xcc8844, 0, -0.05, 0);
+    add(new THREE.CylinderGeometry(0.025, 0.025, 0.005, 6), 0xffee66, 0, -0.02, 0);
+  } else if (type === 'radio') {
+    // Radio waves: concentric arcs
+    for (let r = 2; r <= 5; r++) {
+      add(new THREE.TorusGeometry(0.03 * r, 0.003, 4, 12), 0x44aaff, 0, 0.3, 0);
+    }
+  } else if (type === 'trail') {
+    // Motion trail: small dots in a circle
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.01, 4, 4), 0x88ddff, Math.cos(a) * 0.12, 0, Math.sin(a) * 0.12);
+    }
+  } else if (type === 'spin') {
+    // Spin effect: rotating ring
+    add(new THREE.TorusGeometry(0.12, 0.008, 6, 16), 0x44aaff, 0, 0.1, 0);
+  } else if (type === 'doodle') {
+    // Doodle: scattered colorful dots
+    const colors = [0xff4444, 0x44ff44, 0x4444ff, 0xff44ff, 0xffff44];
+    for (let i = 0; i < 6; i++) {
+      add(new THREE.SphereGeometry(0.008, 4, 4), colors[i], (Math.random() - 0.5) * 0.2, (Math.random() - 0.5) * 0.15, 0);
+    }
+  } else if (type === 'flex') {
+    // Flex: sparkle effect + bicep
+    add(new THREE.SphereGeometry(0.03, 6, 6), 0x44aaff, -0.12, 0.2, 0);
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.008, 4, 4), 0xffee44, Math.cos(a) * 0.06 - 0.12, 0.2 + Math.sin(a) * 0.06, 0);
+    }
+  }
+
+  // Store with fade timer
+  activeProps.push({ meshes, time: 0 });
+}
+
+// Animate and clean up props each frame
+function updateProps() {
+  for (let i = activeProps.length - 1; i >= 0; i--) {
+    const p = activeProps[i];
+    p.time += 0.016;
+    const life = 1.5; // seconds
+    p.meshes.forEach(m => {
+      m.position.y += 0.003;
+      if (p.time > life * 0.7) {
+        m.material.opacity = Math.max(0, 1 - (p.time - life * 0.7) / (life * 0.3));
+      }
+    });
+    if (p.time > life) {
+      p.meshes.forEach(m => scene.remove(m));
+      activeProps.splice(i, 1);
+    }
+  }
+}
 
 function doRandomTrick() {
   const trick = tricks[Math.random() * tricks.length | 0];
   showBubble(trick.text);
   triggerEmotion(trick.anim);
-  // Play 2-3 random mood sounds
+  spawnProp(trick.prop);
   const count = 2 + Math.random() * 2 | 0;
   for (let i = 0; i < count; i++) {
     setTimeout(() => tapBB8Sound(), i * 500);
@@ -839,6 +953,7 @@ function animate() {
   requestAnimationFrame(animate);
   if (mixer) mixer.update(0.016);
   updateRoaming();
+  updateProps();
 
   // ── Idle tricks (every 10-18 seconds of inactivity) ──
   if (!isSpeaking && !isDragging && clippy) {
