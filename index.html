@@ -816,7 +816,7 @@ window.addEventListener('resize', () => {
 
 // ═══ ANIMATE ═══
 let idleTrickTimer = 0;
-let trickCooldown = 10;
+let trickCooldown = 30;
 
 const tricks = [
   { text: '*lights up a tiny lighter* 🔥', sound: 'happy', anim: 'celebrate', prop: 'fire' },
@@ -1017,7 +1017,7 @@ function animate() {
     idleTrickTimer += 0.016;
     if (idleTrickTimer > trickCooldown) {
       idleTrickTimer = 0;
-      trickCooldown = 10 + Math.random() * 8;
+      trickCooldown = 30 + Math.random() * 15;
       doRandomTrick();
     }
   } else {
