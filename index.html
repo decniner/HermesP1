@@ -73,7 +73,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 
 // ═══ CONFIG ═══
 const CONFIG = {
-  wsUrl: 'wss://plots-pontiac-breach-sciences.trycloudflare.com',
+  wsUrl: 'wss://headphones-connectors-behavior-tonight.trycloudflare.com',
   roamSpeed: 0.3,
   roamRadius: 2.5,
 };
@@ -803,10 +803,54 @@ window.addEventListener('resize', () => {
 });
 
 // ═══ ANIMATE ═══
+let idleTrickTimer = 0;
+let trickCooldown = 10;
+
+const tricks = [
+  { text: '*lights up a tiny lighter* 🔥', sound: 'happy', anim: 'celebrate' },
+  { text: '*shoots birds with a pea shooter* 🐦💨', sound: 'playful', anim: 'happy' },
+  { text: '*waters a small plant* 🌱💧', sound: 'curious', anim: 'curious' },
+  { text: '*tries to juggle* 🎪🤹', sound: 'playful', anim: 'celebrate' },
+  { text: '*plays an invisible piano* 🎹🎶', sound: 'happy', anim: 'curious' },
+  { text: '*takes a selfie* 🤳📸', sound: 'celebrate', anim: 'celebrate' },
+  { text: '*reads a tiny newspaper* 📰🧐', sound: 'curious', anim: 'curious' },
+  { text: '*does a little dance* 💃🕺', sound: 'happy', anim: 'celebrate' },
+  { text: '*cooks a tiny pancake* 🥞👨‍🍳', sound: 'happy', anim: 'celebrate' },
+  { text: '*adjusts its antenna like a radio* 📻', sound: 'curious', anim: 'curious' },
+  { text: '*tries to whistle but just beeps* 🎵', sound: 'playful', anim: 'happy' },
+  { text: '*chases its own tail* 🔄', sound: 'playful', anim: 'celebrate' },
+  { text: '*pretends to be a top* 🌀', sound: 'playful', anim: 'celebrate' },
+  { text: '*draws a tiny doodle* ✏️🎨', sound: 'curious', anim: 'curious' },
+  { text: '*gives itself a pep talk* 💪😤', sound: 'celebrate', anim: 'celebrate' },
+];
+
+function doRandomTrick() {
+  const trick = tricks[Math.random() * tricks.length | 0];
+  showBubble(trick.text);
+  triggerEmotion(trick.anim);
+  // Play 2-3 random mood sounds
+  const count = 2 + Math.random() * 2 | 0;
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => tapBB8Sound(), i * 500);
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate);
   if (mixer) mixer.update(0.016);
   updateRoaming();
+
+  // ── Idle tricks (every 10-18 seconds of inactivity) ──
+  if (!isSpeaking && !isDragging && clippy) {
+    idleTrickTimer += 0.016;
+    if (idleTrickTimer > trickCooldown) {
+      idleTrickTimer = 0;
+      trickCooldown = 10 + Math.random() * 8;
+      doRandomTrick();
+    }
+  } else {
+    idleTrickTimer = 0;
+  }
 
   // ── Antenna sway + blinking light ──
   if (clippy && clippy.userData.antennaGroup) {
