@@ -66,7 +66,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
 <script>
 // ═══ CONFIG ═══
 const CONFIG = {
-  wsUrl: 'wss://headphones-connectors-behavior-tonight.trycloudflare.com',
+  wsUrl: 'wss://marketing-via-builders-drugs.trycloudflare.com',
   roamSpeed: 0.3,
   roamRadius: 2.5,
 };
@@ -734,7 +734,7 @@ camVideo.setAttribute('autoplay','');
 container.appendChild(camVideo);
 
 camBtn.addEventListener('click', async () => {
-  if (camActive) { camBtn.style.background = 'rgba(108,99,255,.2)'; camBtn.textContent = '📷'; hideCam(); return; }
+  if (camActive) { captureAndSend(); return; }
   camBtn.textContent = '⏳';
   try {
     camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
