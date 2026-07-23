@@ -1024,7 +1024,7 @@ function animate() {
     idleTrickTimer = 0;
   }
 
-  // ── Antenna sway + blinking light ──
+  // ── Antenna sway + blinking light (only when processing) ──
   if (clippy && clippy.userData.antennaGroup) {
     const ant = clippy.userData.antennaGroup;
     ant.rotation.z = Math.sin(movePhase * 1.5) * 0.12;
@@ -1032,11 +1032,16 @@ function animate() {
   }
   if (clippy && clippy.userData.antennaLight) {
     const light = clippy.userData.antennaLight;
-    // Cycle through colors
-    const colors = [0xffffff, 0xff4444, 0x44ff44, 0x44aaff, 0xffdd44];
-    const idx = Math.floor(movePhase * 4) % colors.length;
-    if (light.material.color.getHex() !== colors[idx]) {
+    if (dot.className === 'busy') {
+      // Blink rapidly when processing
+      const colors = [0xffffff, 0xff4444, 0x44ff44, 0x44aaff, 0xffdd44];
+      const idx = Math.floor(movePhase * 8) % colors.length;
       light.material.color.setHex(colors[idx]);
+      light.scale.set(1.2, 1.2, 1.2);
+    } else {
+      // Steady white when idle
+      light.material.color.setHex(0xffffff);
+      light.scale.set(1, 1, 1);
     }
   }
 
