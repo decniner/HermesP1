@@ -125,6 +125,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
 
@@ -136,7 +137,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
 
 const CONFIG = {
 
-  wsUrl: 'wss://rolled-mls-frame-quality.trycloudflare.com',
+  wsUrl: 'wss://clarity-newsletter-filtering-nova.trycloudflare.com',
 
   roamSpeed: 0.3,
 
@@ -606,133 +607,7 @@ function clampVec(v) {
 
 // ── BB-8 Astromech Chirp & Whistle Sound Generator ──
 
-function playBB8Sound(textLength = 10) {
-
-  let audioCtx;
-
-  try { 
-
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-
-  } catch { return; }
-
-  if (!audioCtx) return;
-
-
-
-  const totalChirps = Math.min(Math.max(textLength, 4), 18); // Dynamic chirp count
-
-  let delayAcc = 0;
-
-
-
-  for (let i = 0; i < totalChirps; i++) {
-
-    // BB-8 uses organic spacing — not too fast
-
-    const stepDelay = 120 + Math.random() * 120; // 120ms - 240ms spacing
-
-    delayAcc += stepDelay;
-
-
-
-    setTimeout(() => {
-
-      try {
-
-        const osc = audioCtx.createOscillator();
-
-        const gain = audioCtx.createGain();
-
-
-
-        // BB-8 is high-pitched: 1200Hz up to 5500Hz
-
-        const baseFreq = 1200 + Math.random() * 3800;
-
-        const now = audioCtx.currentTime;
-
-        const duration = 0.1 + Math.random() * 0.12; // 100-220ms bursts
-
-
-
-        osc.type = 'sine'; // Crisp whistle tone
-
-
-
-        // BB-8 Pitch Sweeps: Rapid bends and double-ramps
-
-        const sweepType = Math.floor(Math.random() * 4);
-
-        osc.frequency.setValueAtTime(baseFreq, now);
-
-
-
-        if (sweepType === 0) {
-
-          // Rapid upward chirp
-
-          osc.frequency.exponentialRampToValueAtTime(Math.min(baseFreq * 1.8, 6000), now + duration);
-
-        } else if (sweepType === 1) {
-
-          // Rapid downward bleep
-
-          osc.frequency.exponentialRampToValueAtTime(Math.max(baseFreq * 0.4, 600), now + duration);
-
-        } else if (sweepType === 2) {
-
-          // Bouncy warble (Up then down)
-
-          osc.frequency.linearRampToValueAtTime(Math.min(baseFreq * 1.5, 5500), now + (duration * 0.5));
-
-          osc.frequency.linearRampToValueAtTime(Math.max(baseFreq * 0.6, 800), now + duration);
-
-        } else {
-
-          // Rapid vibrato frequency wobble
-
-          const vibratoSpeed = 25;
-
-          for (let v = 0; v < duration; v += 0.015) {
-
-            const freqOffset = (v % 0.03 < 0.015 ? 300 : -300);
-
-            osc.frequency.setValueAtTime(Math.min(Math.max(baseFreq + freqOffset, 800), 5500), now + v);
-
-          }
-
-        }
-
-
-
-        // Fast attack & soft fade volume envelope
-
-        gain.gain.setValueAtTime(0.01, now);
-
-        gain.gain.linearRampToValueAtTime(0.18, now + 0.01);
-
-        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-
-
-        osc.connect(gain);
-
-        gain.connect(audioCtx.destination);
-
-
-
-        osc.start(now);
-
-        osc.stop(now + duration);
-
-      } catch {}
-
-    }, delayAcc);
-
-  }
-
-}
+function playBB8Sound(textLength = 10) { playRandomSound(); }
 
 
 
@@ -1006,85 +881,13 @@ function tapBB8Sound() {
 
 
 
-function playBB8SoundCustom(freqMin, freqMax, spacing, count) {
-
-  let audioCtx;
-
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
-
-  if (!audioCtx) return;
-
-  let delay = 0;
-
-  for (let i = 0; i < count; i++) {
-
-    delay += spacing + Math.random() * 20;
-
-    setTimeout(() => {
-
-      try {
-
-        const osc = audioCtx.createOscillator();
-
-        const gain = audioCtx.createGain();
-
-        const now = audioCtx.currentTime;
-
-        const freq = freqMin + Math.random() * (freqMax - freqMin);
-
-        const dur = spacing / 1000 + 0.03;
-
-        osc.type = 'sine';
-
-        osc.frequency.setValueAtTime(freq, now);
-
-        osc.frequency.exponentialRampToValueAtTime(Math.max(200, freq * (Math.random() > 0.5 ? 1.5 : 0.5)), now + dur);
-
-        gain.gain.setValueAtTime(0.01, now);
-
-        gain.gain.linearRampToValueAtTime(0.15, now + 0.01);
-
-        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-
-        osc.connect(gain);
-
-        gain.connect(audioCtx.destination);
-
-        osc.start(now);
-
-        osc.stop(now + dur);
-
-      } catch {}
-
-    }, delay);
-
-  }
-
-}
+function playBB8SoundCustom(freqMin, freqMax, spacing, count) { playRandomSound(); }
 
 
 
 // ── Antenna signal sound ──
 let antennaSoundTimer = 0;
-function playAntennaSignal() {
-  let ctx;
-  try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return; }
-  if (!ctx) return;
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  const now = ctx.currentTime;
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(1800, now);
-  osc.frequency.exponentialRampToValueAtTime(2400, now + 0.06);
-  osc.frequency.exponentialRampToValueAtTime(1200, now + 0.12);
-  gain.gain.setValueAtTime(0.04, now);
-  gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(now);
-  osc.stop(now + 0.15);
-}
+function playAntennaSignal() { playRandomSound(); }
 
 renderer.domElement.addEventListener('touchend', () => {
 
@@ -2034,7 +1837,37 @@ console.log('📎 BB-8 loaded!');
 // ── Skin button ──
 document.getElementById('skinbtn').addEventListener('click', cycleSkin);
 
-</script>
+
+
+// ═══ BB-8 MP3 SOUND SYSTEM ═══
+const BB8_SOUNDS = [];
+const SOUND_BASE = '/sounds/';
+const SOUND_FILES = [
+  'bb2-02','bb8-01','bb8-03','bb8-04','bb8-05','bb8-06','bb8-07','bb8-08',
+  'bb8-09','bb8-10','bb8-11','bb8-12','bb8-13','bb8-14','bb8-15','bb8-16',
+  'bb8-17','bb8-18','bb8-19','bb8-20','bb8-21','bb8-22','bb8-23','bb8-24',
+  'bb8-25','bb8-26','bb8-27','bb8-28','bb8-29','bb8-30','bb8-31','bb8-32'
+];
+let soundsLoaded = false;
+function preloadSounds() {
+  if (soundsLoaded) return;
+  soundsLoaded = true;
+  SOUND_FILES.forEach((name, i) => {
+    const audio = new Audio();
+    audio.src = SOUND_BASE + name + '.mp3';
+    audio.preload = 'auto';
+    audio.volume = 0.4;
+    BB8_SOUNDS[i] = audio;
+  });
+}
+function playRandomSound() {
+  if (BB8_SOUNDS.length === 0) { preloadSounds(); return; }
+  const idx = Math.floor(Math.random() * BB8_SOUNDS.length);
+  const sound = BB8_SOUNDS[idx];
+  if (sound) { sound.currentTime = 0; sound.play().catch(() => {}); }
+}
+document.addEventListener('click', preloadSounds, { once: true });
+document.addEventListener('touchstart', preloadSounds, { once: true });</script>
 
 </body>
 
