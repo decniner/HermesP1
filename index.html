@@ -97,7 +97,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
   <div id="bar">
 
     <button id="cam">📷</button>
-
+    <button id="skinbtn" style="background:rgba(108,99,255,.2);border:none;border-radius:50%;width:44px;height:44px;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0">🎨</button>
     <button id="mic">🎤</button>
 
     <input id="input" type="text" placeholder="Ask BB-8..." autocomplete="off">
@@ -134,7 +134,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
 
 const CONFIG = {
 
-  wsUrl: 'wss://being-imagine-impaired-diff.trycloudflare.com',
+  wsUrl: 'wss://rolled-mls-frame-quality.trycloudflare.com',
 
   roamSpeed: 0.3,
 
@@ -244,414 +244,199 @@ let bubbleObj = null; // CSS2D bubble element
 
 
 
-function buildClippy() {
-
-  const g = new THREE.Group();
-
-
-
-  // ── Generate seamless BB-8 body texture ──
-
-  function makeBodyTexture() {
-
-    const c = document.createElement('canvas');
-
-    c.width = 512; c.height = 256;
-
-    const ctx = c.getContext('2d');
-
-
-
-    // Base: pearl white
-
-    ctx.fillStyle = '#f5f0eb';
-
-    ctx.fillRect(0, 0, 512, 256);
-
-
-
-    // Orange BB-8 bands
-
-    ctx.fillStyle = '#ee7722';
-
-    ctx.beginPath();
-
-    ctx.ellipse(256, 180, 130, 50, 0, 0, Math.PI * 2);
-
-    ctx.fill();
-
-
-
-    // Left orange circle
-
-    ctx.beginPath();
-
-    ctx.ellipse(90, 130, 45, 55, 0, 0, Math.PI * 2);
-
-    ctx.fill();
-
-
-
-    // Right orange area
-
-    ctx.beginPath();
-
-    ctx.ellipse(420, 130, 35, 45, 0, 0, Math.PI * 2);
-
-    ctx.fill();
-
-
-
-    // Bottom orange sweep
-
-    ctx.beginPath();
-
-    ctx.ellipse(256, 200, 150, 30, 0, 0, Math.PI * 2);
-
-    ctx.fill();
-
-
-
-    // Silver panel on left (inside left orange circle)
-
-    ctx.fillStyle = '#bbbbbb';
-
-    ctx.beginPath();
-
-    ctx.ellipse(90, 132, 22, 32, 0.3, 0, Math.PI * 2);
-
-    ctx.fill();
-
-    ctx.strokeStyle = '#999';
-
-    ctx.lineWidth = 1;
-
-    ctx.stroke();
-
-
-
-    // Silver panel on right
-
-    ctx.beginPath();
-
-    ctx.ellipse(422, 130, 18, 28, -0.2, 0, Math.PI * 2);
-
-    ctx.fill();
-
-    ctx.stroke();
-
-
-
-    // Bottom vents (horizontal slats)
-
-    ctx.fillStyle = '#888';
-
-    ctx.fillRect(200, 200, 60, 6);
-
-    ctx.fillRect(200, 210, 55, 4);
-
-
-
-    // Equator line
-
-    ctx.strokeStyle = '#555';
-
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0, 128);
-
-    ctx.lineTo(512, 128);
-
-    ctx.stroke();
-
-
-
-    // Vertical seam line
-
-    ctx.beginPath();
-
-    ctx.moveTo(80, 0);
-
-    ctx.lineTo(80, 256);
-
-    ctx.stroke();
-
-
-
-    // Bolt dots
-
-    ctx.fillStyle = '#888';
-
-    const boltPositions = [
-
-      [50, 100], [150, 90], [300, 85], [400, 95], [470, 110], [30, 150]
-
-    ];
-
-    boltPositions.forEach(([bx, by]) => {
-
-      ctx.beginPath();
-
-      ctx.arc(bx, by, 4, 0, Math.PI * 2);
-
-      ctx.fill();
-
+// ═══ SKIN SYSTEM ═══
+let currentSkin = 0;
+const skins = [
+  { name:'Pearl White',   body:'#f5f0eb', panel:'#ee7722', stripe:'#d4cdc4', darkPanel:'#3a3a3a' },
+  { name:'Space Black',   body:'#0a0a0a', panel:'#2a2a2a', stripe:'#1a1a1a', darkPanel:'#444' },
+  { name:'Ferrari Red',   body:'#1a0505', panel:'#dc0000', stripe:'#990000', darkPanel:'#661111' },
+  { name:'Gold Chrome',   body:'#f5e6c8', panel:'#d4a017', stripe:'#b8860b', darkPanel:'#8b6914' },
+  { name:'Midnight Blue', body:'#0a0a2e', panel:'#2255cc', stripe:'#1a3a8a', darkPanel:'#112266' },
+  { name:'Stormtrooper',  body:'#ffffff', panel:'#cccccc', stripe:'#999999', darkPanel:'#666' },
+  { name:'Forest Green',  body:'#0a1a0a', panel:'#2d8a2d', stripe:'#1a5c1a', darkPanel:'#0f3f0f' },
+];
+
+function rebuildBB8(skinIdx) {
+  currentSkin = skinIdx % skins.length;
+  const skin = skins[currentSkin];
+  document.getElementById('skinbtn').textContent = ['🎨','🌑','🔥','🥇','🔵','⚪','🌿'][currentSkin];
+
+  // Properly dispose old BB-8
+  if (clippy) {
+    clippy.traverse(child => {
+      if (child.isMesh) {
+        child.geometry && child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) child.material.forEach(m => { m.map && m.map.dispose(); m.dispose(); });
+          else { child.material.map && child.material.map.dispose(); child.material.dispose(); }
+        }
+      }
     });
-
-
-
-    // Orange head stripes area (will be on separate head texture but paint faint guides)
-
-    return new THREE.CanvasTexture(c);
-
-  }
-
-
-
-  // ── Generate seamless head dome texture ──
-
-  function makeHeadTexture() {
-
-    const c = document.createElement('canvas');
-
-    c.width = 256; c.height = 128;
-
-    const ctx = c.getContext('2d');
-
-
-
-    // Base: pearl white
-
-    ctx.fillStyle = '#f5f0eb';
-
-    ctx.fillRect(0, 0, 256, 128);
-
-
-
-    // Horizontal orange stripe
-
-    ctx.fillStyle = '#ee7722';
-
-    ctx.fillRect(50, 38, 50, 6);
-
-
-
-    // Three vertical orange stripes
-
-    ctx.fillRect(160, 20, 5, 25);
-
-    ctx.fillRect(172, 20, 5, 25);
-
-    ctx.fillRect(184, 20, 5, 25);
-
-
-
-    // Top sensor area
-
-    ctx.fillStyle = '#444';
-
-    ctx.beginPath();
-
-    ctx.ellipse(128, 10, 40, 8, 0, 0, Math.PI * 2);
-
-    ctx.fill();
-
-
-
-    return new THREE.CanvasTexture(c);
-
-  }
-
-
-
-  // ── Body sphere with seamless texture ──
-
-  const bodyTex = makeBodyTexture();
-
-  const bodyMat = new THREE.MeshStandardMaterial({ map: bodyTex, roughness: 0.15, metalness: 0.5 });
-
-  const bodySphere = new THREE.Mesh(new THREE.SphereGeometry(0.48, 36, 36), bodyMat);
-
-  bodySphere.position.y = 0.02;
-
-  bodySphere.name = 'bodySphere';
-
-  g.add(bodySphere);
-
-
-
-  // ── Head dome with seamless texture ──
-
-  const headTex = makeHeadTexture();
-
-  const headMat = new THREE.MeshStandardMaterial({ map: headTex, roughness: 0.15, metalness: 0.5 });
-
-  const headDome = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 28, 0, Math.PI * 2, 0, Math.PI / 1.9), headMat);
-
-  headDome.position.set(0, 0.45, 0.02);
-
-  headDome.name = 'headDome';
-
-  g.add(headDome);
-
-
-
-  // Head rim (silver ring, flush)
-
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.01, 8, 32), new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 }));
-
-  rim.position.set(0, 0.32, 0.02);
-
-  g.add(rim);
-
-
-
-  // ── Eyes (black spheres, flush on surface) ──
-
-  const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x222222 });
-
-  const silver = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 });
-
-
-
-  // Left eye (slightly larger, higher)
-
-  const eL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), eyeBlack);
-
-  eL.position.set(-0.13, 0.52, 0.26);
-
-  eL.scale.set(1, 0.85, 0.4);
-
-  g.add(eL);
-
-  const rL = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.012, 8, 16), silver);
-
-  rL.position.set(-0.13, 0.52, 0.28);
-
-  g.add(rL);
-
-
-
-  // Right eye (smaller, lower)
-
-  const eR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), eyeBlack);
-
-  eR.position.set(0.18, 0.44, 0.26);
-
-  eR.scale.set(1, 0.85, 0.4);
-
-  g.add(eR);
-
-  const rR = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 8, 16), silver);
-
-  rR.position.set(0.18, 0.44, 0.28);
-
-  g.add(rR);
-
-
-
-  // Small rectangle below left eye
-
-  const rect = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.02, 0.005), silver);
-
-  rect.position.set(-0.13, 0.45, 0.28);
-
-  g.add(rect);
-
-
-
-  // ── Antenna on top ──
-
-  const antennaGroup = new THREE.Group();
-
-  antennaGroup.position.set(0, 0.68, -0.04);
-
-  antennaGroup.name = 'antenna';
-
-  const antBase = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.012, 0.15, 6), new THREE.MeshStandardMaterial({ color: 0x111111 }));
-
-  antBase.position.y = 0.075;
-
-  antennaGroup.add(antBase);
-
-  const antTip = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-
-  antTip.position.y = 0.16;
-
-  antTip.name = 'antennaLight';
-
-  antennaGroup.add(antTip);
-
-  g.add(antennaGroup);
-
-
-
-  // Store references
-
-  const _antennaLight = antTip;
-
-  const _antennaGroup = antennaGroup;
-
-  const _bodySphere = bodySphere;
-
-  const _headDome = headDome;
-
-
-
-  clippy = g;
-
-  clippy.scale.set(0.6, 0.6, 0.6);
-
-  clippy.position.set(0, -0.05, 0);
-
-  scene.add(clippy);
-
-  clippy.userData = { mouth: null, tail: null, tailTip: null, legs: [], antennaLight: _antennaLight, antennaGroup: _antennaGroup, bodySphere: _bodySphere, headDome: _headDome };
-
-
-
-  // ── Speech bubble ──
-
-  const div = document.createElement('div');
-
-  div.id = 'bb';
-
-  div.textContent = 'Hi!';
-
-  div.style.cssText = 'background:linear-gradient(135deg,rgba(20,20,40,0.92),rgba(30,25,55,0.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(108,99,255,0.25);border-radius:16px;padding:12px 18px;color:#f0f0f0;font-size:14px;line-height:1.6;max-width:260px;text-align:left;pointer-events:auto;cursor:pointer;transition:opacity 0.3s,transform 0.2s;opacity:0;box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(108,99,255,0.1);font-family:-apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:0.01em';
-
-  bubbleObj = new THREE.CSS2DObject(div);
-
-  bubbleObj.position.set(0, 1.7, 0);
-
-  clippy.add(bubbleObj);
-
-  div.addEventListener('click', function(e) {
-
-    if (this._full) {
-
-      this.textContent = this._full;
-
-      this._full = null;
-
-      this.style.maxWidth = '280px';
-
+    scene.remove(clippy);
+    // Remove bubble element from DOM
+    if (bubbleObj && bubbleObj.element && bubbleObj.element.parentNode) {
+      bubbleObj.element.parentNode.removeChild(bubbleObj.element);
     }
-
-    e.stopPropagation();
-
-  });
-
-
-
-  setTimeout(setRoamTarget, 500);
-
+    // Clean up props
+    if (activeProps) activeProps.forEach(p => p.meshes.forEach(m => { scene.remove(m); m.geometry && m.geometry.dispose(); m.material && m.material.dispose(); }));
+    activeProps = [];
+    clippy = null;
+    bubbleObj = null;
+  }
+  buildClippyWithSkin(skin);
 }
 
+function cycleSkin() {
+  rebuildBB8(currentSkin + 1);
+}
 
+// ══════════════════════════════════════════
+//  BB-8 BUILDER
+// ══════════════════════════════════════════
 
+function buildClippyWithSkin(skin) {
+  // ── Body texture ──
+  function makeBodyTexture() {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 256;
+    const ctx = c.getContext('2d');
+
+    ctx.fillStyle = skin.body;
+    ctx.fillRect(0, 0, 512, 256);
+
+    ctx.fillStyle = skin.panel;
+    ctx.beginPath(); ctx.ellipse(256, 180, 130, 50, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(90, 130, 45, 55, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(420, 130, 35, 45, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(256, 200, 150, 30, 0, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#999';
+    ctx.beginPath(); ctx.ellipse(90, 132, 22, 32, 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(422, 130, 18, 28, -0.2, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#666';
+    ctx.fillRect(200, 200, 60, 6); ctx.fillRect(200, 210, 55, 4);
+
+    ctx.strokeStyle = skin.darkPanel;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, 128); ctx.lineTo(512, 128); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(80, 0); ctx.lineTo(80, 256); ctx.stroke();
+
+    ctx.fillStyle = skin.stripe;
+    const bolts = [[50,100],[150,90],[300,85],[400,95],[470,110],[30,150]];
+    bolts.forEach(([x,y]) => { ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill(); });
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Head texture ──
+  function makeHeadTexture() {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 128;
+    const ctx = c.getContext('2d');
+
+    ctx.fillStyle = skin.body;
+    ctx.fillRect(0, 0, 256, 128);
+
+    ctx.fillStyle = skin.panel;
+    ctx.fillRect(50, 38, 50, 6);
+    ctx.fillRect(160, 20, 5, 25); ctx.fillRect(172, 20, 5, 25); ctx.fillRect(184, 20, 5, 25);
+
+    ctx.fillStyle = skin.stripe;
+    ctx.beginPath(); ctx.ellipse(128, 10, 40, 8, 0, 0, Math.PI * 2); ctx.fill();
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  // ── Materials ──
+  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, metalness: 0.3, roughness: 0.2 });
+  const whiteShiny = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.5, roughness: 0.15 });
+  const orange = new THREE.MeshStandardMaterial({ color: 0xee7722, metalness: 0.2, roughness: 0.4 });
+  const silver = new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 });
+  const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x222222 });
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0x44aaff });
+
+  // ── Textures ──
+  const bodyTex = makeBodyTexture();
+  const bodyMat = new THREE.MeshStandardMaterial({ map: bodyTex, roughness: 0.3, metalness: 0.1 });
+  const bodySphere = new THREE.Mesh(new THREE.SphereGeometry(0.48, 36, 36), bodyMat);
+  bodySphere.position.y = 0.02;
+  bodySphere.name = 'bodySphere';
+
+  const headTex = makeHeadTexture();
+  const headMat = new THREE.MeshStandardMaterial({ map: headTex, roughness: 0.3, metalness: 0.1 });
+  const headDome = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 28, 0, Math.PI * 2, 0, Math.PI / 1.9), headMat);
+  headDome.position.set(0, 0.45, 0.02);
+  headDome.name = 'headDome';
+
+  // Head rim
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.01, 8, 32),
+    new THREE.MeshStandardMaterial({ color: 0xbbbbbb, metalness: 0.8, roughness: 0.15 }));
+  rim.position.set(0, 0.32, 0.02);
+
+  // Eyes
+  const eL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), eyeBlack);
+  eL.position.set(-0.13, 0.52, 0.26); eL.scale.set(1, 0.85, 0.4);
+  const rL = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.012, 8, 16), silver);
+  rL.position.set(-0.13, 0.52, 0.28);
+
+  const eR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), eyeBlack);
+  eR.position.set(0.18, 0.44, 0.26); eR.scale.set(1, 0.85, 0.4);
+  const rR = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 8, 16), silver);
+  rR.position.set(0.18, 0.44, 0.28);
+
+  // Small rectangle below left eye
+  const rect = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.02, 0.005), silver);
+  rect.position.set(-0.13, 0.45, 0.28);
+
+  // Antenna
+  const antennaGroup = new THREE.Group();
+  antennaGroup.position.set(0, 0.68, -0.04); antennaGroup.name = 'antenna';
+  const antBase = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.012, 0.15, 6),
+    new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  antBase.position.y = 0.075; antennaGroup.add(antBase);
+  const antTip = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  antTip.position.y = 0.16; antTip.name = 'antennaLight'; antennaGroup.add(antTip);
+
+  // Glow ring
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.1, 0.15, 32),
+    new THREE.MeshBasicMaterial({ color: 0x4444ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = -0.3;
+
+  // ── Assemble ──
+  const g = new THREE.Group();
+  const parts = [bodySphere, headDome, rim, eL, rL, eR, rR, rect, antennaGroup, ring];
+  parts.forEach(p => g.add(p));
+
+  clippy = g;
+  clippy.scale.set(0.6, 0.6, 0.6);
+  clippy.position.set(0, -0.05, 0);
+  scene.add(clippy);
+  clippy.userData = {
+    mouth: null, tail: null, tailTip: null, legs: [],
+    antennaLight: antTip, antennaGroup: antennaGroup,
+    bodySphere: bodySphere, headDome: headDome
+  };
+
+  // ── Speech bubble ──
+  const div = document.createElement('div');
+  div.id = 'bb';
+  div.textContent = 'Hi!';
+  div.style.cssText = 'background:linear-gradient(135deg,rgba(20,20,40,0.92),rgba(30,25,55,0.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(108,99,255,0.25);border-radius:16px;padding:12px 18px;color:#f0f0f0;font-size:14px;line-height:1.6;max-width:260px;text-align:left;pointer-events:auto;cursor:pointer;transition:opacity 0.3s,transform 0.2s;opacity:0;box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(108,99,255,0.1);font-family:-apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:0.01em';
+  bubbleObj = new THREE.CSS2DObject(div);
+  bubbleObj.position.set(0, 1.7, 0);
+  clippy.add(bubbleObj);
+  div.addEventListener('click', function(e) {
+    if (this._full) { this.textContent = this._full; this._full = null; this.style.maxWidth = '280px'; }
+    e.stopPropagation();
+  });
+
+  setTimeout(setRoamTarget, 500);
+}
+
+// Initial build
+buildClippyWithSkin(skins[0]);
 // ── Bubble helper ──
 
 function showBubble(text) {
@@ -2189,13 +1974,14 @@ function animate() {
 
 updateBounds();
 
-buildClippy();
-
 connect();
 
 animate();
 
-console.log('📎 Clippy loaded!');
+console.log('📎 BB-8 loaded!');
+
+// ── Skin button ──
+document.getElementById('skinbtn').addEventListener('click', cycleSkin);
 
 </script>
 
