@@ -33,6 +33,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:radial-gradient(elli
 .hentry .q{font-size:13px;color:#aaa;margin-bottom:4px}
 .hentry .a{font-size:13px;color:#fff}
 .hentry .t{font-size:10px;color:#555;margin-top:4px}
+.hentry.copied{background:rgba(108,99,255,0.25)!important;transition:background 0s}
+.hentry{cursor:pointer}
 .chide{position:absolute;top:14px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
 </style>
 </head>
@@ -793,7 +795,11 @@ document.getElementById('hbtn').addEventListener('click', () => {
   const p = document.getElementById('hpanel');
   const h = JSON.parse(localStorage.getItem('ch') || '[]');
   document.getElementById('hlist').innerHTML = h.reverse().map(e => `
-    <div class="hentry"><div class="q">${e.r === 'me' ? '🧑' : '📎'}</div><div class="a">${e.t.substring(0, 200)}</div><div class="t">${new Date(e.time).toLocaleString()}</div></div>
+    <div class="hentry" onclick="navigator.clipboard.writeText('${e.t.replace(/'/g,"\\'").replace(/"/g,'&quot;')}');this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),800)">
+      <div class="q">${e.r === 'me' ? '🧑' : '📎'}</div>
+      <div class="a">${e.t.substring(0, 200)}</div>
+      <div class="t">${new Date(e.time).toLocaleString()}</div>
+    </div>
   `).join('');
   p.classList.add('open');
 });
