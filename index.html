@@ -649,7 +649,13 @@ function connect() {
 
 function send(t) {
   if (!t || !ws || ws.readyState !== WebSocket.OPEN) { showBubble('⚠️ Not connected...'); return; }
-  clearBubble();
+  // Show user's message on screen, fade after 3.5s
+  if (bubbleObj) {
+    const el = bubbleObj.element;
+    el.textContent = '🧑 ' + t.substring(0, 80);
+    el.style.opacity = '1';
+    el.style.background = 'rgba(30,30,60,0.85)';
+  }
 
   // ── Voice commands ──
   const lower = t.toLowerCase();
