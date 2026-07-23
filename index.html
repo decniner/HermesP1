@@ -638,6 +638,7 @@ function connect() {
     try {
       const d = JSON.parse(e.data);
       if (d.type === 'clippy_message' && d.text) {
+        dot.className = 'on';
         speak(d.text);
         emotionFromText(d.text);
         showBubble(stripEmoji(d.text));
