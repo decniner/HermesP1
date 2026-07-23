@@ -835,83 +835,128 @@ function spawnProp(type) {
 
   let meshes = [];
   const add = (geo, color, x, y, z, sc) => {
-    const m = new THREE.Mesh(geo, mat(color));
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 }));
     m.position.set(cp.x + x, cp.y + y, cp.z + z);
     if (sc) m.scale.set(sc, sc, sc);
     scene.add(m);
     meshes.push(m);
   };
+  const rad = (cx, cy, cz, r, c) => {
+    for (let a = 0; a < Math.PI * 2; a += 0.5) {
+      add(new THREE.SphereGeometry(r/2, 6, 6), c, cx + Math.cos(a)*r, cy + Math.sin(a)*r*0.3, cz);
+    }
+  };
 
   if (type === 'fire') {
-    // Small flame: orange/yellow spheres
-    add(new THREE.SphereGeometry(0.08, 8, 8), 0xff6600, 0.25, 0.3, 0);
-    add(new THREE.SphereGeometry(0.06, 8, 8), 0xffcc00, 0.25, 0.45, 0);
-    add(new THREE.SphereGeometry(0.04, 8, 8), 0xffffff, 0.25, 0.55, 0);
+    // Lighter: small cylinder body + flame
+    add(new THREE.CylinderGeometry(0.04, 0.03, 0.08, 8), 0x888888, 0.15, 0.15, 0);
+    add(new THREE.CylinderGeometry(0.02, 0.015, 0.04, 8), 0x555555, 0.15, 0.25, 0);
+    // Flame
+    add(new THREE.SphereGeometry(0.06, 10, 10), 0xff4400, 0.15, 0.38, 0);
+    add(new THREE.SphereGeometry(0.04, 10, 10), 0xffaa00, 0.15, 0.45, 0);
+    add(new THREE.SphereGeometry(0.02, 10, 10), 0xffff88, 0.15, 0.5, 0);
   } else if (type === 'bird') {
-    // Tiny birds flying away: small dark V shapes
+    // Birds: small body + wing
     for (let i = 0; i < 3; i++) {
-      const a = i * 0.5 + Math.random() * 0.3;
-      add(new THREE.SphereGeometry(0.04, 6, 6), 0x444444, a, 0.3 + i * 0.2, -i * 0.25);
+      const bx = i * 0.3 + 0.1;
+      add(new THREE.SphereGeometry(0.03, 8, 8), 0x333333, bx, 0.3, 0);
+      add(new THREE.BoxGeometry(0.06, 0.002, 0.04), 0x555555, bx, 0.32, 0);
+      add(new THREE.SphereGeometry(0.02, 6, 6), 0x444444, bx + 0.02, 0.29, 0);
     }
   } else if (type === 'plant') {
-    // Plant pot + green leaves
-    add(new THREE.CylinderGeometry(0.06, 0.08, 0.1, 8), 0x886644, 0, -0.1, 0);
-    add(new THREE.SphereGeometry(0.05, 8, 8), 0x44cc44, 0, 0.05, 0);
-    add(new THREE.SphereGeometry(0.04, 8, 8), 0x66ee66, 0.05, 0.1, 0);
+    // Plant pot with stem and leaves
+    add(new THREE.CylinderGeometry(0.06, 0.08, 0.08, 8), 0xAA6622, 0, -0.1, 0);
+    add(new THREE.CylinderGeometry(0.005, 0.005, 0.12, 6), 0x338833, 0, 0.04, 0);
+    add(new THREE.SphereGeometry(0.035, 8, 8), 0x44BB44, 0.02, 0.12, 0);
+    add(new THREE.SphereGeometry(0.03, 8, 8), 0x55CC55, -0.02, 0.1, 0.02);
+    // Water drops
+    add(new THREE.SphereGeometry(0.015, 6, 6), 0x88DDFF, 0.04, -0.05, 0);
+    add(new THREE.SphereGeometry(0.012, 6, 6), 0x88DDFF, -0.03, -0.06, 0);
   } else if (type === 'juggle') {
-    // Colored juggling balls
-    const colors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44, 0xff44ff];
+    // Juggling balls in a ring
+    const colors = [0xff3333, 0x33ff33, 0x3333ff, 0xffff33, 0xff33ff];
     for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      add(new THREE.SphereGeometry(0.045, 8, 8), colors[i], Math.cos(a) * 0.2, 0.2 + Math.sin(a) * 0.2, 0);
+      const a = (i / 5) * Math.PI * 2 + Math.PI/2;
+      const r = 0.15;
+      add(new THREE.SphereGeometry(0.04, 10, 10), colors[i], Math.cos(a) * r, 0.25 + Math.sin(a) * r * 0.8, Math.sin(a) * r * 0.3);
     }
   } else if (type === 'notes') {
-    // Music note shapes: small colored dots floating up
-    for (let i = 0; i < 5; i++) {
-      add(new THREE.SphereGeometry(0.03, 6, 6), 0xffdd44, (Math.random() - 0.5) * 0.35, 0.2 + i * 0.1, (Math.random() - 0.5) * 0.25);
+    // Music notes: small rectangles with dots
+    for (let i = 0; i < 4; i++) {
+      const nx = (Math.random() - 0.5) * 0.3;
+      add(new THREE.BoxGeometry(0.015, 0.05, 0.005), 0xFFDD44, nx, 0.15 + i * 0.08, (Math.random() - 0.5) * 0.15);
+      add(new THREE.SphereGeometry(0.012, 6, 6), 0xFFDD44, nx, 0.15 + i * 0.08 - 0.025, 0.01);
     }
   } else if (type === 'flash') {
-    // Camera flash: bright white expanding ring
-    add(new THREE.RingGeometry(0.02, 0.35, 24), 0xffffff, 0, 0.3, 0);
+    // Camera flash: bright ring + dot
+    add(new THREE.RingGeometry(0.05, 0.35, 24), 0xffffff, 0, 0.3, 0);
+    add(new THREE.SphereGeometry(0.04, 8, 8), 0xffffff, 0, 0.3, 0);
+    // Rays
+    for (let a = 0; a < Math.PI * 2; a += 0.4) {
+      add(new THREE.BoxGeometry(0.002, 0.25, 0.002), 0xffffff, Math.cos(a) * 0.2, 0.3, Math.sin(a) * 0.2);
+    }
   } else if (type === 'paper') {
-    // Small newspaper: flat rectangle
-    add(new THREE.BoxGeometry(0.16, 0.002, 0.12), 0xf5f0e0, 0.2, 0.15, 0);
+    // Newspaper: flat page with lines
+    add(new THREE.BoxGeometry(0.18, 0.002, 0.14), 0xf5f0e0, 0.2, 0.15, 0);
+    // Text lines
+    add(new THREE.BoxGeometry(0.12, 0.001, 0.002), 0x888888, 0.2, 0.18, 0.03);
+    add(new THREE.BoxGeometry(0.1, 0.001, 0.002), 0x888888, 0.2, 0.16, 0.03);
+    add(new THREE.BoxGeometry(0.08, 0.001, 0.002), 0x888888, 0.2, 0.14, 0.03);
+    // Image box
+    add(new THREE.BoxGeometry(0.04, 0.03, 0.002), 0xcccccc, 0.25, 0.18, -0.03);
   } else if (type === 'stars') {
-    // Sparkle stars
+    // Dancing stars sparkle
     for (let i = 0; i < 6; i++) {
       const a = (i / 6) * Math.PI * 2;
-      add(new THREE.SphereGeometry(0.025, 6, 6), 0xffee44, Math.cos(a) * 0.25, 0.15 + Math.sin(a) * 0.2, 0);
+      const r = 0.2;
+      add(new THREE.SphereGeometry(0.025, 8, 8), 0xffee44, Math.cos(a) * r, 0.15 + Math.sin(a) * r * 0.8, Math.sin(a) * r * 0.3);
+      add(new THREE.SphereGeometry(0.01, 6, 6), 0xffffff, Math.cos(a) * r * 1.3, 0.15 + Math.sin(a) * r * 0.8, Math.sin(a) * r * 0.3);
     }
   } else if (type === 'pancake') {
-    // Pancake with butter
-    add(new THREE.CylinderGeometry(0.09, 0.1, 0.015, 10), 0xcc8844, 0, -0.05, 0);
-    add(new THREE.CylinderGeometry(0.04, 0.04, 0.008, 8), 0xffee66, 0, -0.02, 0);
+    // Pancake stack with butter
+    add(new THREE.CylinderGeometry(0.08, 0.09, 0.015, 12), 0xcc8844, 0, -0.06, 0);
+    add(new THREE.CylinderGeometry(0.07, 0.08, 0.012, 12), 0xdd9955, 0, -0.04, 0);
+    add(new THREE.CylinderGeometry(0.03, 0.03, 0.006, 8), 0xffee66, 0.02, -0.025, 0);
+    // Syrup drip
+    add(new THREE.SphereGeometry(0.015, 6, 6), 0xcc6633, 0.05, -0.06, 0);
+    add(new THREE.SphereGeometry(0.01, 6, 6), 0xcc6633, -0.04, -0.055, 0);
   } else if (type === 'radio') {
-    // Radio waves: concentric arcs
-    for (let r = 2; r <= 5; r++) {
-      add(new THREE.TorusGeometry(0.05 * r, 0.006, 6, 16), 0x44aaff, 0, 0.3, 0);
+    // Radio waves: concentric torus rings
+    for (let r = 1; r <= 4; r++) {
+      add(new THREE.TorusGeometry(0.04 * r, 0.005, 6, 20), 0x44aaff, 0, 0.25 + r * 0.02, 0);
     }
+    // Antenna
+    add(new THREE.CylinderGeometry(0.003, 0.003, 0.1, 6), 0xaaaaaa, 0, 0.35, 0);
+    add(new THREE.SphereGeometry(0.008, 6, 6), 0xff4444, 0, 0.42, 0);
   } else if (type === 'trail') {
-    // Motion trail: small dots in a circle
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      add(new THREE.SphereGeometry(0.02, 6, 6), 0x88ddff, Math.cos(a) * 0.15, 0, Math.sin(a) * 0.15);
+    // Motion trail: dots forming a circle
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.02, 6, 6), 0x88ddff, Math.cos(a) * 0.18, 0.02, Math.sin(a) * 0.18);
     }
   } else if (type === 'spin') {
-    // Spin effect: rotating ring
-    add(new THREE.TorusGeometry(0.18, 0.015, 8, 20), 0x44aaff, 0, 0.1, 0);
+    // Spinning top ring
+    add(new THREE.TorusGeometry(0.18, 0.018, 8, 24), 0x44aaff, 0, 0.08, 0);
+    add(new THREE.TorusGeometry(0.12, 0.012, 8, 20), 0x66ccff, 0, 0.1, 0);
+    add(new THREE.SphereGeometry(0.03, 8, 8), 0x88ddff, 0, 0.15, 0);
   } else if (type === 'doodle') {
-    // Doodle: scattered colorful dots
-    const colors = [0xff4444, 0x44ff44, 0x4444ff, 0xff44ff, 0xffff44];
-    for (let i = 0; i < 6; i++) {
-      add(new THREE.SphereGeometry(0.015, 6, 6), colors[i], (Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.2, 0);
+    // Doodle: colorful scribble lines
+    const cols = [0xff4444, 0x44ff44, 0x4444ff, 0xff44ff, 0xffff44, 0x44ffff];
+    for (let i = 0; i < 8; i++) {
+      const x = (Math.random() - 0.5) * 0.35;
+      const y = (Math.random() - 0.5) * 0.2;
+      add(new THREE.SphereGeometry(0.015, 6, 6), cols[i % 6], x, y, 0);
+      add(new THREE.SphereGeometry(0.008, 4, 4), 0xffffff, x + 0.01, y + 0.01, 0);
     }
   } else if (type === 'flex') {
-    // Flex: sparkle effect + bicep
-    add(new THREE.SphereGeometry(0.05, 8, 8), 0x44aaff, -0.15, 0.2, 0);
-    for (let i = 0; i < 4; i++) {
-      const a = (i / 4) * Math.PI * 2;
-      add(new THREE.SphereGeometry(0.012, 6, 6), 0xffee44, Math.cos(a) * 0.08 - 0.15, 0.2 + Math.sin(a) * 0.08, 0);
+    // Flex: arm with bicep curl
+    add(new THREE.SphereGeometry(0.04, 8, 8), 0x44aaff, -0.12, 0.15, 0);
+    add(new THREE.SphereGeometry(0.05, 10, 10), 0x66ccff, -0.12, 0.22, 0);
+    add(new THREE.SphereGeometry(0.03, 8, 8), 0x88ddff, -0.12, 0.28, 0);
+    // Sparkles around
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      add(new THREE.SphereGeometry(0.01, 6, 6), 0xffee44, Math.cos(a) * 0.06 - 0.12, 0.22 + Math.sin(a) * 0.06, 0);
     }
   }
 
@@ -924,7 +969,7 @@ function updateProps() {
   for (let i = activeProps.length - 1; i >= 0; i--) {
     const p = activeProps[i];
     p.time += 0.016;
-    const life = 1.5; // seconds
+    const life = 3.0; // seconds
     p.meshes.forEach(m => {
       m.position.y += 0.003;
       if (p.time > life * 0.7) {
