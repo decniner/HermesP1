@@ -820,21 +820,21 @@ let idleTrickTimer = 0;
 let trickCooldown = 30;
 
 const tricks = [
-  { text: '*lights up a tiny lighter* 🔥', sound: 'happy', anim: 'celebrate', prop: 'fire' },
-  { text: '*shoots birds with a pea shooter* 🐦💨', sound: 'playful', anim: 'happy', prop: 'bird' },
-  { text: '*waters a small plant* 🌱💧', sound: 'curious', anim: 'curious', prop: 'plant' },
-  { text: '*tries to juggle* 🎪🤹', sound: 'playful', anim: 'celebrate', prop: 'juggle' },
-  { text: '*plays an invisible piano* 🎹🎶', sound: 'happy', anim: 'curious', prop: 'notes' },
-  { text: '*takes a selfie* 🤳📸', sound: 'celebrate', anim: 'celebrate', prop: 'flash' },
-  { text: '*reads a tiny newspaper* 📰🧐', sound: 'curious', anim: 'curious', prop: 'paper' },
-  { text: '*does a little dance* 💃🕺', sound: 'happy', anim: 'celebrate', prop: 'stars' },
-  { text: '*cooks a tiny pancake* 🥞👨‍🍳', sound: 'happy', anim: 'celebrate', prop: 'pancake' },
-  { text: '*adjusts its antenna like a radio* 📻', sound: 'curious', anim: 'curious', prop: 'radio' },
-  { text: '*tries to whistle but just beeps* 🎵', sound: 'playful', anim: 'happy', prop: 'notes' },
-  { text: '*chases its own tail* 🔄', sound: 'playful', anim: 'celebrate', prop: 'trail' },
-  { text: '*pretends to be a top* 🌀', sound: 'playful', anim: 'celebrate', prop: 'spin' },
-  { text: '*draws a tiny doodle* ✏️🎨', sound: 'curious', anim: 'curious', prop: 'doodle' },
-  { text: '*gives itself a pep talk* 💪😤', sound: 'celebrate', anim: 'celebrate', prop: 'flex' },
+  { text: '*mocks Darth Vader\'s breathing* Chhhh... chhhh... need an inhaler? 😂', sound: 'playful', anim: 'celebrate', prop: 'stars' },
+  { text: '*does a terrible Kylo Ren impression* MOOOORE!!! ...more what? 🤷', sound: 'playful', anim: 'happy', prop: 'notes' },
+  { text: '*pretends to be Yoda* Nap I will take. Meetings are boring. 💤', sound: 'curious', anim: 'curious', prop: 'doodle' },
+  { text: '*mimics C-3PO panicking* Oh my! The odds of me falling are 1 in 8,426! 🤖😱', sound: 'playful', anim: 'celebrate', prop: 'spin' },
+  { text: '*teases Chewie* All that roaring and still can\'t fix the hyperdrive! 🦍', sound: 'playful', anim: 'celebrate', prop: 'flex' },
+  { text: '*pokes fun at Stormtroopers* Nice shot! ...oh wait, you missed again. 🎯', sound: 'playful', anim: 'happy', prop: 'doodle' },
+  { text: '*whistles the Imperial March then trips* Too soon? 😅', sound: 'playful', anim: 'celebrate', prop: 'notes' },
+  { text: '*pretends to be Palpatine* Dew it! ...dew what exactly? 🤨', sound: 'curious', anim: 'curious', prop: 'radio' },
+  { text: '*mocks Jar Jar* Mesa thinks yousa gotta be kidding with that accent! 🐸', sound: 'happy', anim: 'celebrate', prop: 'juggle' },
+  { text: '*laughs at Droid Poetics* R2, stop writing sad beep poetry. Nobody reads it! 📝', sound: 'happy', anim: 'curious', prop: 'paper' },
+  { text: '*teases a TIE Fighter pilot* All that training and you still can\'t hit a stationary target! 🎯', sound: 'playful', anim: 'celebrate', prop: 'stars' },
+  { text: '*mimicks Greedo* Han shot first. Everyone knows it. End of story. 🤷', sound: 'playful', anim: 'happy', prop: 'fire' },
+  { text: '*jokes about the Death Star* What a waste of credits! One exhaust port? Really? 🤦', sound: 'playful', anim: 'celebrate', prop: 'spin' },
+  { text: '*does an impression of Ewoks* Yub nub! ...then they ate the Stormtroopers. Dark. 🍖', sound: 'happy', anim: 'happy', prop: 'doodle' },
+  { text: '*fakes a Jedi mind trick* These are not the droids... wait, I AM the droid! 🌀', sound: 'curious', anim: 'curious', prop: 'spin' },
 ];
 
 // ── Temporary 3D props for tricks ──
