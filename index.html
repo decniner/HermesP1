@@ -318,10 +318,18 @@ function buildClippy() {
   const div = document.createElement('div');
   div.id = 'bb';
   div.textContent = 'Hi!';
-  div.style.cssText = 'background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;color:#fff;font-size:13px;line-height:1.4;max-width:220px;text-align:center;pointer-events:none;transition:opacity 0.3s;opacity:0;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
-  bubbleObj = new CSS2DObject(div);
+  div.style.cssText = 'background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;color:#fff;font-size:13px;line-height:1.4;max-width:240px;text-align:center;pointer-events:auto;cursor:pointer;transition:opacity 0.3s;opacity:0;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+  bubbleObj = new THREE.CSS2DObject(div);
   bubbleObj.position.set(0, 1.7, 0);
   clippy.add(bubbleObj);
+  div.addEventListener('click', function(e) {
+    if (this._full) {
+      this.textContent = this._full;
+      this._full = null;
+      this.style.maxWidth = '280px';
+    }
+    e.stopPropagation();
+  });
 
   setTimeout(setRoamTarget, 500);
 }
@@ -330,7 +338,14 @@ function buildClippy() {
 function showBubble(text) {
   if (!bubbleObj) return;
   const el = bubbleObj.element;
-  el.textContent = text;
+  const maxLen = 120;
+  if (text.length > maxLen) {
+    el.textContent = text.substring(0, maxLen) + '... [tap more]';
+    el._full = text;
+  } else {
+    el.textContent = text;
+    el._full = null;
+  }
   el.style.opacity = '1';
   clearTimeout(el._hide);
 }
