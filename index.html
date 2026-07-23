@@ -1012,8 +1012,8 @@ function animate() {
   updateRoaming();
   updateProps();
 
-  // ── Idle tricks (every 10-18 seconds of inactivity) ──
-  if (!isSpeaking && !isDragging && clippy) {
+  // ── Idle tricks (every 30-45 seconds of inactivity, not while busy) ──
+  if (!isSpeaking && !isDragging && clippy && dot.className !== 'busy') {
     idleTrickTimer += 0.016;
     if (idleTrickTimer > trickCooldown) {
       idleTrickTimer = 0;
