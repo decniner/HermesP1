@@ -1038,6 +1038,27 @@ function animate() {
       const idx = Math.floor(movePhase * 8) % colors.length;
       light.material.color.setHex(colors[idx]);
       light.scale.set(1.2, 1.2, 1.2);
+      // Signal wave ring around antenna
+      if (clippy.userData.antennaGroup && Math.floor(movePhase * 6) % 3 === 0) {
+        const antPos = new THREE.Vector3();
+        clippy.userData.antennaGroup.getWorldPosition(antPos);
+        const wave = new THREE.Mesh(
+          new THREE.TorusGeometry(0.02, 0.004, 6, 12),
+          new THREE.MeshBasicMaterial({ color: colors[idx], transparent: true, opacity: 0.8 })
+        );
+        wave.position.copy(antPos);
+        wave.position.y += 0.16;
+        scene.add(wave);
+        // Animate and remove wave
+        let t = 0;
+        const anim = setInterval(() => {
+          t += 0.033;
+          const s = 1 + t * 3;
+          wave.scale.set(s, s, s);
+          wave.material.opacity = Math.max(0, 0.8 - t * 0.6);
+          if (t > 1.2) { clearInterval(anim); scene.remove(wave); }
+        }, 33);
+      }
     } else {
       // Steady white when idle
       light.material.color.setHex(0xffffff);
